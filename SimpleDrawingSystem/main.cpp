@@ -19,12 +19,6 @@
 #include "Comm.hpp"
 
 #include <iostream>
-#include <sys/types.h>
-#include <unistd.h>
-#include <curses.h>
-#include <poll.h>
-#include <sys/types.h>
-#include <signal.h>
 
 using namespace std;
 
@@ -33,7 +27,6 @@ int x = 640;
 int y = 480;
 
 Draw scene(x,y, true);
-pid_t parent = getpid();
 
 float *PixelBuffer;
 void display();
@@ -51,74 +44,29 @@ int main(int argc, char *argv[]) {
     
     for(Polygon poly: world) scene.draw(poly);
     
-    int pipes[2];
-    if(pipe(pipes)) {
-        cout << "Failed to create pipe" << endl;
-        exit(0);
-    }
     
-    cout << "Command: " << std::flush;
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE);
+    //set window size to 200*200
+    glutInitWindowSize(x, y);
+    //set window position
+    glutInitWindowPosition(100, 100);
     
-    pid_t pid = fork();
+    //create and set main window title
+    int MainWindow = glutCreateWindow("Simple Drawing System");
+    glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
+    //sets display function
+    glutDisplayFunc(display);
     
-    if (pid) {
-        dup2(pipes[1], STDOUT_FILENO);
-        close(pipes[0]);
-        close(pipes[1]);
+    glutMainLoop();//main display loop, will display until terminate
 
-        string test;
-        
-        struct pollfd fd_pol[1];
-        
-        fd_pol[0].fd = STDIN_FILENO;
-        fd_pol[0].events = POLLIN;
-        fd_pol[0].revents = POLLIN;
-        
-        while(test != "exit") {
-            if (poll(fd_pol, 1, 50)) {
-                getline(cin, test);
-                if(write(STDOUT_FILENO, (test + '\n').c_str(), test.size() + 1) == -1) {
-                    cerr << "Something broke" << endl;
-                }
-                cerr << "Command: " << std::flush;
-            }
-        }
-
-        kill(pid,SIGTERM);
-        wait(NULL);
-
-        
-    } else {
-        
-        
-        dup2(pipes[0], STDIN_FILENO);
-        close(pipes[1]);
-        close(pipes[0]);
-        
-        glutInit(&argc, argv);
-        glutInitDisplayMode(GLUT_SINGLE);
-        //set window size to 200*200
-        glutInitWindowSize(x, y);
-        //set window position
-        glutInitWindowPosition(100, 100);
-        
-        //create and set main window title
-        int MainWindow = glutCreateWindow("Simple Drawing System");
-        glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
-        //sets display function
-        glutDisplayFunc(display);
-        
-        glutMainLoop();//main display loop, will display until terminate
-        
-
-        
-    }
     return 0;
 }
 
 //main display loop, this function will be called again and again by OpenGL
 void display()
 {
+
     //Misc.
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -129,17 +77,38 @@ void display()
     //window refresh
     glFlush();
     
-    struct pollfd fd_pol[1];
-    
-    fd_pol[0].fd = STDIN_FILENO;
-    fd_pol[0].events = POLLIN;
-    fd_pol[0].revents = POLLIN;
-    
     string test;
     
-    if (poll(fd_pol, 1, 0)) {
-        getline(cin, test);
-        menu(test);
-    }
+    cout << "Enter action (transform, viewport, exit): " << flush;
+    cin >> test;
+    int id = 0;
+    float x_m, y_m;
+
+    if (test == "transform") {
+        cout << "Enter the ID of the polygon to be manipulated: " << flush;
+        cin >> id;
+        cout << "Enter the type of transformation (scale, translate, rotate): " << flush;
+        cin >> test;
+        
+        if (test == "scale") {
+            cout << "Enter the x and y scale (e.g. 1.0 1.0): ";
+            cin >> x_m >> y_m;
+            
+        } else if (test == "transform") {
+            cout << "Enger the x and y direction to move (e.g. 1.0 1.0): ";
+            cin >> x_m >> y_m;
+            
+
+        } else if (test == "rotate") {
+            cout << "Enter the angle in degrees to rotate (e.g. 45): ";
+            cin >> x_m;
+            
+        } else cout << "That is not a valid transformation." << std::endl;
+    } else if (test == "viewport") {
+        
+    } else if (test == "exit") exit(0);
+    else cout << "That is not a valid action." << std::endl;
+    
+    glutPostRedisplay();
 
 }

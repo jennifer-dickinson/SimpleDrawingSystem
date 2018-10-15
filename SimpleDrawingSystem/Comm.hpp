@@ -13,6 +13,6 @@
 #include <string>
 #include <vector>
 
-void menu(std::string cmd);
+std::vector<std::string> tokens(std::string line);
 
 #endif /* Comm_hpp */

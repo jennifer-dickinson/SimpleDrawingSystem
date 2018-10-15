@@ -12,7 +12,7 @@
 #include <cmath>
 #include <stdio.h>
 
-#include "polygon.h"
+#include "polygon.hpp"
 
 
 class Draw {

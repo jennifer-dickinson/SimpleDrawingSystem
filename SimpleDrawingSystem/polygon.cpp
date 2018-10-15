@@ -2,7 +2,7 @@
 // Created by Jennifer Salas on 10/2/18.
 //
 
-#include "polygon.h"
+#include "polygon.hpp"
 
 std::vector <Polygon> initializePolygons(std::string file) {
     std::vector <Polygon> polygonSet;

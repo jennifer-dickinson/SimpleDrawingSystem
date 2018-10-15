@@ -1,8 +1,13 @@
-long:
-	g++ -o draw polygon.cpp Lines.cpp DigitalDifferentialAnalyzer.cpp Bresenham.cpp Draw.cpp Comm.cpp main.cpp -framework GLUT -framework OpenGL -lcurses -Wno-deprecated -Wc++11-extensions
+FLAGS = -Wno-deprecated -std=c++11
+DEPS = polygon.hpp Draw.hpp Comm.hpp
+OBJ = polygon.o Lines.o DigitalDifferentialAnalyzer.o Bresenham.o Draw.o Comm.o main.o 
+
+
+draw: $(OBJ)
+	g++ -o $@ $(OBJ) $(FLAGS) -framework GLUT -framework OpenGL 
+
+%.o : %.cpp $(DEPS)
+	g++ -c -o $@ $<  $(FLAGS)
 
 clean:
-	rm *.o
-
-cleanall:
 	rm *.o draw

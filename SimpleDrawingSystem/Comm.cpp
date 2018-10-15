@@ -8,7 +8,7 @@
 
 #include "Comm.hpp"
 
-void menu(std::string line) {
+std::vector<std::string> tokens(std::string line) {
     std::vector<std::string> token;
     int start, stop;
     for(start = 0; start < line.size(); start++) {
@@ -20,16 +20,7 @@ void menu(std::string line) {
     
     for (auto tok: token) std::cout << tok << std::endl;
     
-    if (token.size() > 1) {
-        if (token[0] == "rotate") {
-            return;
-        } else if(token[0] == "translate") {
-            return;
-        } else if (token[0] == "scale") {
-            return;
-        }
-    }
     
-    std::cout << "Invalid command" << std::endl;
-    
+    if (token.size() && token[0] == "exit") exit(0);
+    return token;
 }
