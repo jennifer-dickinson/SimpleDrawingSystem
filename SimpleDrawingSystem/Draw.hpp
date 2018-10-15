@@ -22,15 +22,23 @@ class Draw {
     int min;
     
     bool bresenhamAlgo;
-    enum sett {};
+    
 public:
-    Draw() : x(640), y(480), bresenhamAlgo(true) {
+    
+    std::vector<Polygon> polygons;
+
+    
+    Draw() : x(640), y(480), bresenhamAlgo(true)  {
         PixelBuffer = new float[(x+1) * (y+1) * 3];
         min = std::min(x,y);
     }
-    Draw(unsigned int _x, unsigned int _y, bool ba) : x(_x), y(_y), bresenhamAlgo(ba){
+    Draw(unsigned int _x, unsigned int _y, bool ba, std::vector<Polygon> poly) : x(_x), y(_y), bresenhamAlgo(ba){
         PixelBuffer = new float[(x+1) * (y+1) * 3];
         min = std::min(x,y);
+    }
+    
+    void setWorld(std::vector<Polygon> &poly) {
+        polygons = poly;
     }
     
     void digitalDifferenceAnalyzer(Point p1, Point p2, int delta_x, int delta_y);

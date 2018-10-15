@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <limits>
+#include <cmath>
 
 //using Point = std::pair<size_t, size_t>;
 
@@ -25,12 +26,13 @@ public:
         float y;
         float second;
     };
-    float xd, yd;
-    int xp, yp;
+    
+    float xr, yr; // real coordinates
+    float xd, yd; // device coordinates
+    int xp, yp;   // pixel coordinates
 
-    Point(): first(0), second(0), xd(0), yd(0), xp(0), yp(0) {};
-    Point(float _x, float _y) : first(_x), second(_y), xd(_x), yd(_y), xp(_x), yp(_y) { };
-//    Point(const Point &a) : first(a.first), second(a.second), xd(a.xd), yd(a.yd), xp(a.xp), yp(a.yp){    }
+    Point(): first(0), second(0), xd(0), yd(0), xp(0), yp(0), xr(0), yr(0) {};
+    Point(float _x, float _y) : first(_x), second(_y), xd(_x), yd(_y), xp(_x), yp(_y), xr(_x), yr(_y)  { };
 
     friend std::ostream &operator<<(std::ostream &os, const Point &p);
 };
@@ -47,8 +49,12 @@ public:
     Polygon(int v) : vertices(v) {};
 
     void addVertex(Point p);
-
-
+    
+    void scale(const float &x, const float &y);
+    
+    void translate(const float &x, const float &y);
+    
+    void rotate(const float &deg);
 };
 
 std::vector<Polygon> initializePolygons(std::string file);

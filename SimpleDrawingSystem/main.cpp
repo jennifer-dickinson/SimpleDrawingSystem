@@ -26,7 +26,7 @@ using namespace std;
 int x = 640;
 int y = 480;
 
-Draw scene(x,y, true);
+Draw scene(x,y, true, {});
 
 float *PixelBuffer;
 void display();
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     
     vector<Polygon> world = initializePolygons(file);
     
-    for(Polygon poly: world) scene.draw(poly);
+    for(Polygon poly: scene.polygons) scene.draw(poly);
     
     
     glutInit(&argc, argv);
@@ -59,14 +59,14 @@ int main(int argc, char *argv[]) {
     glutDisplayFunc(display);
     
     glutMainLoop();//main display loop, will display until terminate
-
+    
     return 0;
 }
 
 //main display loop, this function will be called again and again by OpenGL
 void display()
 {
-
+    
     //Misc.
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -83,7 +83,7 @@ void display()
     cin >> test;
     int id = 0;
     float x_m, y_m;
-
+    
     if (test == "transform") {
         cout << "Enter the ID of the polygon to be manipulated: " << flush;
         cin >> id;
@@ -93,12 +93,13 @@ void display()
         if (test == "scale") {
             cout << "Enter the x and y scale (e.g. 1.0 1.0): ";
             cin >> x_m >> y_m;
+            scene.polygons[id].scale(x_m, y_m);
             
         } else if (test == "transform") {
             cout << "Enger the x and y direction to move (e.g. 1.0 1.0): ";
             cin >> x_m >> y_m;
             
-
+            
         } else if (test == "rotate") {
             cout << "Enter the angle in degrees to rotate (e.g. 45): ";
             cin >> x_m;
@@ -108,6 +109,9 @@ void display()
         
     } else if (test == "exit") exit(0);
     else cout << "That is not a valid action." << std::endl;
+    
+    
+        for(Polygon poly: scene.polygons) scene.draw(poly);
     
     glutPostRedisplay();
 

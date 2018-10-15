@@ -48,8 +48,6 @@ std::vector <Polygon> initializePolygons(std::string file) {
             Point tempPoint (x,y);
             if (temp.point.size()) assert(&tempPoint.x != &temp.point.back().x);
             temp.addVertex(tempPoint);
-//            std::cout << "   Added point:" << temp.point.back() << std::endl;
-//            printf("    Should be (%.0f,%.0f)\n", x, y);
             
             if (x > x_max) x_max = x;
             if (x < x_min) x_min = x;
@@ -65,8 +63,6 @@ std::vector <Polygon> initializePolygons(std::string file) {
     
     float delta = std::max(delta_x, delta_y);
     
-//    printf("Xmax: %.2f; Xmin: %.2f; Ymax: %.2f; Ymin: %.2f\n", x_max, x_min, y_max, y_min);
-//    std::cout << "Device point" << std::endl;
     for(Polygon &poly: polygonSet) {
         for (Point &point: poly.point) {
             point.xd = (point.x - x_min) / delta;
@@ -88,4 +84,48 @@ void Polygon::addVertex(Point p) {
 std::ostream &operator<< (std::ostream& os, const Point& p) {
     os << "(" << p.x << "," << p.y << ")";
     return os;
+}
+
+
+void Polygon::scale(const float &_x,const  float &_y) {
+    // Matrix multiplication simplified
+    for (auto &p: point) {
+        p.x *= _x;
+        p.y *= _y;
+    }
+}
+
+void Polygon::translate(const float &_x,const  float &_y) {
+    // Matrix addition simplified
+    for (auto &p: point) {
+        p.x += _x;
+        p.y += _y;
+    }
+}
+
+void Polygon::rotate(const float &deg) {
+    float x_avg = 0, y_avg = 0;
+    
+    // Get the average locaiton of the polygon
+    for(auto &p: point) {
+        x_avg = p.x;
+        y_avg = p.y;
+    }
+    
+    x_avg /= point.size();
+    y_avg /= point.size();
+    
+    // Move to origin
+    translate(-x_avg, -y_avg);
+    
+    // rotate - matrix multiplication simplified
+    
+    for(auto &p: point) {
+        float _x = p.x;
+        p.x = _x * cos(deg) - p.y * sin(deg);
+        p.y = _x * sin(deg) + p.y * cos(deg);
+    }
+    
+    // Return to original position
+    translate(x_avg, y_avg);
 }
