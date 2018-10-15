@@ -9,6 +9,10 @@
 #ifndef Comm_hpp
 #define Comm_hpp
 
-#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+void menu(std::string cmd);
 
 #endif /* Comm_hpp */

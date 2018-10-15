@@ -6,4 +6,8 @@
 //  Copyright © 2018 Jennifer Salas. All rights reserved.
 //
 
-#include <stdio.h>
+#include "Draw.hpp"
+
+void Draw::digitalDifferentialAnalyzer(Point &a, Point &b, int &delta_x, int &delta_y) {
+    
+}

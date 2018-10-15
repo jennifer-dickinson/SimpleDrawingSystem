@@ -45,90 +45,43 @@ void Draw::draw(Polygon & p) {
     /*
      * Draw a polygon by drawing a connecting line between sequential vertices.
      */
+    for(auto point: p.point) std::cout << point << std::endl;
     for(int i = 0; i < p.point.size() - 1; i++) draw(p.point[i], p.point[i+1]);
     
-    // This connects the last vertex with the first vertex
-    if (&p.point.front() != &p.point.back()) draw(p.point.front(), p.point.back());
+    // This draws a line between the last and first vertices
+    if (&p.point.front() != &p.point.back()) draw(p.point.back(), p.point.front());
 }
 
 void Draw::draw(Vertex &a, Vertex &b) {
-    
+    int delta_x, delta_y;
     // Make sure to convert the vertices from device to pixel coordinates.
     xd2xp(a); xd2xp(b);
     
-    // Find the change in x and y
-    int delta_x = b.x - a.x, delta_y = b.y - a.y;
-    
-    
-    if(delta_x == 0) {
-        // Vertical line
-
-        int min = std::min(a.yp, b.yp);
-        int max = std::max(a.yp, b.yp);
-        
-        for (int i = min; i < max + 1; i++) MakePix(a.xp, i);
-        
-    } else if (delta_y == 0) {
-        // Horizontal line
-        
-        int min = std::min(a.xp, b.xp);
-        int max = std::max(a.xp, b.xp);
-        
-        for (int i = min; i < max + 1; i++) MakePix(i, a.yp);
-        
-    } else if (delta_y == delta_x) {
-        // Slope is exactly 1
-        Point min = (a.xp > b.xp)? b : a;
-        Point max = (a.xp < b.xp)? b : a;
-        
-        int diff = max.xp - min.xp;
-        
-        for(int i = 0; i < diff + 1; i++) MakePix(min.xp + i, min.yp + i);
-
-
-    } else if (delta_y == - delta_x) {
-        // Slope is exactly -1
-        Point min = (a.xp > b.xp)? b : a;
-        Point max = (a.xp < b.xp)? b : a;
-        
-        int diff = max.xp - min.xp;
-        
-        for(int i = 0; i < diff; i++) MakePix(min.xp + i, min.yp - i);
-
-
-    } else if ( (delta_y / (float)delta_x) < 1 && (delta_y / (float) delta_x) > 0){
-        // Bresenham when m < 1 and m > 0
-        std::cout << "Bresenham - slope: " <<  (delta_y / (float) delta_x) << std::endl;
-    
-        
-        int y_ = a.yp, y_prev = a.yp;
-        int p = 2 * delta_y - delta_x, p_;
-        if (!(p < 0)) {
-            y_prev = a.yp;
-            y_++;
-            std::cout << "Increment" << std::endl;
-        }
-        MakePix(a);
-        MakePix(a.xp + 1, y_);
-        
-        for(int i = a.xp + 2; i < b.xp; i++) {
-            MakePix(i, y_);
-            
-            p_ = p;
-            p = p_ + 2 * delta_y - 2 * delta_x * (y_ - y_prev);
-
-            printf("%d + 2 * %d - 2 * %2d (%d - %d) = %d\n", p_, delta_y, delta_x, y_, y_prev, p);
-            y_prev = y_;
-            if (!(p < 0)) {
-                y_++;
-            }
-        }
+    // Order the vertices from left to right, bottom to top
+    Point min, max;
+    if(a.x < b.x) {
+        min = a;
+        max = b;
+    } else if (b.x < a.x) {
+        min = b;
+        max = a;
+    } else if (a.y < b.y) {
+        min = a;
+        max = b;
     } else {
-        
-        // Bresenham when
-        std::cout << "-S line" << std::endl;
+        min = b;
+        max = a;
     }
     
-    // Use DDA or other algoirthm to draw a lien from vertex a to vertix b
+    // Find the change in x and y
+    delta_x = max.x - min.x;
+    delta_y = max.y - min.y;
+    
+    if(delta_x == 0) verticalLine(min, max);
+    else if (delta_y == 0) horizontalLine(min, max);
+    else if (delta_y == delta_x)  diagonalLinePositive(min, max);
+    else if (delta_y == - delta_x)  diagonalLineNegative(min, max);
+    else if (bresenhamAlgo)  bresenham(min, max, delta_x, delta_y);
+    else digitalDifferentialAnalyzer(min, max, delta_x, delta_y);
 }
 

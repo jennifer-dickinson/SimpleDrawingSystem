@@ -16,6 +16,7 @@
 #include <GLUT/glut.h>
 
 #include "Draw.hpp"
+#include "Comm.hpp"
 
 #include <iostream>
 #include <sys/types.h>
@@ -31,13 +32,12 @@ using namespace std;
 int x = 640;
 int y = 480;
 
-Draw scene(x,y);
+Draw scene(x,y, true);
 pid_t parent = getpid();
 
 float *PixelBuffer;
 void display();
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     string file("");
     if (argc == 2) {
         file = argv[1];
@@ -45,25 +45,28 @@ int main(int argc, char *argv[])
     else if (argc == 1){
         cout << "Please enter a filename: ";
         cin >> file;
-        
     }
     
     vector<Polygon> world = initializePolygons(file);
     
-    for(Polygon poly: world) {
-        scene.draw(poly);
+    for(Polygon poly: world) scene.draw(poly);
+    
+    int pipes[2];
+    if(pipe(pipes)) {
+        cout << "Failed to create pipe" << endl;
+        exit(0);
     }
     
-//    int pipes[2];
-//    pipe(pipes);
+    cout << "Command: " << std::flush;
     
     pid_t pid = fork();
     
     if (pid) {
+        dup2(pipes[1], STDOUT_FILENO);
+        close(pipes[0]);
+        close(pipes[1]);
+
         string test;
-        int status = 0;
-        waitpid(pid, &status, WNOHANG);
-//        cout << pid << " status " <<  status << endl;
         
         struct pollfd fd_pol[1];
         
@@ -71,15 +74,14 @@ int main(int argc, char *argv[])
         fd_pol[0].events = POLLIN;
         fd_pol[0].revents = POLLIN;
         
-        cout << "Command: ";
-        
-        while(!WIFEXITED(pid) && test  != "exit") {
+        while(test != "exit") {
             if (poll(fd_pol, 1, 50)) {
-                cin >> test;
-                cout << "Command: ";
-
+                getline(cin, test);
+                if(write(STDOUT_FILENO, (test + '\n').c_str(), test.size() + 1) == -1) {
+                    cerr << "Something broke" << endl;
+                }
+                cerr << "Command: " << std::flush;
             }
-            waitpid(pid, &status, WNOHANG);
         }
 
         kill(pid,SIGTERM);
@@ -87,6 +89,11 @@ int main(int argc, char *argv[])
 
         
     } else {
+        
+        
+        dup2(pipes[0], STDIN_FILENO);
+        close(pipes[1]);
+        close(pipes[0]);
         
         glutInit(&argc, argv);
         glutInitDisplayMode(GLUT_SINGLE);
@@ -102,9 +109,11 @@ int main(int argc, char *argv[])
         glutDisplayFunc(display);
         
         glutMainLoop();//main display loop, will display until terminate
+        
+
+        
     }
     return 0;
-
 }
 
 //main display loop, this function will be called again and again by OpenGL
@@ -120,8 +129,17 @@ void display()
     //window refresh
     glFlush();
     
-//    int status;
-//    waitpid(parent, &status, WNOHANG);
+    struct pollfd fd_pol[1];
     
+    fd_pol[0].fd = STDIN_FILENO;
+    fd_pol[0].events = POLLIN;
+    fd_pol[0].revents = POLLIN;
     
+    string test;
+    
+    if (poll(fd_pol, 1, 0)) {
+        getline(cin, test);
+        menu(test);
+    }
+
 }

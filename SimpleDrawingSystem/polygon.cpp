@@ -25,7 +25,7 @@ std::vector <Polygon> initializePolygons(std::string file) {
 
     std::cout << "Total polygons: " << numPolygons << std::endl;
 
-    float x_min = std::numeric_limits<float>::min(), y_min = std::numeric_limits<float>::min();
+    float x_min = std::numeric_limits<float>::max(), y_min = std::numeric_limits<float>::max();
     float x_max = std::numeric_limits<float>::min(), y_max = std::numeric_limits<float>::min();
     
     for (int i = 0; i < numPolygons; i++) {
@@ -44,17 +44,17 @@ std::vector <Polygon> initializePolygons(std::string file) {
             getline(input, line);
             std::istringstream point(line);
             point >> x >> y;
-            
-            if (x > x_max) x_max = x;
-            else if (x < x_min) x_min = x;
-            
-            if (y > y_max) y_max = y;
-            else if (y < y_min) y_min = y;
 
             Point tempPoint (x,y);
             if (temp.point.size()) assert(&tempPoint.x != &temp.point.back().x);
             temp.addVertex(tempPoint);
-            std::cout << "   Added point:" << temp.point.back() << std::endl;
+//            std::cout << "   Added point:" << temp.point.back() << std::endl;
+//            printf("    Should be (%.0f,%.0f)\n", x, y);
+            
+            if (x > x_max) x_max = x;
+            if (x < x_min) x_min = x;
+            if (y > y_max) y_max = y;
+            if (y < y_min) y_min = y;
         }
 
         polygonSet.push_back(temp);
@@ -65,12 +65,13 @@ std::vector <Polygon> initializePolygons(std::string file) {
     
     float delta = std::max(delta_x, delta_y);
     
-    std::cout << "Device point" << std::endl;
+//    printf("Xmax: %.2f; Xmin: %.2f; Ymax: %.2f; Ymin: %.2f\n", x_max, x_min, y_max, y_min);
+//    std::cout << "Device point" << std::endl;
     for(Polygon &poly: polygonSet) {
         for (Point &point: poly.point) {
             point.xd = (point.x - x_min) / delta;
             point.yd = (point.y - y_min) / delta;
-//            std::cout << point <<  "=>" << "(" << point.xd << "," << point.yd << ")" << std::endl;
+            std::cout << point <<  "=>" << "(" << point.xd << "," << point.yd << ")" << std::endl;
         }
     }
 
