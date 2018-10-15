@@ -44,7 +44,15 @@ public:
     
     void draw(Vertex &a, Vertex &b);
     
+    void translateXY(Polygon &a, float pos);
+    
+    void rotate(Polygon &a, float pos);
+    
+    void scale(Polygon &a, float pos);
+    
+    
     operator float*() { return PixelBuffer; }
+
     
 };
 #endif /* Draw_hpp */

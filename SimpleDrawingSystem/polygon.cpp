@@ -54,7 +54,7 @@ std::vector <Polygon> initializePolygons(std::string file) {
             Point tempPoint (x,y);
             if (temp.point.size()) assert(&tempPoint.x != &temp.point.back().x);
             temp.addVertex(tempPoint);
-            std::cout << "   Added point:" << temp.point.back() << "; should be: " << Point(x,y) << std::endl;
+            std::cout << "   Added point:" << temp.point.back() << std::endl;
         }
 
         polygonSet.push_back(temp);
@@ -70,7 +70,7 @@ std::vector <Polygon> initializePolygons(std::string file) {
         for (Point &point: poly.point) {
             point.xd = (point.x - x_min) / delta;
             point.yd = (point.y - y_min) / delta;
-            std::cout << point <<  "=>" << "(" << point.xd << "," << point.yd << ")" << std::endl;
+//            std::cout << point <<  "=>" << "(" << point.xd << "," << point.yd << ")" << std::endl;
         }
     }
 

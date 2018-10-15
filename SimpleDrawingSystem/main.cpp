@@ -50,11 +50,7 @@ int main(int argc, char *argv[])
     
     vector<Polygon> world = initializePolygons(file);
     
-//    int i = 0;
     for(Polygon poly: world) {
-//        for (Point point: poly.point) {
-//            scene.draw(point);
-//        }
         scene.draw(poly);
     }
     
@@ -67,7 +63,7 @@ int main(int argc, char *argv[])
         string test;
         int status = 0;
         waitpid(pid, &status, WNOHANG);
-        cout << pid << " status " <<  status << endl;
+//        cout << pid << " status " <<  status << endl;
         
         struct pollfd fd_pol[1];
         
@@ -75,15 +71,20 @@ int main(int argc, char *argv[])
         fd_pol[0].events = POLLIN;
         fd_pol[0].revents = POLLIN;
         
-        while(test  != "exit") {
-            cout << "Command: ";
-            poll(fd_pol, 1, 0);
-            cin >> test;
-            cout << "You put " << test << endl;
+        cout << "Command: ";
+        
+        while(!WIFEXITED(pid) && test  != "exit") {
+            if (poll(fd_pol, 1, 50)) {
+                cin >> test;
+                cout << "Command: ";
+
+            }
             waitpid(pid, &status, WNOHANG);
-            cout << "Status: " << WIFSIGNALED(status) << endl;
         }
-        kill(pid,SIGQUIT);
+
+        kill(pid,SIGTERM);
+        wait(NULL);
+
         
     } else {
         
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
         glutInitWindowPosition(100, 100);
         
         //create and set main window title
-        int MainWindow = glutCreateWindow("Hello Graphics!!");
+        int MainWindow = glutCreateWindow("Simple Drawing System");
         glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
         //sets display function
         glutDisplayFunc(display);
