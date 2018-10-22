@@ -57,8 +57,6 @@ public:
     void rotate(const float &deg);
 };
 
-std::vector<Polygon> initializePolygons(std::string file);
-
 typedef Point Vertex;
 
 #endif //ECS175PROJ1_POLYGON_H

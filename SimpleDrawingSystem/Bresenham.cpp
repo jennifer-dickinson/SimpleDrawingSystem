@@ -59,7 +59,7 @@ void Draw::bresenhamLTNO(Point &min, Point &max, int &delta_x, int &delta_y) {
 
     MakePix(min);
     
-    std::cout << min << max << std::endl;
+//    std::cout << min << max << std::endl;
     
     for(int i = min.yp - 1; i > max.yp && !(x_ < 0); i--) {
         MakePix(x_, i);

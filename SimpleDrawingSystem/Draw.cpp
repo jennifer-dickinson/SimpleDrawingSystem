@@ -41,10 +41,20 @@ void Draw::draw (Vertex &a) {
     MakePix(a.xp, a.yp);
 }
 
+
+void Draw::draw() {
+    for(int i = 0; i < x * y * 3; i++) PixelBuffer[i] = 0;
+    for(Polygon &poly: polygons) draw(poly);
+}
+
 void Draw::draw(Polygon & p) {
     /*
      * Draw a polygon by drawing a connecting line between sequential vertices.
      */
+    for (Point &point: p.point) {
+        point.xd = (point.xr - x_min) / delta;
+        point.yd = (point.yr - y_min) / delta;
+    }
     for(auto point: p.point) std::cout << point << std::endl;
     for(int i = 0; i < p.point.size() - 1; i++) draw(p.point[i], p.point[i+1]);
     

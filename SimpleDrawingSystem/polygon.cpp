@@ -3,8 +3,9 @@
 //
 
 #include "polygon.hpp"
+#include "Draw.hpp"
 
-std::vector <Polygon> initializePolygons(std::string file) {
+std::vector<Polygon> Draw::initializePolygons(std::string file) {
     std::vector <Polygon> polygonSet;
     std::ifstream input(file);
     std::string line;
@@ -25,8 +26,14 @@ std::vector <Polygon> initializePolygons(std::string file) {
 
     std::cout << "Total polygons: " << numPolygons << std::endl;
 
-    float x_min = std::numeric_limits<float>::max(), y_min = std::numeric_limits<float>::max();
-    float x_max = std::numeric_limits<float>::min(), y_max = std::numeric_limits<float>::min();
+//    float x_min = std::numeric_limits<float>::max(), y_min = std::numeric_limits<float>::max();
+//    float x_max = std::numeric_limits<float>::min(), y_max = std::numeric_limits<float>::min();
+    
+    x_min = std::numeric_limits<float>::max();
+    y_min = std::numeric_limits<float>::max();
+    x_max = std::numeric_limits<float>::min();
+    y_max = std::numeric_limits<float>::min();
+
     
     for (int i = 0; i < numPolygons; i++) {
 
@@ -59,15 +66,15 @@ std::vector <Polygon> initializePolygons(std::string file) {
 
     }
     
-    float delta_x = x_max - x_min , delta_y = y_max - y_min;
+    delta_x = x_max - x_min;
+    delta_y = y_max - y_min;
     
-    float delta = std::max(delta_x, delta_y);
+    delta = std::max(delta_x, delta_y);
     
     for(Polygon &poly: polygonSet) {
         for (Point &point: poly.point) {
             point.xd = (point.x - x_min) / delta;
             point.yd = (point.y - y_min) / delta;
-            std::cout << point <<  "=>" << "(" << point.xd << "," << point.yd << ")" << std::endl;
         }
     }
 
@@ -89,43 +96,72 @@ std::ostream &operator<< (std::ostream& os, const Point& p) {
 
 void Polygon::scale(const float &_x,const  float &_y) {
     // Matrix multiplication simplified
-    for (auto &p: point) {
-        p.x *= _x;
-        p.y *= _y;
-    }
-}
-
-void Polygon::translate(const float &_x,const  float &_y) {
-    // Matrix addition simplified
-    for (auto &p: point) {
-        p.x += _x;
-        p.y += _y;
-    }
-}
-
-void Polygon::rotate(const float &deg) {
     float x_avg = 0, y_avg = 0;
-    
-    // Get the average locaiton of the polygon
-    for(auto &p: point) {
-        x_avg = p.x;
-        y_avg = p.y;
+    for(int i = 0; i < point.size(); i++) {
+        x_avg += point[i].xr;
+        y_avg += point[i].yr;
     }
     
     x_avg /= point.size();
     y_avg /= point.size();
     
-    // Move to origin
-    translate(-x_avg, -y_avg);
+    translate(-x_avg,-y_avg);
     
-    // rotate - matrix multiplication simplified
-    
-    for(auto &p: point) {
-        float _x = p.x;
-        p.x = _x * cos(deg) - p.y * sin(deg);
-        p.y = _x * sin(deg) + p.y * cos(deg);
+    for (auto &p: point) {
+        p.xr *= _x;
+        p.yr *= _y;
     }
     
-    // Return to original position
     translate(x_avg, y_avg);
+
+}
+
+void Polygon::translate(const float &_x,const  float &_y) {
+    // Matrix addition simplified
+    for (auto &p: point) {
+        p.xr += _x;
+        p.yr += _y;
+    }
+}
+
+void Polygon::rotate(const float &deg) {
+
+    float s = sin(deg);
+    float c = cos(deg);
+    
+    float c_x = 0, c_y = 0;
+    
+    for (auto &p: point) {
+        c_x += p.x;
+        c_y += p.y;
+    }
+    
+    c_x /= point.size();
+    c_y /= point.size();
+    
+    // Matrix multiplication simplified
+//    std::cout << " Translating.. " << std::endl;
+//    for(auto &p: point) {
+//        std::cout << "    from (" << p.xr << " , " << p.yr << ") to ";
+//        float _x = p.xr, _y = p.yr;
+//        p.xr = c * _x - s * _y + (c_x - c_x * c + c_y * s);
+//        p.yr = s * _x + c * _y + (c_y - c_x * s - c_y * c);
+//        std::cout << "(" << p.xr << " , " << p.yr << ")" << std::endl;
+//    }
+    
+    translate(-c_x, -c_y);
+    for (auto &p: point) std::cout << "Translated to (" << p.xr << " , " << p.yr << ")" << std::endl;
+    
+    for(auto &p: point) {
+        std::cout << "    from (" << p.xr << " , " << p.yr << ") to ";
+        float _x = p.xr, _y=p.yr;
+        p.xr = _x * c - _y * s;
+        p.yr = _x * s + _y * s;
+        std::cout << "(" << p.xr << " , " << p.yr << ")" << std::endl;
+    }
+    
+    translate(c_x, c_y);
+    for (auto &p: point) std::cout << "Final to (" << p.xr << " , " << p.yr << ")" << std::endl;
+
+
 }

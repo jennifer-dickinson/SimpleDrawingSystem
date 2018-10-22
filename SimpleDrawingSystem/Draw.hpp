@@ -16,10 +16,11 @@
 
 
 class Draw {
-    unsigned int x;
-    unsigned int y;
-    float *PixelBuffer;
+    unsigned int x, y; // These are the dimensions of the drawable window
+    float delta_x, delta_y, delta;
+    float *PixelBuffer; // This is where we can draw the pixels
     int min;
+    float x_min, x_max, y_min, y_max;
     
     bool bresenhamAlgo;
     
@@ -29,7 +30,7 @@ public:
 
     
     Draw() : x(640), y(480), bresenhamAlgo(true)  {
-        PixelBuffer = new float[(x+1) * (y+1) * 3];
+        PixelBuffer = new float[(x) * (y) * 3];
         min = std::min(x,y);
     }
     Draw(unsigned int _x, unsigned int _y, bool ba, std::vector<Polygon> poly) : x(_x), y(_y), bresenhamAlgo(ba){
@@ -49,6 +50,7 @@ public:
     
     void xd2xp(Point &p);
     
+    void draw();
     void draw(Vertex &a);
     void draw(Polygon & p);
     void draw(Vertex &a, Vertex &b);
@@ -77,6 +79,8 @@ public:
 
     // Digital Differential Analyzer
     void digitalDifferentialAnalyzer(Point &a, Point &b, int &delta_x, int &delta_y);
+    
+    std::vector <Polygon> initializePolygons(std::string file);
     
 };
 #endif /* Draw_hpp */

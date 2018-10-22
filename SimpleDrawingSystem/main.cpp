@@ -21,6 +21,7 @@
 #include <iostream>
 
 using namespace std;
+bool firstTime = true;
 
 
 int x = 640;
@@ -28,7 +29,6 @@ int y = 480;
 
 Draw scene(x,y, true, {});
 
-float *PixelBuffer;
 void display();
 int main(int argc, char *argv[]) {
     string file("");
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
         cin >> file;
     }
     
-    vector<Polygon> world = initializePolygons(file);
+    scene.polygons = scene.initializePolygons(file);
     
     for(Polygon poly: scene.polygons) scene.draw(poly);
     
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     glutInitWindowPosition(100, 100);
     
     //create and set main window title
-    int MainWindow = glutCreateWindow("Simple Drawing System");
+    glutCreateWindow("Simple Drawing System");
     glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
     //sets display function
     glutDisplayFunc(display);
@@ -77,41 +77,49 @@ void display()
     //window refresh
     glFlush();
     
-    string test;
-    
-    cout << "Enter action (transform, viewport, exit): " << flush;
-    cin >> test;
-    int id = 0;
-    float x_m, y_m;
-    
-    if (test == "transform") {
-        cout << "Enter the ID of the polygon to be manipulated: " << flush;
-        cin >> id;
-        cout << "Enter the type of transformation (scale, translate, rotate): " << flush;
+    if (firstTime) {
+        firstTime = false;
+    } else {
+        string test;
+        
+        cout << "Enter action (transform, viewport, exit): " << flush;
         cin >> test;
+        int id = 0;
+        float x_m, y_m;
         
-        if (test == "scale") {
-            cout << "Enter the x and y scale (e.g. 1.0 1.0): ";
-            cin >> x_m >> y_m;
-            scene.polygons[id].scale(x_m, y_m);
+        if (test == "transform") {
+            cout << "Enter the ID of the polygon to be manipulated: " << flush;
+            cin >> id;
+            cout << "Enter the type of transformation (scale, translate, rotate): " << flush;
+            cin >> test;
             
-        } else if (test == "transform") {
-            cout << "Enger the x and y direction to move (e.g. 1.0 1.0): ";
-            cin >> x_m >> y_m;
+            if (test == "scale") {
+                cout << "Enter the x and y scale (e.g. 1.0 1.0): ";
+                cin >> x_m >> y_m;
+                scene.polygons[id].scale(x_m, y_m);
+                
+            } else if (test == "translate") {
+                cout << "Enter the x and y direction to move (e.g. 1.0 1.0): ";
+                cin >> x_m >> y_m;
+                scene.polygons[id].translate(x_m, y_m);
+                
+            } else if (test == "rotate") {
+                cout << "Enter the angle in degrees to rotate (e.g. 45): ";
+                cin >> x_m;
+                scene.polygons[id].rotate(x_m);
+            } else cout << "That is not a valid transformation." << std::endl;
+        } else if (test == "viewport") {
             
-            
-        } else if (test == "rotate") {
-            cout << "Enter the angle in degrees to rotate (e.g. 45): ";
-            cin >> x_m;
-            
-        } else cout << "That is not a valid transformation." << std::endl;
-    } else if (test == "viewport") {
-        
-    } else if (test == "exit") exit(0);
-    else cout << "That is not a valid action." << std::endl;
+        } else if (test == "exit") exit(0);
+        else {
+            cout << "That is not a valid action." << std::endl;
+        }
+    }
     
-    
-        for(Polygon poly: scene.polygons) scene.draw(poly);
+    glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    scene.draw();
     
     glutPostRedisplay();
 
