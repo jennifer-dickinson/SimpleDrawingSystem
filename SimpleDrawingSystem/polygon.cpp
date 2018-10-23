@@ -60,6 +60,8 @@ std::vector<Polygon> Draw::initializePolygons(std::string file) {
             if (x < x_min) x_min = x;
             if (y > y_max) y_max = y;
             if (y < y_min) y_min = y;
+            
+            std::cout << "    Added point: " << tempPoint << std::endl;
         }
 
         polygonSet.push_back(temp);
@@ -101,15 +103,18 @@ void Polygon::scale(const float &_x,const  float &_y) {
         x_avg += point[i].xr;
         y_avg += point[i].yr;
     }
-    
+
     x_avg /= point.size();
     y_avg /= point.size();
-    
+
     translate(-x_avg,-y_avg);
     
+    std::cout << " Scaling.. " << std::endl;
     for (auto &p: point) {
+        std::cout << "    from (" << p.xr << "," << p.yr << ") to ";
         p.xr *= _x;
         p.yr *= _y;
+        std::cout << "(" << p.xr << "," << p.yr << ")" << std::endl;
     }
     
     translate(x_avg, y_avg);
@@ -118,9 +123,12 @@ void Polygon::scale(const float &_x,const  float &_y) {
 
 void Polygon::translate(const float &_x,const  float &_y) {
     // Matrix addition simplified
+    std::cout << " Translating.. " << std::endl;
     for (auto &p: point) {
+        std::cout << "    from (" << p.xr << "," << p.yr << ") to ";
         p.xr += _x;
         p.yr += _y;
+        std::cout << "(" << p.xr << "," << p.yr << ")" << std::endl;
     }
 }
 
@@ -140,28 +148,13 @@ void Polygon::rotate(const float &deg) {
     c_y /= point.size();
     
     // Matrix multiplication simplified
-//    std::cout << " Translating.. " << std::endl;
-//    for(auto &p: point) {
-//        std::cout << "    from (" << p.xr << " , " << p.yr << ") to ";
-//        float _x = p.xr, _y = p.yr;
-//        p.xr = c * _x - s * _y + (c_x - c_x * c + c_y * s);
-//        p.yr = s * _x + c * _y + (c_y - c_x * s - c_y * c);
-//        std::cout << "(" << p.xr << " , " << p.yr << ")" << std::endl;
-//    }
-    
-    translate(-c_x, -c_y);
-    for (auto &p: point) std::cout << "Translated to (" << p.xr << " , " << p.yr << ")" << std::endl;
-    
+    std::cout << " Rotating.. " << std::endl;
     for(auto &p: point) {
-        std::cout << "    from (" << p.xr << " , " << p.yr << ") to ";
-        float _x = p.xr, _y=p.yr;
-        p.xr = _x * c - _y * s;
-        p.yr = _x * s + _y * s;
-        std::cout << "(" << p.xr << " , " << p.yr << ")" << std::endl;
+        std::cout << "    from (" << p.xr << "," << p.yr << ") to ";
+        float _x = p.xr, _y = p.yr;
+        p.xr = c * _x - s * _y + (c_x - c_x * c + c_y * s);
+        p.yr = s * _x + c * _y + (c_y - c_x * s - c_y * c);
+        std::cout << "(" << p.xr << "," << p.yr << ")" << std::endl;
     }
-    
-    translate(c_x, c_y);
-    for (auto &p: point) std::cout << "Final to (" << p.xr << " , " << p.yr << ")" << std::endl;
-
 
 }

@@ -55,27 +55,32 @@ void Draw::draw(Polygon & p) {
         point.xd = (point.xr - x_min) / delta;
         point.yd = (point.yr - y_min) / delta;
     }
-    for(auto point: p.point) std::cout << point << std::endl;
-    for(int i = 0; i < p.point.size() - 1; i++) draw(p.point[i], p.point[i+1]);
+    for(int i = 0; i < p.point.size() - 1; i++) {
+//        std::cout << "    Drawing " << p.point[i] << " to " << p.point[i+1] << std::endl;
+        draw(p.point[i], p.point[i+1]);
+    }
     
     // This draws a line between the last and first vertices
-    if (&p.point.front() != &p.point.back()) draw(p.point.back(), p.point.front());
+    if (p.point.front().x != p.point.back().x && p.point.front().y != p.point.back().y) {
+//        std::cout << "    Drawing " << p.point.front() << " to " << p.point.back() << std::endl;
+        draw(p.point.back(), p.point.front());
+    }
 }
 
 void Draw::draw(Vertex &a, Vertex &b) {
-    int delta_x, delta_y;
+    float deltax, deltay;
     // Make sure to convert the vertices from device to pixel coordinates.
     xd2xp(a); xd2xp(b);
     
     // Order the vertices from left to right, bottom to top
     Point min, max;
-    if(a.x < b.x) {
+    if(a.xr < b.xr) {
         min = a;
         max = b;
-    } else if (b.x < a.x) {
+    } else if (b.xr < a.xr) {
         min = b;
         max = a;
-    } else if (a.y < b.y) {
+    } else if (a.yr < b.yr) {
         min = a;
         max = b;
     } else {
@@ -84,14 +89,15 @@ void Draw::draw(Vertex &a, Vertex &b) {
     }
     
     // Find the change in x and y
-    delta_x = max.x - min.x;
-    delta_y = max.y - min.y;
+    deltax = max.xr - min.xr;
+    deltay = max.yr - min.yr;
     
-    if(delta_x == 0) verticalLine(min, max);
-    else if (delta_y == 0) horizontalLine(min, max);
-    else if (delta_y == delta_x)  diagonalLinePositive(min, max);
-    else if (delta_y == - delta_x)  diagonalLineNegative(min, max);
-    else if (bresenhamAlgo)  bresenham(min, max, delta_x, delta_y);
-    else digitalDifferentialAnalyzer(min, max, delta_x, delta_y);
+//    std::cout << deltax << " " << deltay << std::endl;
+    if(deltax == 0) verticalLine(min, max);
+    else if (deltay == 0) horizontalLine(min, max);
+    else if (deltay == deltax)  diagonalLinePositive(min, max);
+    else if (deltay == - deltax)  diagonalLineNegative(min, max);
+    else if (bresenhamAlgo)  bresenham(min, max, deltax, deltay);
+    else digitalDifferentialAnalyzer(min, max, deltax, deltay);
 }
 

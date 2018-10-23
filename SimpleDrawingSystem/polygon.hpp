@@ -14,7 +14,7 @@
 
 //using Point = std::pair<size_t, size_t>;
 
-class Point : private std::pair<float, float> {
+class Point : public std::pair<float, float> {
     
 public:
     
@@ -33,7 +33,11 @@ public:
 
     Point(): first(0), second(0), xd(0), yd(0), xp(0), yp(0), xr(0), yr(0) {};
     Point(float _x, float _y) : first(_x), second(_y), xd(_x), yd(_y), xp(_x), yp(_y), xr(_x), yr(_y)  { };
-
+    
+    bool operator<(const Point &p) {
+        return x <= p.x && y <= p.y;
+    }
+    
     friend std::ostream &operator<<(std::ostream &os, const Point &p);
 };
 

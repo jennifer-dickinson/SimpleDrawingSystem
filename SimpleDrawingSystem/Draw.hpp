@@ -29,7 +29,7 @@ public:
     std::vector<Polygon> polygons;
 
     
-    Draw() : x(640), y(480), bresenhamAlgo(true)  {
+    Draw() : x(640), y(480), bresenhamAlgo(false)  {
         PixelBuffer = new float[(x) * (y) * 3];
         min = std::min(x,y);
     }
@@ -42,7 +42,13 @@ public:
         polygons = poly;
     }
     
-    void digitalDifferenceAnalyzer(Point p1, Point p2, int delta_x, int delta_y);
+    Polygon &operator[](int i){
+        if(i < 0 || i >= polygons.size()) {
+            std::cout << "ID " << i << " is not valid. Returning polygon" << i % polygons.size() << "." << std::endl;
+        }
+        return polygons[i % polygons.size()];
+    }
+    
     
     void MakePix (const Point &a);
     void MakePix (const int &x, const int &y);
@@ -71,16 +77,41 @@ public:
     
     
     // Bresenham functions
-    void bresenham(Point &a, Point &b, int &delta_x, int &delta_y);
-    void bresenhamLTPO(Point &a, Point &b, int &delta_x, int &delta_y); // Less than positve one (postive slope)
-    void bresenhamGTPO(Point &a, Point &b, int &delta_x, int &delta_y); // Greater than positive one (postive slope)
-    void bresenhamLTNO(Point &a, Point &b, int &delta_x, int &delta_y); // Less than negative one (negative slope)
-    void bresenhamGTNO(Point &a, Point &b, int &delta_x, int &delta_y); // Greater than negative one (negative slope)
+    void bresenham(Point &a, Point &b, float delta_x, float delta_y);
+    void bresenhamLTPO(Point &a, Point &b, float &delta_x, float &delta_y); // Less than positve one (postive slope)
+    void bresenhamGTPO(Point &a, Point &b, float &delta_x, float &delta_y); // Greater than positive one (postive slope)
+    void bresenhamLTNO(Point &a, Point &b, float &delta_x, float &delta_y); // Less than negative one (negative slope)
+    void bresenhamGTNO(Point &a, Point &b, float &delta_x, float &delta_y); // Greater than negative one (negative slope)
 
     // Digital Differential Analyzer
-    void digitalDifferentialAnalyzer(Point &a, Point &b, int &delta_x, int &delta_y);
-    
+    void digitalDifferentialAnalyzer(const Point &start, const Point &end, float &delta_x, float &delta_y);
+    void DDAGreater(const Point &start, const Point &end, const float &slope);
+    void DDARegular(const Point &start, const Point &end, const float &slope);
+
     std::vector <Polygon> initializePolygons(std::string file);
+    
+    void save(std::string filename) {
+        std::ofstream file(filename);
+        
+        file << polygons.size() << std::endl;
+        
+        for (auto poly: polygons) {
+
+            file << std::endl << poly.point.size() << std::endl;
+            for (auto point: poly.point) {
+                file << point.xr << " " << point.yr << std::endl;
+            }
+        }
+        file.close();
+    }
+    
+    void info(int id) {
+        std::cout << "    Showing info for polygon " << id << std::endl;
+        std::cout << "      Number of vertices: " << polygons[id].point.size() << std::endl;
+        for (auto point: polygons[id].point) {
+            std::cout << "        (" << point.xr << "," << point.yr << ")" << std::endl;
+        }
+    }
     
 };
 #endif /* Draw_hpp */

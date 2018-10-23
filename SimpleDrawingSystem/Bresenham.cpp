@@ -8,14 +8,14 @@
 
 #include "Draw.hpp"
 
-void Draw::bresenham(Point &min, Point &max, int &delta_x, int &delta_y) {
+void Draw::bresenham(Point &min, Point &max, float delta_x, float delta_y) {
     float slope = (delta_y / (float) delta_x);
     if (slope > 1) bresenhamGTPO(min, max, delta_x, delta_y);
     else if (slope < -1) bresenhamLTNO(min, max, delta_x, delta_y);
     else if (slope > 0) bresenhamLTPO(min, max, delta_x, delta_y);
     else bresenhamGTNO(min, max, delta_x, delta_y);
 }
-void Draw::bresenhamLTPO(Point &min, Point &max, int &delta_x, int &delta_y) {
+void Draw::bresenhamLTPO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham when slope < 1 && slope > 0
 
     int y_ = min.yp, y_prev = min.yp, p = 2 * delta_y - delta_x;
@@ -33,7 +33,7 @@ void Draw::bresenhamLTPO(Point &min, Point &max, int &delta_x, int &delta_y) {
     }
 } // Less than positve one (postive slope)
 
-void Draw::bresenhamGTPO(Point &min, Point &max, int &delta_x, int &delta_y) {
+void Draw::bresenhamGTPO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham slope > 1
     
     int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
@@ -50,7 +50,7 @@ void Draw::bresenhamGTPO(Point &min, Point &max, int &delta_x, int &delta_y) {
     }
 } // Greater than positive one (postive slope)
 
-void Draw::bresenhamLTNO(Point &min, Point &max, int &delta_x, int &delta_y) {
+void Draw::bresenhamLTNO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham when slope < -1
     
     int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
@@ -69,7 +69,7 @@ void Draw::bresenhamLTNO(Point &min, Point &max, int &delta_x, int &delta_y) {
     }
 } // Less than negative one (negative slope)
 
-void Draw::bresenhamGTNO(Point &min, Point &max, int &delta_x, int &delta_y) {
+void Draw::bresenhamGTNO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham when slope > -1 && slope < 0
     int y_ = min.yp, y_prev = min.yp, p = 2 * delta_y - delta_x;
     
