@@ -91,6 +91,7 @@ void display()
         float x_m, y_m;
         
         if (input == "help") {
+            std::cout << std::endl;
             std::cout << "    COMMAND     PARAMETERS" << std::endl;
             std::cout << "    --------------------------------------------------" << std::endl;
             std::cout << "    algoirthm   <bresenham | dda>" << std::endl;
@@ -98,7 +99,7 @@ void display()
             std::cout << "    scale       <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<std::endl;
             std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<std::endl;
             std::cout << "    viewport    <X LOWER> <X UPPER> <Y LOWER> <Y UPPER>" << std::endl;
-            std::cout << "    info        <POLYGON ID" << std::endl;
+            std::cout << "    info        <POLYGON ID>" << std::endl;
             std::cout << "    save        <FILENAME>" << std::endl;
 
         }
