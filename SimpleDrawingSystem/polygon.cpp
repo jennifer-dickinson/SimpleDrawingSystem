@@ -106,19 +106,14 @@ void Polygon::scale(const float &_x,const  float &_y) {
 
     x_avg /= point.size();
     y_avg /= point.size();
-
-    translate(-x_avg,-y_avg);
     
     std::cout << " Scaling.. " << std::endl;
     for (auto &p: point) {
         std::cout << "    from (" << p.xr << "," << p.yr << ") to ";
-        p.xr *= _x;
-        p.yr *= _y;
+        p.xr = (p.xr - x_avg) * _x + x_avg;
+        p.yr = (p.yr - y_avg) * _y + y_avg;
         std::cout << "(" << p.xr << "," << p.yr << ")" << std::endl;
     }
-    
-    translate(x_avg, y_avg);
-
 }
 
 void Polygon::translate(const float &_x,const  float &_y) {
@@ -140,8 +135,8 @@ void Polygon::rotate(const float &deg) {
     float c_x = 0, c_y = 0;
     
     for (auto &p: point) {
-        c_x += p.x;
-        c_y += p.y;
+        c_x += p.xr;
+        c_y += p.yr;
     }
     
     c_x /= point.size();
