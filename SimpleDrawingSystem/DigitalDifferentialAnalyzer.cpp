@@ -24,11 +24,11 @@ void Draw::DDAGreater(const Point &start, const Point &end, const float &slope) 
     int start_x = start2.xp;
     int b = start_y - slope * start_x;
     
-    assert(start_y <= end_y);
+//    assert(start_y <= end_y);
 
     for(int i = start_y; i < end_y - 1; i++) {
         int x_value = std::round((i - b) / slope);
-        assert(x_value >= 0);
+//        assert(x_value >= 0);
         MakePix(x_value, i);
     }
     
@@ -47,7 +47,7 @@ void Draw::DDARegular(const Point &start, const Point &end, const float &slope) 
     int start_y = start2.yp;
     int b = start_y - slope * start_x;
     
-    assert(start_x <= end_x);
+//    assert(start_x <= end_x);
 
 
     for(int i = start_x; i < end_x - 1; i++) {

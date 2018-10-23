@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <stdio.h>
+#include <map>
 
 #include "polygon.hpp"
 
@@ -20,7 +21,11 @@ class Draw {
     float delta_x, delta_y, delta;
     float *PixelBuffer; // This is where we can draw the pixels
     int min;
-    float x_min, x_max, y_min, y_max;
+    const char x_min = 0b0100;
+    const char x_max = 0b1000;
+    const char y_max = 0b0010;
+    const char y_min = 0b0001; //This is our "viewing port"
+    std::map<char, float> ViewBox;
     
     
 public:
@@ -88,8 +93,15 @@ public:
     void digitalDifferentialAnalyzer(const Point &start, const Point &end, float &delta_x, float &delta_y);
     void DDAGreater(const Point &start, const Point &end, const float &slope);
     void DDARegular(const Point &start, const Point &end, const float &slope);
+    
+    // Clipping alogirthm
+    void CohenSutherland(Polygon &poly);
+    void locate(Point &p);
+    float Xintersection (const Point &start, const Point &end, const float &xLine);
+    float Yintersection (const Point &start, const Point &end, const float &xLine);
 
-    std::vector <Polygon> initializePolygons(std::string file);
+
+    void initializePolygons(std::string file);
     
     void save(std::string filename) {
         std::ofstream file(filename);
@@ -98,8 +110,8 @@ public:
         
         for (auto poly: polygons) {
 
-            file << std::endl << poly.point.size() << std::endl;
-            for (auto point: poly.point) {
+            file << std::endl << poly.size() << std::endl;
+            for (auto point: poly) {
                 file << point.xr << " " << point.yr << std::endl;
             }
         }
@@ -108,8 +120,8 @@ public:
     
     void info(int id) {
         std::cout << "    Showing info for polygon " << id << std::endl;
-        std::cout << "      Number of vertices: " << polygons[id].point.size() << std::endl;
-        for (auto point: polygons[id].point) {
+        std::cout << "      Number of vertices: " << polygons[id].size() << std::endl;
+        for (auto point: polygons[id]) {
             std::cout << "        (" << point.xr << "," << point.yr << ")" << std::endl;
         }
     }

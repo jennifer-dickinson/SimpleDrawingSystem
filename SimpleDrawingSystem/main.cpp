@@ -12,11 +12,11 @@
  Use #include <GL/glut.h> on csif
  */
 
-//#include <GL/glut.h>  // CSIF Specific
+#include <GL/glut.h>  // CSIF Specific
 
-#include <OpenGL/gl.h>  // Mac Specific
-#include <OpenGL/glu.h> // Mac Specific
-#include <GLUT/glut.h>  // Mac Specific
+//#include <OpenGL/gl.h>  // Mac Specific
+//#include <OpenGL/glu.h> // Mac Specific
+//#include <GLUT/glut.h>  // Mac Specific
 
 #include "Draw.hpp"
 #include "Comm.hpp"
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
         cin >> file;
     }
     
-    scene.polygons = scene.initializePolygons(file);
+    scene.initializePolygons(file);
     
     for(Polygon poly: scene.polygons) scene.draw(poly);
     
@@ -85,7 +85,7 @@ void display()
     } else {
         string input;
         
-        cout << "Enter action (type help for available commands): " << flush;
+        cout <<  std::endl << "Enter action (type help for available commands): " << flush;
         cin >> input;
         int id = 0;
         float x_m, y_m;
@@ -127,7 +127,7 @@ void display()
         } else if (input == "info") {
             cin >> id;
             scene.info(id);
-        }else if (input == "exit") exit(0);
+        } else if (input == "exit") exit(0);
         else {
             cout << "That is not a valid action." << std::endl;
             std::getline(std::cin, input); // Used to flush out the rest of the commands

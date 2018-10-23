@@ -51,20 +51,20 @@ void Draw::draw(Polygon & p) {
     /*
      * Draw a polygon by drawing a connecting line between sequential vertices.
      */
-    for (Point &point: p.point) {
-        point.xd = (point.xr - x_min) / delta;
-        point.yd = (point.yr - y_min) / delta;
-    }
-    for(int i = 0; i < p.point.size() - 1; i++) {
-//        std::cout << "    Drawing " << p.point[i] << " to " << p.point[i+1] << std::endl;
-        draw(p.point[i], p.point[i+1]);
+    
+    // Clip the polygon here
+    Polygon c = p; // c means clipped
+    
+    CohenSutherland(c);
+    
+    // Convert the vertices from world coordinates to device coordinates
+    for (Point &point: c) {
+        point.xd = (point.xr - ViewBox[x_min]) / delta;
+        point.yd = (point.yr - ViewBox[y_min]) / delta;
     }
     
-    // This draws a line between the last and first vertices
-    if (p.point.front().x != p.point.back().x && p.point.front().y != p.point.back().y) {
-//        std::cout << "    Drawing " << p.point.front() << " to " << p.point.back() << std::endl;
-        draw(p.point.back(), p.point.front());
-    }
+    // Draw the points of the polygon.
+    for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
 }
 
 void Draw::draw(Vertex &a, Vertex &b) {
@@ -92,7 +92,7 @@ void Draw::draw(Vertex &a, Vertex &b) {
     deltax = max.xr - min.xr;
     deltay = max.yr - min.yr;
     
-//    std::cout << deltax << " " << deltay << std::endl;
+//    std::cout << a<< b << deltax << " " << deltay << std::endl;
     if(deltax == 0) verticalLine(min, max);
     else if (deltay == 0) horizontalLine(min, max);
     else if (deltay == deltax)  diagonalLinePositive(min, max);
