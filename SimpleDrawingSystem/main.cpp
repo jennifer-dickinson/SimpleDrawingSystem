@@ -11,9 +11,12 @@
  Mac Specific Headers below
  Use #include <GL/glut.h> on csif
  */
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
+
+//#include <GL/glut.h>  // CSIF Specific
+
+#include <OpenGL/gl.h>  // Mac Specific
+#include <OpenGL/glu.h> // Mac Specific
+#include <GLUT/glut.h>  // Mac Specific
 
 #include "Draw.hpp"
 #include "Comm.hpp"
