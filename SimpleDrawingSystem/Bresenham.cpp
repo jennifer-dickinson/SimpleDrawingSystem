@@ -9,6 +9,8 @@
 #include "Draw.hpp"
 
 void Draw::bresenham(Point &min, Point &max, float delta_x, float delta_y) {
+    delta_x = (max.xp - min.xp);
+    delta_y = (max.yp - min.yp);
     float slope = (delta_y / (float) delta_x);
     if (slope > 1) bresenhamGTPO(min, max, delta_x, delta_y);
     else if (slope < -1) bresenhamLTNO(min, max, delta_x, delta_y);

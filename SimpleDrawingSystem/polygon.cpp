@@ -53,7 +53,7 @@ std::vector<Polygon> Draw::initializePolygons(std::string file) {
             point >> x >> y;
 
             Point tempPoint (x,y);
-            if (temp.point.size()) assert(&tempPoint.x != &temp.point.back().x);
+//            if (temp.point.size()) assert(&tempPoint.x != &temp.point.back().x);
             temp.addVertex(tempPoint);
             
             if (x > x_max) x_max = x;

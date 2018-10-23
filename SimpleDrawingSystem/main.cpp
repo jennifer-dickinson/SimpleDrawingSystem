@@ -93,14 +93,22 @@ void display()
         if (input == "help") {
             std::cout << "    COMMAND     PARAMETERS" << std::endl;
             std::cout << "    --------------------------------------------------" << std::endl;
+            std::cout << "    algoirthm   <bresenham | dda>" << std::endl;
             std::cout << "    rotate      <POLYGON ID> <DEGREES>" << std:: endl;
             std::cout << "    scale       <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<std::endl;
             std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<std::endl;
             std::cout << "    viewport    <X LOWER> <X UPPER> <Y LOWER> <Y UPPER>" << std::endl;
-            
             std::cout << "    info        <POLYGON ID" << std::endl;
             std::cout << "    save        <FILENAME>" << std::endl;
 
+        }
+        else if (input == "algorithm") {
+            cin >> input;
+            if (input == "bresenham") scene.bresenhamAlgo = true;
+            else if (input == "dda") scene.bresenhamAlgo = false;
+            else {
+                std::cout << "That is not a valid algorithm" << std::endl;
+            }
         }
         else if (input == "scale") {
                 cin >> id >> x_m >> y_m;

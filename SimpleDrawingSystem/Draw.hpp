@@ -22,9 +22,10 @@ class Draw {
     int min;
     float x_min, x_max, y_min, y_max;
     
-    bool bresenhamAlgo;
     
 public:
+    bool bresenhamAlgo;
+
     
     std::vector<Polygon> polygons;
 
