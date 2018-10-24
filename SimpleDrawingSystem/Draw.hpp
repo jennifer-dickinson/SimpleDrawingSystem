@@ -21,10 +21,10 @@ class Draw {
     float delta_x, delta_y, delta;
     float *PixelBuffer; // This is where we can draw the pixels
     int min;
-    const char x_min = 0b0100;
-    const char x_max = 0b1000;
-    const char y_max = 0b0010;
-    const char y_min = 0b0001; //This is our "viewing port"
+    const char x_min = 0b0001;
+    const char x_max = 0b0010;
+    const char y_min = 0b0100;
+    const char y_max = 0b1000;
     std::map<char, float> ViewBox;
     
     

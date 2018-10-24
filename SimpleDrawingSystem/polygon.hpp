@@ -55,10 +55,7 @@ public:
     void rotate(const float &deg);
     
     Point &operator[](int d) {
-        if (d < 0) {
-            d = abs(d);
-            d = (int)size() - (d % (int)size());
-        }
+        if (d < 0)  d = (int)size() - (abs(d % (int)size()));
         return std::vector<Point>::operator[](d % size());
     }
     

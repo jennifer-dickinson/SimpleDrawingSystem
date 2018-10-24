@@ -78,6 +78,8 @@ void Draw::initializePolygons(std::string file) {
             point.yd = (point.y - ViewBox[y_min]) / delta;
         }
     }
+    
+    std::cout << " Boundaries: " << ViewBox[x_min] << " " << ViewBox[x_max] << " " << ViewBox[y_min] << " " << ViewBox[y_max] << std::endl;
 
     input.close();
 }
