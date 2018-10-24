@@ -21,11 +21,6 @@ void Draw::bresenhamLTPO(Point &min, Point &max, float &delta_x, float &delta_y)
     // Bresenham when slope < 1 && slope > 0
 
     int y_ = min.yp, y_prev = min.yp, p = 2 * delta_y - delta_x;
-    
-    if (!(p < 0)) y_++;
-    
-    MakePix(min);
-    MakePix(min.xp + 1, y_);
 
     for(int i = min.xp + 2; i < max.xp; i++) {
         MakePix(i, y_);
@@ -37,13 +32,9 @@ void Draw::bresenhamLTPO(Point &min, Point &max, float &delta_x, float &delta_y)
 
 void Draw::bresenhamGTPO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham slope > 1
-    
+
     int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
-    
-    if (!(p < 0)) x_++;
-    
-    MakePix(min);
-    
+
     for(int i = min.yp + 1; i < max.yp; i++) {
         MakePix(x_, i);
         p = p + 2 * delta_x - 2 * delta_y * (x_ - x_prev);
@@ -54,15 +45,9 @@ void Draw::bresenhamGTPO(Point &min, Point &max, float &delta_x, float &delta_y)
 
 void Draw::bresenhamLTNO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham when slope < -1
-    
-    int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
-    
-    if (!(p < 0)) x_++;
 
-    MakePix(min);
-    
-//    std::cout << min << max << std::endl;
-    
+    int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
+
     for(int i = min.yp - 1; i > max.yp && !(x_ < 0); i--) {
         MakePix(x_, i);
         p = p + 2 * delta_x + 2 * delta_y * (x_ - x_prev);
@@ -74,11 +59,7 @@ void Draw::bresenhamLTNO(Point &min, Point &max, float &delta_x, float &delta_y)
 void Draw::bresenhamGTNO(Point &min, Point &max, float &delta_x, float &delta_y) {
     // Bresenham when slope > -1 && slope < 0
     int y_ = min.yp, y_prev = min.yp, p = 2 * delta_y - delta_x;
-    
-    if (p < 0) y_--;
-    
-    MakePix(min);
-    
+
     for(int i = min.xp + 1; i < max.xp && !(y_ < 0); i++) {
         MakePix(i, y_);
         p = p + 2 * delta_y - 2 * delta_x * (y_ - y_prev);
