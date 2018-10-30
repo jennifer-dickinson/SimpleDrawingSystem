@@ -31,7 +31,7 @@ void Draw::CohenSutherland(Polygon &poly) {
      * needs to be clipped.
      */
     
-    // First locate each point.
+    // First locate each worldPoint.
     bool bounded = false;
     for(auto &p: poly) {
         locate(p);
@@ -103,7 +103,7 @@ void Draw::CohenSutherland(Polygon &poly) {
 void Draw::locate(Point &p) {
 
     /*
-     * Assigns a region to a point relative to the viewbox.
+     * Assigns a region to a worldPoint relative to the viewbox.
      *
      * The region binary value is of the format 0bABRL, where A is above,
      * B is below, R is right, and L is left of the viewbox.

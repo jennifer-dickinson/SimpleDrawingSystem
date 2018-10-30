@@ -36,4 +36,4 @@
 
 6. Other information:
 
-	Clipping does not work when a point overlaps with two outside regions (bottom and left for example).
+	Clipping does not work when a worldPoint overlaps with two outside regions (bottom and left for example).

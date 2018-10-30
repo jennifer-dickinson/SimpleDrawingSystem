@@ -1,6 +1,6 @@
 FLAGS = -Wno-deprecated -std=c++11
 DEPS = polygon.hpp Draw.hpp Comm.hpp
-OBJ = polygon.o Lines.o DigitalDifferentialAnalyzer.o Bresenham.o Draw.o Comm.o main.o clipping.o
+OBJ = polygon.o Lines.o DigitalDifferentialAnalyzer.o Bresenham.o Draw.o main.o clipping.o polyhedron.o
 
 
 draw: $(OBJ)

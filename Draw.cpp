@@ -7,7 +7,6 @@
 //
 
 #include "Draw.hpp"
-#include <stdio.h>
 
 void Draw::xd2xp(Point &p) {
     /*
@@ -44,7 +43,8 @@ void Draw::draw (Vertex &a) {
 
 void Draw::draw() {
     for(int i = 0; i < x * y * 3; i++) PixelBuffer[i] = 0;
-    for(Polygon &poly: polygons) draw(poly);
+    if (ThreeDimensional) for(Polyhedron &poly: polyhedrons) draw(poly);
+    else for(Polygon &poly: polygons) draw(poly);
 }
 
 void Draw::draw(Polygon & p) {
