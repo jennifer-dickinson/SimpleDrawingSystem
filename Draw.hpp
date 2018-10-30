@@ -62,6 +62,10 @@ public:
         return polygons[i % polygons.size()];
     }
 
+    void viewXY() { view = XY; }
+    void viewXZ() { view = XZ; }
+    void viewYZ() { view = YZ; }
+
 
     void MakePix (const Point &a);
     void MakePix (const int &x, const int &y);

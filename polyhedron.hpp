@@ -31,7 +31,7 @@ struct Point3D{
     }
     Vertex xy() { return {x, y}; }
     Vertex xz() { return {x, z}; }
-    Vertex zy() { return {z, y}; }
+    Vertex yz() { return {y, z}; }
 };
 
 public:

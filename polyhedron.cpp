@@ -14,14 +14,34 @@ void getinput(std::ifstream &input, std::string &line) {
     } while (line.empty());
 }
 
+void Polyhedron::scale(float factor) {
+}
+
 void Draw::draw(Polyhedron &p) {
     std::cout << "drawing" << std::endl;
-    for(auto line: p.line) {
-        Vertex start = p.worldPoint[line.first].xy();
-        Vertex end = p.worldPoint[line.second].xy();
-        std::cout << start << end << std::endl;
-        draw(start, end);
+    if (view == XY) {
+        for(auto line: p.line) {
+            Vertex start = p.worldPoint[line.first].xy();
+            Vertex end = p.worldPoint[line.second].xy();
+            std::cout << start << end << std::endl;
+            draw(start, end);
+        }
+    } else if (view == XZ) {
+        for(auto line: p.line) {
+            Vertex start = p.worldPoint[line.first].xz();
+            Vertex end = p.worldPoint[line.second].xz();
+            std::cout << start << end << std::endl;
+            draw(start, end);
+        }
+    } else {
+        for(auto line: p.line) {
+            Vertex start = p.worldPoint[line.first].yz();
+            Vertex end = p.worldPoint[line.second].yz();
+            std::cout << start << end << std::endl;
+            draw(start, end);
+        }
     }
+
 }
 
 void Draw::normalize() {

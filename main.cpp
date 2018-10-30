@@ -114,7 +114,7 @@ void Menu3D(Draw &scene) {
         std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<std::endl;
         std::cout << "    rotate      <POLYGON ID> <DEGREES>" << std:: endl;
         std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
-        std::cout << "    viewport    <XY | XZ | YZ>" << std::endl;
+        std::cout << "    projection    <XY | XZ | YZ>" << std::endl;
         std::cout << "    info        <POLYHEDRON ID>" << std::endl;
         std::cout << "    save        <FILENAME>" << std::endl;
         std::cout << "    exit" << std::endl;
@@ -124,7 +124,12 @@ void Menu3D(Draw &scene) {
 
     } else if (input == "rotate") {
 
-    } else if (input == "viewport") {
+    } else if (input == "projection") {
+        cin >> input;
+        if (input == "XY") scene.viewXY();
+        else if (input == "XZ") scene.viewXZ();
+        else if (input ==  "YZ") scene.viewYZ();
+        else std::cout << input << " is an invalid projection." << std::endl;
 
     } else if (input == "save") {
 
