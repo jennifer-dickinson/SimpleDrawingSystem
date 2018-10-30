@@ -2,7 +2,6 @@
 // Created by Jennifer Salas on 10/2/18.
 //
 
-#include "polygon.hpp"
 #include "Draw.hpp"
 
 void Draw::initializePolygons(std::string file) {
@@ -18,7 +17,6 @@ void Draw::initializePolygons(std::string file) {
     float x = 0.0, y = 0.0;
 
     std::getline(input, line);
-    std::cout << line << std::endl;
     std::istringstream ss(line);
 
     ss >> numPolygons;
@@ -52,7 +50,7 @@ void Draw::initializePolygons(std::string file) {
             point >> x >> y;
 
             Point tempPoint (x,y);
-//            if (temp.point.size()) assert(&tempPoint.x != &temp.point.back().x);
+//            if (temp.worldPoint.size()) assert(&tempPoint.x != &temp.worldPoint.back().x);
             temp.addVertex(tempPoint);
             
             if (x > ViewBox[x_max]) ViewBox[x_max] = x;
@@ -60,7 +58,7 @@ void Draw::initializePolygons(std::string file) {
             if (y > ViewBox[y_max]) ViewBox[y_max] = y;
             if (y < ViewBox[y_min]) ViewBox[y_min] = y;
             
-            std::cout << "    Added point: " << tempPoint << std::endl;
+            std::cout << "    Added worldPoint: " << tempPoint << std::endl;
         }
 
         polygons.push_back(temp);

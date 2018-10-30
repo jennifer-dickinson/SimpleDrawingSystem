@@ -58,16 +58,7 @@ public:
         if (d < 0)  d = (int)size() - (abs(d % (int)size()));
         return std::vector<Point>::operator[](d % size());
     }
-    
-//    Polygon(Polygon &p) {
-//        for(auto point: p) push_back(point);
-//    }
-//
-//    Polygon &operator=(Polygon &p) {
-//        Polygon tmp(p);
-//        swap(tmp);
-//        return *this;
-//    }
+
 };
 
 typedef Point Vertex;

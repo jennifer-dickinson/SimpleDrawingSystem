@@ -7,12 +7,13 @@
 //
 
 #include "Draw.hpp"
-#include <stdio.h>
 
 void Draw::xd2xp(Point &p) {
     /*
      * Convert device coordinates to pixel coordinates
      */
+    p.xd = (p.xr - ViewBox[x_min]) / delta;
+    p.yd = (p.yr - ViewBox[y_min]) / delta;
     p.xp = p.xd * (min - 1);
     p.yp = p.yd * (min - 1);
 }
@@ -44,7 +45,8 @@ void Draw::draw (Vertex &a) {
 
 void Draw::draw() {
     for(int i = 0; i < x * y * 3; i++) PixelBuffer[i] = 0;
-    for(Polygon &poly: polygons) draw(poly);
+    if (ThreeDimensional) for(Polyhedron &poly: polyhedrons) draw(poly);
+    else for(Polygon &poly: polygons) draw(poly);
 }
 
 void Draw::draw(Polygon & p) {
@@ -56,13 +58,7 @@ void Draw::draw(Polygon & p) {
     Polygon c = p; // c means clipped
     
     CohenSutherland(c);
-    
-    // Convert the vertices from world coordinates to device coordinates
-    for (Point &point: c) {
-        point.xd = (point.xr - ViewBox[x_min]) / delta;
-        point.yd = (point.yr - ViewBox[y_min]) / delta;
-    }
-    
+
     // Draw the points of the polygon.
     for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
 }

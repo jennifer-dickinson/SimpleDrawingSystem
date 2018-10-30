@@ -1,0 +1,39 @@
+1. Jennifer Salas, 914329903, jvsalas@ucdavis.edu
+
+2. Instructions to make and run:
+	
+	make
+	./draw [filename (optional)]
+
+	While in the program, type help for commands
+  
+  A sample file "bresenham" is included. The format for a file is the following:
+
+	#polygons
+
+	#vertices
+	#vertex 1
+	#vertex 2
+	...
+
+  Please note that the white space is important.
+
+3. Attempted algorithms:
+
+	CohenSutherland: clipping.cp,p lines: 43-94
+	Bresenham: bresenham.cpp, lines: all
+	DDA: DigitalDifferentialAnalyzer, lines: all
+	translation: polygon.cpp, lines: 115-124
+	rotate: polygon.cpp, lines: 126-152
+	scale: polygon.cpp, lines 95-113
+
+4. Part's I didn't implement:
+
+	1. Changing the viewbox
+	2. Rasterizing
+
+5. Attempts at extra credit: none
+
+6. Other information:
+
+	Clipping does not work when a worldPoint overlaps with two outside regions (bottom and left for example).
