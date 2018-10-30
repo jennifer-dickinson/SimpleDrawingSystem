@@ -28,8 +28,8 @@ Draw scene(x,y, false, {});
 
 void display();
 int main(int argc, char *argv[]) {
-    bool tD = false;
-    string file("");
+    bool tD;
+    string file;
     for(int i = 0; i < argc; i++) std::cout << argv[i];
     std::cout << std::endl;
     if (argc == 2 && std::string("3d") != argv[1]) {

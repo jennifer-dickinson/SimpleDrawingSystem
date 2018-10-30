@@ -29,13 +29,15 @@ struct Point3D{
         o << '(' << p.x << ',' << p.y << ',' << p.z << ')';
         return o;
     }
+    Vertex xy() { return {x, y}; }
+    Vertex xz() { return {x, z}; }
+    Vertex zy() { return {z, y}; }
 };
 
 public:
     friend class Draw;
 
     std::vector<Point3D> worldPoint;
-    std::vector<Point3D> devicePoint;
     std::vector<Line> line;
 
     void rotate(float degree, Point3D &p1, Point3D &p2);
