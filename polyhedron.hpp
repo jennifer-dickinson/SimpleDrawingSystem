@@ -25,13 +25,15 @@ class Polyhedron {
 
 struct Point3D{
     float x, y, z;
+
+    Point3D(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
     friend std::ostream &operator<<(std::ostream &o, Point3D p) {
         o << '(' << p.x << ',' << p.y << ',' << p.z << ')';
         return o;
     }
-    Vertex xy() { return {x, y}; }
-    Vertex xz() { return {x, z}; }
-    Vertex yz() { return {y, z}; }
+    Vertex xy() { return Vertex(x,y); }
+    Vertex xz() { return Vertex(x,z); }
+    Vertex yz() { return Vertex(y,z); }
 };
 
 public:
