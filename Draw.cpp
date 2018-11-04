@@ -12,8 +12,16 @@ void Draw::xd2xp(Point &p) {
     /*
      * Convert device coordinates to pixel coordinates
      */
-    p.xd = (p.xr - ViewBox[x_min]) / delta;
-    p.yd = (p.yr - ViewBox[y_min]) / delta;
+    if (view == XY) {
+        p.xd = (p.xr - ViewBox[x_min]) / delta;
+        p.yd = (p.yr - ViewBox[y_min]) / delta;
+    } else if (view == XZ) {
+        p.xd = (p.xr - ViewBox[x_min]) / delta;
+        p.yd = (p.yr - ViewBox[z_min]) / delta;
+    } else {
+        p.xd = (p.xr - ViewBox[y_min]) / delta;
+        p.yd = (p.yr - ViewBox[z_min]) / delta;
+    }
     p.xp = p.xd * (min - 1);
     p.yp = p.yd * (min - 1);
 }

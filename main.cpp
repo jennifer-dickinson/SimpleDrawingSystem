@@ -106,7 +106,7 @@ void Menu3D(Draw &scene) {
     cout <<  std::endl << "Enter action (type help for available commands): " << flush;
     cin >> input;
     int id = 0;
-    float x_m, y_m;
+    float x_m, y_m, z_m;
 
     if (input == "help") {
         std::cout << "    COMMAND     PARAMETERS" << std::endl;
@@ -119,9 +119,11 @@ void Menu3D(Draw &scene) {
         std::cout << "    save        <FILENAME>" << std::endl;
         std::cout << "    exit" << std::endl;
     } else if (input == "scale") {
-
+        cin >> id >> x_m;
+        scene.polyhedrons[id].scale(x_m);
     } else if (input == "translate") {
-
+        cin >> id >> x_m >> y_m >> z_m;
+        scene.polyhedrons[id].translate({x_m, y_m, z_m});
     } else if (input == "rotate") {
 
     } else if (input == "projection") {
@@ -143,6 +145,7 @@ void Menu3D(Draw &scene) {
         cout << "That is not a valid action." << std::endl;
         std::getline(std::cin, input); // Used to flush out the rest of the commands
     }
+    scene.normalize();
 }
 
 void Menu(Draw &scene) {

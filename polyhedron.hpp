@@ -29,6 +29,9 @@ struct Point3D{
         o << '(' << p.x << ',' << p.y << ',' << p.z << ')';
         return o;
     }
+    Point3D operator-() {
+        return {-x, -y, -z};
+    }
     Vertex xy() { return {x, y}; }
     Vertex xz() { return {x, z}; }
     Vertex yz() { return {y, z}; }
@@ -40,11 +43,11 @@ public:
     std::vector<Point3D> worldPoint;
     std::vector<Line> line;
 
-    void rotate(float degree, Point3D &p1, Point3D &p2);
+    void rotate(float degree, Point3D p1, Point3D p2);
 
     void scale(float factor);
 
-    void translate(Point3D &p);
+    void translate(Point3D p);
 
 
 };

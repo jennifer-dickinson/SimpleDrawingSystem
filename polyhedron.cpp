@@ -14,34 +14,68 @@ void getinput(std::ifstream &input, std::string &line) {
     } while (line.empty());
 }
 
+void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
+    // Find C
+    Point3D C{0,0,0};
+    for(Point3D &p: worldPoint) {
+        C.x += p.x;
+        C.y += p.y;
+        C.z += p.z;
+    }
+    // Translate by -C
+    translate(-C);
+    // Rotate
+    // Trnslate by +C
+    translate(C);
+}
+
 void Polyhedron::scale(float factor) {
+    // Matrix multiplication simplified
+    float x_avg = 0, y_avg = 0, z_avg;
+    for(Point3D &point: worldPoint) {
+        x_avg += point.x;
+        y_avg += point.y;
+        z_avg += point.z;
+    }
+
+    x_avg /= worldPoint.size();
+    y_avg /= worldPoint.size();
+    z_avg /= worldPoint.size();
+
+    std::cout << " Scaling.. " << std::endl;
+    for (auto &p: worldPoint) {
+        std::cout << "    from (" << p.x << "," << p.y << ") to ";
+        p.x = (p.x - x_avg) * factor + x_avg;
+        p.y = (p.y - y_avg) * factor + y_avg;
+        p.z = (p.z - z_avg) * factor + z_avg;
+        std::cout << "(" << p.x << "," << p.y << "," << p.z << ")" << std::endl;
+    }
+}
+void Polyhedron::translate(Polyhedron::Point3D p) {
+    for(Point3D &point: worldPoint) {
+        point.x += p.x;
+        point.y += p.y;
+        point.z += p.z;
+    }
 }
 
 void Draw::draw(Polyhedron &p) {
-    std::cout << "drawing" << std::endl;
-    if (view == XY) {
-        for(auto line: p.line) {
-            Vertex start = p.worldPoint[line.first].xy();
-            Vertex end = p.worldPoint[line.second].xy();
-            std::cout << start << end << std::endl;
-            draw(start, end);
+//    std::cout << "drawing" << std::endl;
+    for(Line &line: p.line) {
+        Vertex start, end;
+        if (view == XY) {
+            start = p.worldPoint[line.first].xy();
+            end = p.worldPoint[line.second].xy();
+        } else if (view == XZ) {
+            start = p.worldPoint[line.first].xz();
+            end = p.worldPoint[line.second].xz();
+        } else {
+            start = p.worldPoint[line.first].yz();
+            end = p.worldPoint[line.second].yz();
         }
-    } else if (view == XZ) {
-        for(auto line: p.line) {
-            Vertex start = p.worldPoint[line.first].xz();
-            Vertex end = p.worldPoint[line.second].xz();
-            std::cout << start << end << std::endl;
-            draw(start, end);
-        }
-    } else {
-        for(auto line: p.line) {
-            Vertex start = p.worldPoint[line.first].yz();
-            Vertex end = p.worldPoint[line.second].yz();
-            std::cout << start << end << std::endl;
-            draw(start, end);
-        }
+        std::cout << start << end << std::endl;
+        draw(start, end);
     }
-
 }
 
 void Draw::normalize() {
@@ -70,6 +104,12 @@ void Draw::normalize() {
 
     delta = std::max(delta_x, delta_y);
     delta = std::max(delta, delta_z);
+
+    return;
+//    std::cout << "X boundaries: " << ViewBox[x_max] << " " << ViewBox[x_min] << std::endl;
+//    std::cout << "Y boundaries: " << ViewBox[y_max] << " " << ViewBox[y_min] << std::endl;
+//    std::cout << "Z boundaries: " << ViewBox[z_max] << " " << ViewBox[z_min] << std::endl;
+
 }
 
 void Draw::initializePolyhedrons(std::string filename) {
