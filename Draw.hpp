@@ -48,7 +48,7 @@ public:
         ThreeDimensional = false;
         view = XY;
     }
-    Draw(unsigned int _x, unsigned int _y, bool ba, std::vector<Polygon> poly) : x(_x), y(_y), bresenhamAlgo(ba){
+    Draw(unsigned int _x, unsigned int _y, bool ba) : x(_x), y(_y), bresenhamAlgo(ba){
         PixelBuffer = new float[(x+1) * (y+1) * 3];
         min = std::min(x,y);
         ThreeDimensional = false;

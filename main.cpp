@@ -24,7 +24,7 @@ bool firstTime = true;
 int x = 600;
 int y = 600;
 
-Draw scene(x,y, false, {});
+Draw scene(x,y, false);
 
 void display();
 int main(int argc, char *argv[]) {

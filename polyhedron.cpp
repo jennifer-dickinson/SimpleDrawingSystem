@@ -135,8 +135,8 @@ void Draw::initializePolyhedrons(std::string filename) {
         getinput(input, line);
 
         unsigned int numVertices;
-        ss = std::istringstream(line);
-        ss >> numVertices;
+        std::istringstream nV(line);
+        nV >> numVertices;
 
         // Initialize the temporary polyhedron
         Polyhedron temp;
@@ -145,12 +145,12 @@ void Draw::initializePolyhedrons(std::string filename) {
         for (int j = 0; j < numVertices; j++) {
             getinput(input, line);
 
-            ss = std::istringstream(line);
+            std::istringstream v(line);
             float x, y, z;
 
-            ss >> x >> y >> z;
-            Polyhedron::Point3D temppoint{x, y, z};
-            temp.worldPoint.emplace_back(temppoint);
+            v >> x >> y >> z;
+            Polyhedron::Point3D temppoint(x, y, z);
+            temp.worldPoint.push_back(temppoint);
 
             std::cout << "    Adding point" << temppoint << std::endl;
 
@@ -160,18 +160,18 @@ void Draw::initializePolyhedrons(std::string filename) {
         getinput(input, line);
 
         int numLines;
-        ss = std::istringstream(line);
-        ss >> numLines;
+        std::istringstream nl(line);
+        nl >> numLines;
 
         // Collect the lines
         for (int j = 0; j < numLines; j++) {
             getinput(input, line);
 
-            ss = std::istringstream(line);
+            std::istringstream l(line);
             int start, end;
 
-            ss >> start >> end; // Note that the points are indexed starting at 1
-            temp.line.emplace_back(start - 1, end - 1);
+            l >> start >> end; // Note that the points are indexed starting at 1
+            temp.line.push_back(Line(start - 1, end - 1));
             std::cout << "  Making line from point " << start << " to " << end << std::endl;
         }
 
