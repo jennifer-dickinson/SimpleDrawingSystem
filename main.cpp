@@ -106,15 +106,15 @@ void Menu3D(Draw &scene) {
     cout <<  std::endl << "Enter action (type help for available commands): " << flush;
     cin >> input;
     int id = 0;
-    float x_m, y_m, z_m;
+    float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
     if (input == "help") {
         std::cout << "    COMMAND     PARAMETERS" << std::endl;
         std::cout << "    --------------------------------------------------" << std::endl;
         std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<std::endl;
-        std::cout << "    rotate      <POLYGON ID> <DEGREES>" << std:: endl;
+        std::cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" << std:: endl;
         std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
-        std::cout << "    projection    <XY | XZ | YZ>" << std::endl;
+        std::cout << "    view        <XY | XZ | YZ>" << std::endl;
         std::cout << "    info        <POLYHEDRON ID>" << std::endl;
         std::cout << "    save        <FILENAME>" << std::endl;
         std::cout << "    exit" << std::endl;
@@ -125,12 +125,14 @@ void Menu3D(Draw &scene) {
         cin >> id >> x_m >> y_m >> z_m;
         scene.polyhedrons[id].translate({x_m, y_m, z_m});
     } else if (input == "rotate") {
+        cin >> id >> degree >> x_m >> y_m >> z_m >> x_m2 >> y_m2 >> z_m2;
+        scene.polyhedrons[id].rotate(degree, {x_m, y_m, z_m}, {x_m2, y_m2, z_m2});
 
-    } else if (input == "projection") {
+    } else if (input == "view") {
         cin >> input;
-        if (input == "XY") scene.viewXY();
-        else if (input == "XZ") scene.viewXZ();
-        else if (input ==  "YZ") scene.viewYZ();
+        if (input == "XY" || input == "xy") scene.viewXY();
+        else if (input == "XZ" || input == "xz") scene.viewXZ();
+        else if (input == "YZ" || input == "yz") scene.viewYZ();
         else std::cout << input << " is an invalid projection." << std::endl;
 
     } else if (input == "save") {

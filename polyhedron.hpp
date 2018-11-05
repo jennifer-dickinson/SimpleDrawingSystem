@@ -15,6 +15,7 @@
 #include <sstream>
 #include <utility>
 #include <vector>
+#include <iomanip>
 
 #include "Draw.hpp"
 
@@ -28,7 +29,7 @@ struct Point3D{
 
     Point3D(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
     friend std::ostream &operator<<(std::ostream &o, Point3D p) {
-        o << '(' << p.x << ',' << p.y << ',' << p.z << ')';
+        o << std::setprecision(1) << '(' << p.x << ',' << p.y << ',' << p.z << ')';
         return o;
     }
     Point3D operator-() {

@@ -7,6 +7,11 @@
 //
 
 #include "Draw.hpp"
+#include <cassert>
+
+float niceround(float num) {
+    return roundf(num * 1000) / 1000;
+}
 
 void getinput(std::ifstream &input, std::string &line) {
     do {
@@ -16,29 +21,68 @@ void getinput(std::ifstream &input, std::string &line) {
 
 void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     // Find C
+    while(degree <= -180) degree += 360;
+    while(degree > 180) degree -= 360;
+
+    degree *= M_PI / 180.0;
+
     Point3D C{0,0,0};
     for(Point3D &p: worldPoint) {
         C.x += p.x;
         C.y += p.y;
         C.z += p.z;
     }
-    // Translate by -C
-    translate(-C);
-    // Rotate using Quarternion Method
 
-    // 1. Normalize Unit vector with p1 & p2
+    C.x /= worldPoint.size();
+    C.y /= worldPoint.size();
+    C.z /= worldPoint.size();
 
     float len = sqrtf( powf(p1.x - p2.x, 2) + powf(p1.y - p2.y, 2) + powf(p1.z - p2.z, 2));
+    std::cout << " len is " << len << std::endl;
+    float c = cosf(degree), s = sinf(degree);
 
-    Point3D q{
-            (p1.y * p2.z - p1.z * p2.y) / len,
-            (p1.z * p2.x - p1.x * p2.z) / len,
-            (p1.z * p2.x - p1.y * p2.x) / len
+    Point3D u{
+            (p2.x - p1.x) / len,
+            (p2.y - p1.y) / len,
+            (p2.z - p1.z) / len
     };
 
+    std::cout << sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) << std::endl;
+    assert(fabsf(sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) - 1) < .01);
 
-    // Trnslate by +C
-    translate(C);
+    // Single matrix equation pulled from
+    // https://en.wikipedia.org/wiki/Rotation_matrix#General_rotations
+
+    float R[3][3] = {
+            { niceround(c + powf(u.x, 2) * (1 - c))    , niceround(u.x * u.y * (1 - c) - u.z * s) , niceround(u.x * u.z * (1 - c) + u.y * s) },
+            { niceround(u.y * u.x * (1 - c) + u.z * s) , niceround(c + powf(u.y, 2) * (1 - c))    , niceround(u.y * u.z * (1 - c) - u.x * s) },
+            { niceround(u.z * u.x * (1 - c) - u.y * s) , niceround(u.z * u.y * (1 - c) + u.x * s) , niceround( c + powf(u.z, 2) * (1 - c))   }
+    };
+
+    std::cout << "Rotating.. " << std::endl;
+    for(Point3D &p: worldPoint) {
+        std::cout << p << " to ";
+
+        p = {
+                p.x - C.x,
+                p.y - C.y,
+                p.z - C.z
+        };
+
+        p = {
+                niceround((p.x * R[0][0] + p.y * R[1][0] + p.z * R[2][0])),
+                niceround((p.x * R[0][1] + p.y * R[1][1] + p.z * R[2][1])),
+                niceround((p.x * R[0][2] + p.y * R[1][2] + p.z * R[2][2])),
+        };
+
+        p = {
+                p.x + C.x,
+                p.y + C.y,
+                p.z + C.z
+        };
+        std::cout << p << std::endl;
+
+    }
 }
 
 void Polyhedron::scale(float factor) {
@@ -56,18 +100,22 @@ void Polyhedron::scale(float factor) {
 
     std::cout << " Scaling.. " << std::endl;
     for (auto &p: worldPoint) {
-        std::cout << "    from (" << p.x << "," << p.y << ") to ";
+        std::cout << p << " to ";
         p.x = (p.x - x_avg) * factor + x_avg;
         p.y = (p.y - y_avg) * factor + y_avg;
         p.z = (p.z - z_avg) * factor + z_avg;
-        std::cout << "(" << p.x << "," << p.y << "," << p.z << ")" << std::endl;
+        std::cout << p << std::endl;
     }
 }
 void Polyhedron::translate(Polyhedron::Point3D p) {
+    std::cout << "Translating .. " << std::endl;
     for(Point3D &point: worldPoint) {
+        std::cout << p << " to ";
         point.x += p.x;
         point.y += p.y;
         point.z += p.z;
+        std::cout << p << std::endl;
+
     }
 }
 
@@ -85,7 +133,6 @@ void Draw::draw(Polyhedron &p) {
             start = p.worldPoint[line.first].yz();
             end = p.worldPoint[line.second].yz();
         }
-        std::cout << start << end << std::endl;
         draw(start, end);
     }
 }
