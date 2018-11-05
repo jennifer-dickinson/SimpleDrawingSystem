@@ -24,7 +24,19 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     }
     // Translate by -C
     translate(-C);
-    // Rotate
+    // Rotate using Quarternion Method
+
+    // 1. Normalize Unit vector with p1 & p2
+
+    float len = sqrtf( powf(p1.x - p2.x, 2) + powf(p1.y - p2.y, 2) + powf(p1.z - p2.z, 2));
+
+    Point3D q{
+            (p1.y * p2.z - p1.z * p2.y) / len,
+            (p1.z * p2.x - p1.x * p2.z) / len,
+            (p1.z * p2.x - p1.y * p2.x) / len
+    };
+
+
     // Trnslate by +C
     translate(C);
 }

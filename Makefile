@@ -4,8 +4,8 @@ OBJ = polygon.o Lines.o DigitalDifferentialAnalyzer.o Bresenham.o Draw.o main.o 
 
 
 draw: $(OBJ)
-	# g++ -o $@ $(OBJ) $(FLAGS) -lglut -lGLU -lGL
-	g++ -o $@ $(OBJ) $(FLAGS) -framework GLUT -framework OpenGL
+	g++ -o $@ $(OBJ) $(FLAGS) -lglut -lGLU -lGL
+	# g++ -o $@ $(OBJ) $(FLAGS) -framework GLUT -framework OpenGL
 
 %.o : %.cpp $(DEPS)
 	g++ -c -o $@ $<  $(FLAGS)
