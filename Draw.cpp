@@ -116,15 +116,12 @@ void Draw::draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_) {
     } else if (view == XZ) {
         a = a_.xz();
         b = b_.xz();
-    } else if (view == YZ) {
+    } else {
         a = a_.yz();
         b = b_.yz();
-    } else if (view == CAVALIER) {
-
-    } else if (view == CABINET) {
-
     }
 
     draw(a,b);
 
 }
+

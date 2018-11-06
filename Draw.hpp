@@ -62,9 +62,13 @@ public:
         return polygons[i % polygons.size()];
     }
 
-    void viewXY() { view = XY; }
-    void viewXZ() { view = XZ; }
-    void viewYZ() { view = YZ; }
+    void viewXY();
+    void viewXZ();
+    void viewYZ();
+    void viewCavalier();
+    void viewCabinet ();
+    void ObliqueProjection(float degree);
+    void undoOblique();
 
 
     void MakePix (const Point &a);
@@ -79,6 +83,7 @@ public:
     void draw(Polyhedron &p);
     void draw(Vertex &a, Vertex &b);
     void draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_);
+    void oblique(Polyhedron::Point3D a, Polyhedron::Point3D b);
 
 
         operator float*() { return PixelBuffer; }
@@ -139,6 +144,26 @@ public:
         }
     }
 
+
+
     void normalize();
+
+    void save3D(std::string filename) {
+        std::ofstream file(filename);
+
+        file << polyhedrons.size() << std::endl;
+
+        for(int i = 0; i < polyhedrons.size(); i++) {
+            file << polyhedrons[i].worldPoint.size() << std::endl;
+            for(auto p: polyhedrons[i].worldPoint) {
+                file<< p.x << " " << p.y << " " << p.z << std::endl;
+            }
+            file << polyhedrons[i].line.size() << std::endl;
+            for (auto pair: polyhedrons[i].line) {
+                file << pair.first << " " << pair.second << std::endl;
+            }
+        }
+        file.close();
+    }
 };
 #endif /* Draw_hpp */

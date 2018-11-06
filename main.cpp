@@ -114,28 +114,50 @@ void Menu3D(Draw &scene) {
         std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<std::endl;
         std::cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" << std:: endl;
         std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
-        std::cout << "    view        <XY | XZ | YZ>" << std::endl;
+        std::cout << "    view        <XY | XZ | YZ | CAVALIER | CABINET>" << std::endl;
         std::cout << "    info        <POLYHEDRON ID>" << std::endl;
         std::cout << "    save        <FILENAME>" << std::endl;
         std::cout << "    exit" << std::endl;
     } else if (input == "scale") {
         cin >> id >> x_m;
+        scene.undoOblique();
         scene.polyhedrons[id].scale(x_m);
     } else if (input == "translate") {
         cin >> id >> x_m >> y_m >> z_m;
+        scene.undoOblique();
         scene.polyhedrons[id].translate({x_m, y_m, z_m});
     } else if (input == "rotate") {
         cin >> id >> degree >> x_m >> y_m >> z_m >> x_m2 >> y_m2 >> z_m2;
+        scene.undoOblique();
         scene.polyhedrons[id].rotate(degree, {x_m, y_m, z_m}, {x_m2, y_m2, z_m2});
 
     } else if (input == "view") {
         cin >> input;
-        if (input == "XY" || input == "xy") scene.viewXY();
-        else if (input == "XZ" || input == "xz") scene.viewXZ();
-        else if (input == "YZ" || input == "yz") scene.viewYZ();
+        if (input == "XY" || input == "xy") {
+            scene.undoOblique();
+            scene.viewXY();
+        }
+        else if (input == "XZ" || input == "xz") {
+            scene.undoOblique();
+            scene.viewXZ();
+        }
+        else if (input == "YZ" || input == "yz") {
+            scene.undoOblique();
+            scene.viewYZ();
+        }
+        else if (input == "CAVALIER" || input == "cavalier")  {
+            scene.undoOblique();
+            scene.viewCavalier();
+        }
+        else if (input == "CABINET" || input == "cabinet") {
+            scene.undoOblique();
+            scene.viewCabinet();
+        }
         else std::cout << input << " is an invalid projection." << std::endl;
 
     } else if (input == "save") {
+        cin >> input;
+        scene.save(input);
 
     } else if (input == "info") {
 

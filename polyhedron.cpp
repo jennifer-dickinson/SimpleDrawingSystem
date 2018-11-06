@@ -9,6 +9,7 @@
 #include "Draw.hpp"
 #include <cassert>
 
+
 float niceround(float num) {
     return roundf(num * 1000) / 1000;
 }
@@ -21,13 +22,13 @@ void getinput(std::ifstream &input, std::string &line) {
 
 void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     // Find C
-    while(degree <= -180) degree += 360;
-    while(degree > 180) degree -= 360;
+    while (degree <= -180) degree += 360;
+    while (degree > 180) degree -= 360;
 
     degree *= M_PI / 180.0;
 
-    Point3D C{0,0,0};
-    for(Point3D &p: worldPoint) {
+    Point3D C{0, 0, 0};
+    for (Point3D &p: worldPoint) {
         C.x += p.x;
         C.y += p.y;
         C.z += p.z;
@@ -37,7 +38,7 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     C.y /= worldPoint.size();
     C.z /= worldPoint.size();
 
-    float len = sqrtf( powf(p1.x - p2.x, 2) + powf(p1.y - p2.y, 2) + powf(p1.z - p2.z, 2));
+    float len = sqrtf(powf(p1.x - p2.x, 2) + powf(p1.y - p2.y, 2) + powf(p1.z - p2.z, 2));
     std::cout << " len is " << len << std::endl;
     float c = cosf(degree), s = sinf(degree);
 
@@ -54,13 +55,16 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     // https://en.wikipedia.org/wiki/Rotation_matrix#General_rotations
 
     float R[3][3] = {
-            { niceround(c + powf(u.x, 2) * (1 - c))    , niceround(u.x * u.y * (1 - c) - u.z * s) , niceround(u.x * u.z * (1 - c) + u.y * s) },
-            { niceround(u.y * u.x * (1 - c) + u.z * s) , niceround(c + powf(u.y, 2) * (1 - c))    , niceround(u.y * u.z * (1 - c) - u.x * s) },
-            { niceround(u.z * u.x * (1 - c) - u.y * s) , niceround(u.z * u.y * (1 - c) + u.x * s) , niceround( c + powf(u.z, 2) * (1 - c))   }
+            {niceround(c + powf(u.x, 2) * (1 - c)),    niceround(u.x * u.y * (1 - c) - u.z * s), niceround(
+                    u.x * u.z * (1 - c) + u.y * s)},
+            {niceround(u.y * u.x * (1 - c) + u.z * s), niceround(c + powf(u.y, 2) * (1 - c)),    niceround(
+                    u.y * u.z * (1 - c) - u.x * s)},
+            {niceround(u.z * u.x * (1 - c) - u.y * s), niceround(u.z * u.y * (1 - c) + u.x * s), niceround(
+                    c + powf(u.z, 2) * (1 - c))}
     };
 
     std::cout << "Rotating.. " << std::endl;
-    for(Point3D &p: worldPoint) {
+    for (Point3D &p: worldPoint) {
         std::cout << p << " to ";
 
         p = {
@@ -88,7 +92,7 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
 void Polyhedron::scale(float factor) {
     // Matrix multiplication simplified
     float x_avg = 0, y_avg = 0, z_avg;
-    for(Point3D &point: worldPoint) {
+    for (Point3D &point: worldPoint) {
         x_avg += point.x;
         y_avg += point.y;
         z_avg += point.z;
@@ -107,9 +111,10 @@ void Polyhedron::scale(float factor) {
         std::cout << p << std::endl;
     }
 }
+
 void Polyhedron::translate(Polyhedron::Point3D p) {
     std::cout << "Translating .. " << std::endl;
-    for(Point3D &point: worldPoint) {
+    for (Point3D &point: worldPoint) {
         std::cout << p << " to ";
         point.x += p.x;
         point.y += p.y;
@@ -121,19 +126,8 @@ void Polyhedron::translate(Polyhedron::Point3D p) {
 
 void Draw::draw(Polyhedron &p) {
 //    std::cout << "drawing" << std::endl;
-    for(Line &line: p.line) {
-        Vertex start, end;
-        if (view == XY) {
-            start = p.worldPoint[line.first].xy();
-            end = p.worldPoint[line.second].xy();
-        } else if (view == XZ) {
-            start = p.worldPoint[line.first].xz();
-            end = p.worldPoint[line.second].xz();
-        } else {
-            start = p.worldPoint[line.first].yz();
-            end = p.worldPoint[line.second].yz();
-        }
-        draw(start, end);
+    for (Line &line: p.line) {
+        draw(p.worldPoint[line.first], p.worldPoint[line.second]);
     }
 }
 
@@ -146,8 +140,8 @@ void Draw::normalize() {
     ViewBox[y_max] = std::numeric_limits<float>::min();
     ViewBox[z_max] = std::numeric_limits<float>::min();
 
-    for(Polyhedron &poly: polyhedrons) {
-        for(Polyhedron::Point3D &p: poly.worldPoint) {
+    for (Polyhedron &poly: polyhedrons) {
+        for (Polyhedron::Point3D &p: poly.worldPoint) {
             if (p.x > ViewBox[x_max]) ViewBox[x_max] = p.x;
             if (p.x < ViewBox[x_min]) ViewBox[x_min] = p.x;
             if (p.y > ViewBox[y_max]) ViewBox[y_max] = p.y;
@@ -251,4 +245,64 @@ void Draw::initializePolyhedrons(std::string filename) {
 //    std::cout << ViewBox[y_min] << " " << ViewBox[y_max] <<std::endl;
 //    std::cout << ViewBox[z_min] << " " << ViewBox[z_max] <<std::endl;
 
+}
+
+void Draw::oblique(Polyhedron::Point3D a, Polyhedron::Point3D b) {
+    Polyhedron::Point3D d{b.x - a.x, b.y - a.y, b.z - a.z};
+
+    float len = sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2) + powf(b.z - a.z, 2));
+
+    // d is the direction vector
+    d.x /= len;
+    d.y /= len;
+    d.z /= len; // we will replace this value to be t.z
+
+
+
+    for (Polyhedron &poly: polyhedrons) {
+        for (Polyhedron::Point3D &p: poly.worldPoint) {
+            Polyhedron::Point3D t = p;
+            p.save();
+
+            p.x = t.x + t.z * (-d.x / d.z);
+            p.y = t.y + t.z * (-d.y / d.z);
+            p.z = 0;
+
+        }
+
+    }
+}
+
+
+void Draw::viewCavalier() {
+    view = CAVALIER;
+    oblique({0, 0, 0}, {1, 1, 1});
+}
+
+void Draw::viewCabinet() {
+    view = CABINET;
+    oblique({0, 0, 0}, {1, 1, 3});
+}
+
+void Draw::viewXY() {
+    view = XY;
+}
+
+void Draw::viewXZ() {
+    view = XZ;
+}
+
+void Draw::viewYZ() {
+    view = YZ;
+}
+
+void Draw::undoOblique() {
+    if (view == CAVALIER || view == CABINET) {
+        for (Polyhedron &poly: polyhedrons) {
+            for (Polyhedron::Point3D &p: poly.worldPoint) {
+                p.restore();
+            }
+        }
+    }
+    view = XY;
 }

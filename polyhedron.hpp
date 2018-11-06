@@ -20,12 +20,15 @@
 #include "Draw.hpp"
 
 
+#define CABINET_DEGREE       67.5f
+#define CAVALIER_DEGREE      45.0f
+
 #define Line std::pair<unsigned int, unsigned int>
 
 class Polyhedron {
 
 struct Point3D{
-    float x, y, z;
+    float x, y, z, xold, yold, zold;
 
     Point3D(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
     friend std::ostream &operator<<(std::ostream &o, Point3D p) {
@@ -38,6 +41,9 @@ struct Point3D{
     Vertex xy() { return {x, y}; }
     Vertex xz() { return {x, z}; }
     Vertex yz() { return {y, z}; }
+
+    void save() {xold = x; yold = y; zold = z;}
+    void restore() {x = xold; y = yold; z = zold;}
 };
 
 public:
@@ -51,6 +57,8 @@ public:
     void scale(float factor);
 
     void translate(Point3D p);
+
+    void oblique(Point3D &d);
 
 
 };

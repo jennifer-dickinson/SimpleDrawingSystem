@@ -3,7 +3,7 @@
 2. Instructions to make and run:
 	
 	make
-	./draw [filename (optional)]
+	./draw 3d <file>
 
 	While in the program, type help for commands
   
