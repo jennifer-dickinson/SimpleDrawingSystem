@@ -7,16 +7,20 @@
 
 	While in the program, type help for commands
   
-  A sample file "bresenham" is included. The format for a file is the following:
+  A sample file "samplePolyhedron" is included. The format for a file is the following:
 
-	#polygons
+	<number of polyhedrons>
 
-	#vertices
-	#vertex 1
-	#vertex 2
+	<number of vertices>
+	<vertex 1>
+	<vertex 2>
 	...
 
-  Please note that the white space is important.
+	<number of lines>
+	<vertex a1> <vertex a2>
+	<vertex b1> <vertex b2>
+	...
+
 
 3. Attempted algorithms:
 

@@ -12,18 +12,20 @@ void Draw::xd2xp(Point &p) {
     /*
      * Convert device coordinates to pixel coordinates
      */
-    if (view == XY) {
-        p.xd = (p.xr - ViewBox[x_min]) / delta;
-        p.yd = (p.yr - ViewBox[y_min]) / delta;
-    } else if (view == XZ) {
+
+    if (view == XZ) {
         p.xd = (p.xr - ViewBox[x_min]) / delta;
         p.yd = (p.yr - ViewBox[z_min]) / delta;
-    } else {
+    } else if(view == YZ) {
         p.xd = (p.xr - ViewBox[y_min]) / delta;
         p.yd = (p.yr - ViewBox[z_min]) / delta;
+    } else {
+        p.xd = (p.xr - ViewBox[x_min]) / delta;
+        p.yd = (p.yr - ViewBox[y_min]) / delta;
     }
-    p.xp = p.xd * (min - 1);
-    p.yp = p.yd * (min - 1);
+
+    p.xp = (p.xd * .8 + .1) * (min - 1);
+    p.yp = (p.yd * .8 + .1) * (min - 1);
 }
 
 void Draw::MakePix (const Point &a) {
@@ -105,3 +107,24 @@ void Draw::draw(Vertex &a, Vertex &b) {
     else digitalDifferentialAnalyzer(min, max, deltax, deltay);
 }
 
+void Draw::draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_) {
+    // Handles cavalier and cabinet views
+    Point a, b;
+    if (view == XY) {
+        a = a_.xy();
+        b = b_.xy();
+    } else if (view == XZ) {
+        a = a_.xz();
+        b = b_.xz();
+    } else if (view == YZ) {
+        a = a_.yz();
+        b = b_.yz();
+    } else if (view == CAVALIER) {
+
+    } else if (view == CABINET) {
+
+    }
+
+    draw(a,b);
+
+}

@@ -16,7 +16,7 @@
 #include "polygon.hpp"
 #include "polyhedron.hpp"
 
-enum View {XY, XZ, YZ};
+enum View {XY, XZ, YZ, CAVALIER, CABINET};
 
 class Draw {
     unsigned int x, y; // These are the dimensions of the drawable window
@@ -78,9 +78,10 @@ public:
     void draw(Polygon & p);
     void draw(Polyhedron &p);
     void draw(Vertex &a, Vertex &b);
+    void draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_);
 
 
-    operator float*() { return PixelBuffer; }
+        operator float*() { return PixelBuffer; }
 
     // Basic lines
     void horizontalLine(Point &a, Point &b);
@@ -91,8 +92,8 @@ public:
 
     // Bresenham functions
     void bresenham(Point &a, Point &b, float delta_x, float delta_y);
-    void bresenhamLTPO(Point &a, Point &b, float &delta_x, float &delta_y); // Less than positve one (postive slope)
-    void bresenhamGTPO(Point &a, Point &b, float &delta_x, float &delta_y); // Greater than positive one (postive slope)
+    void bresenhamLTPO(Point &a, Point &b, float &delta_x, float &delta_y); // Less than positive one (positive slope)
+    void bresenhamGTPO(Point &a, Point &b, float &delta_x, float &delta_y); // Greater than positive one (positive slope)
     void bresenhamLTNO(Point &a, Point &b, float &delta_x, float &delta_y); // Less than negative one (negative slope)
     void bresenhamGTNO(Point &a, Point &b, float &delta_x, float &delta_y); // Greater than negative one (negative slope)
 
