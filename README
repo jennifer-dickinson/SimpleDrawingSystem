@@ -24,20 +24,12 @@
 
 3. Attempted algorithms:
 
-	CohenSutherland: clipping.cp,p lines: 43-94
-	Bresenham: bresenham.cpp, lines: all
-	DDA: DigitalDifferentialAnalyzer, lines: all
-	translation: polygon.cpp, lines: 115-124
-	rotate: polygon.cpp, lines: 126-152
-	scale: polygon.cpp, lines 95-113
+    1. translate, scale, rotate
+    2. cabinet  and cavalier
+    3. normalize
 
 4. Part's I didn't implement:
-
-	1. Changing the viewbox
-	2. Rasterizing
 
 5. Attempts at extra credit: none
 
 6. Other information:
-
-	Clipping does not work when a worldPoint overlaps with two outside regions (bottom and left for example).

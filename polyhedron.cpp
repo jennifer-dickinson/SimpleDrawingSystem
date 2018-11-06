@@ -39,7 +39,7 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     C.z /= worldPoint.size();
 
     float len = sqrtf(powf(p1.x - p2.x, 2) + powf(p1.y - p2.y, 2) + powf(p1.z - p2.z, 2));
-    std::cout << " len is " << len << std::endl;
+//    std::cout << " len is " << len << std::endl;
     float c = cosf(degree), s = sinf(degree);
 
     Point3D u{
@@ -48,7 +48,7 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
             (p2.z - p1.z) / len
     };
 
-    std::cout << sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) << std::endl;
+//    std::cout << sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) << std::endl;
     assert(fabsf(sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) - 1) < .01);
 
     // Single matrix equation pulled from
