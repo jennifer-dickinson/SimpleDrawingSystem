@@ -26,8 +26,8 @@ void Draw::xd2xp(Point &p) {
         p.yd = (p.yr - ViewBox[y_min]) / delta;
     }
 
-    p.xp = (p.xd * .8 + .1) * (min - 1);
-    p.yp = (p.yd * .8 + .1) * (min - 1);
+    p.xp = (int) std::round((p.xd * .8 + .1) * (min - 1) * 100) / 100;
+    p.yp = (int) std::round((p.yd * .8 + .1) * (min - 1) * 100) / 100;
 }
 
 void Draw::MakePix (const Point &a) {
@@ -79,15 +79,16 @@ void Draw::draw(Polygon & p) {
 
 
 int intersection(Point &a, Point &b, int y_line) {
-    int delta_x = b.x - a.x;
-    if (delta_x == 0) return b.x;
+    float delta_x = b.x - a.x;
+    if (delta_x == 0) return b.xp;
     float slope = (b.y - a.y) / delta_x;
-    int y_inter = b.yp - slope * b.xp;
-    return (y_line - y_inter) / slope;
+    int y_inter = static_cast<int>(b.yp - slope * b.xp);
+    return static_cast<int>(std::round(((y_line - y_inter) / slope) * 100) / 100);
 }
 
 void Draw::rasterize(Polygon &c) {
     // This must receive clipped polygon
+    std::cout << "Rasterizing clipped polygon" << std::endl;
     int x_min = std::numeric_limits<int>::max(),
         x_max = std::numeric_limits<int>::min(),
         y_min = std::numeric_limits<int>::max(),
@@ -108,19 +109,21 @@ void Draw::rasterize(Polygon &c) {
         std::vector<int> xs;
 
         // calculate the intersections of every line in the polygon
-        for(auto point = c.begin(); point != c.end(); point++) {
-            int x_point = intersection(*point, *(point+1), y_);
-            if(x_point < x_max && x_point > x_min) xs.push_back(x_point);
+        for(int i = 0 ; i < c.size(); i++) {
+            int x_point = intersection(c[i], c[i+1], y_);
+
+            if (x_point <= std::max(c[i].xp, c[i+1].xp) && x_point >= std::min(c[i].xp, c[i+1].xp))
+                xs.push_back(x_point);
         }
 
-        // sort all the points
-        std::sort(xs.begin(), xs.end());
+        if (xs.size() > 1) {
+            // sort all the points
+            std::sort(xs.begin(), xs.end());
 
-        bool on = false;
-
-        for(auto inter = xs.begin(); inter < xs.end(); inter += 2) {
-            for(int x_ = *inter; x_ < *(inter + 1); x_++) {
-                MakePix(x_, y_);
+            for(auto inter = xs.begin(); inter < xs.end(); inter += 2) {
+                for(int x_ = *inter; x_ < *(inter + 1); x_++) {
+                    MakePix(x_, y_);
+                }
             }
         }
     }
