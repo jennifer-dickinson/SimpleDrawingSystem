@@ -9,6 +9,7 @@
 #ifndef Draw_hpp
 #define Draw_hpp
 
+#include <algorithm>
 #include <cmath>
 #include <stdio.h>
 #include <map>
@@ -93,6 +94,8 @@ public:
     void verticalLine(Point &a, Point &b);
     void diagonalLinePositive(Point &a, Point &b);
     void diagonalLineNegative(Point &a, Point &b);
+
+    void rasterize(Polygon &c);
 
 
     // Bresenham functions
