@@ -123,10 +123,14 @@ void Polygon::translate(const float &_x,const  float &_y) {
     }
 }
 
-void Polygon::rotate(const float &deg) {
+void Polygon::rotate(const float &deg_) {
 
-    float s = sin(deg);
-    float c = cos(deg);
+    float deg = deg_ * M_PI / 180;
+
+    std::cout << "Degree is " << deg << std::endl;
+
+    float s = sinf(deg);
+    float c = cosf(deg);
     
     float c_x = 0, c_y = 0;
     

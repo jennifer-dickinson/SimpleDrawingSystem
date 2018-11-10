@@ -22,7 +22,7 @@ void Draw::bresenhamLTPO(Point &min, Point &max, float &delta_x, float &delta_y)
 
     int y_ = min.yp, y_prev = min.yp, p = 2 * delta_y - delta_x;
 
-    for(int i = min.xp + 2; i < max.xp; i++) {
+    for(int i = min.xp + 2; i <= max.xp; i++) {
         MakePix(i, y_);
         p = p + 2 * delta_y - 2 * delta_x * (y_ - y_prev);
         y_prev = y_;
@@ -35,7 +35,7 @@ void Draw::bresenhamGTPO(Point &min, Point &max, float &delta_x, float &delta_y)
 
     int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
 
-    for(int i = min.yp + 1; i < max.yp; i++) {
+    for(int i = min.yp + 1; i <= max.yp; i++) {
         MakePix(x_, i);
         p = p + 2 * delta_x - 2 * delta_y * (x_ - x_prev);
         x_prev = x_;
@@ -48,7 +48,7 @@ void Draw::bresenhamLTNO(Point &min, Point &max, float &delta_x, float &delta_y)
 
     int x_ = min.xp, x_prev = min.xp, p = 2 * delta_x - delta_y;
 
-    for(int i = min.yp - 1; i > max.yp && !(x_ < 0); i--) {
+    for(int i = min.yp - 1; i >= max.yp && !(x_ < 0); i--) {
         MakePix(x_, i);
         p = p + 2 * delta_x + 2 * delta_y * (x_ - x_prev);
         x_prev = x_;
@@ -60,7 +60,7 @@ void Draw::bresenhamGTNO(Point &min, Point &max, float &delta_x, float &delta_y)
     // Bresenham when slope > -1 && slope < 0
     int y_ = min.yp, y_prev = min.yp, p = 2 * delta_y - delta_x;
 
-    for(int i = min.xp + 1; i < max.xp && !(y_ < 0); i++) {
+    for(int i = min.xp + 1; i <= max.xp && !(y_ < 0); i++) {
         MakePix(i, y_);
         p = p + 2 * delta_y - 2 * delta_x * (y_ - y_prev);
         y_prev = y_;

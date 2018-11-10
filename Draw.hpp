@@ -33,10 +33,10 @@ class Draw {
     std::map<char, float> ViewBox;
     View view;
 
-
 public:
     bool bresenhamAlgo;
     bool ThreeDimensional;
+    bool raster;
 
 
     std::vector<Polygon> polygons;
@@ -48,12 +48,16 @@ public:
         min = std::min(x,y);
         ThreeDimensional = false;
         view = XY;
+        raster = false;
     }
     Draw(unsigned int _x, unsigned int _y, bool ba) : x(_x), y(_y), bresenhamAlgo(ba){
         PixelBuffer = new float[(x+1) * (y+1) * 3];
         min = std::min(x,y);
         ThreeDimensional = false;
         view = XY;
+        raster = false;
+
+
     }
 
     Polygon &operator[](int i){

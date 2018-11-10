@@ -8,6 +8,7 @@
 
 #include "Draw.hpp"
 #include <limits>
+#include <cassert>
 
 
 void Draw::xd2xp(Point &p) {
@@ -71,19 +72,17 @@ void Draw::draw(Polygon & p) {
 
     CohenSutherland(c);
 
-    rasterize(c);
-
+    if (raster) rasterize(c);
+//
     // Draw the points of the polygon.
     for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
 }
 
 
-int intersection(Point &a, Point &b, int y_line) {
-    float delta_x = b.x - a.x;
-    if (delta_x == 0) return b.xp;
-    float slope = (b.y - a.y) / delta_x;
-    int y_inter = static_cast<int>(b.yp - slope * b.xp);
-    return static_cast<int>(std::round(((y_line - y_inter) / slope) * 100) / 100);
+int intersection(float delta_x, float delta_y, int y_line, Point &point) {
+    float slope = delta_y / delta_x;
+    float b = point.yp - slope * point.xp;
+    return (y_line - b) / slope;
 }
 
 void Draw::rasterize(Polygon &c) {
@@ -110,21 +109,39 @@ void Draw::rasterize(Polygon &c) {
 
         // calculate the intersections of every line in the polygon
         for(int i = 0 ; i < c.size(); i++) {
-            int x_point = intersection(c[i], c[i+1], y_);
 
-            if (x_point <= std::max(c[i].xp, c[i+1].xp) && x_point >= std::min(c[i].xp, c[i+1].xp))
-                xs.push_back(x_point);
+            if(std::max(c[i].yp, c[i+1].yp) >= y_ && std::min(c[i].yp, c[i+1].yp) <= y_) {
+                float delta_x = c[i].xp - c[i+1].xp, delta_y = c[i].yp - c[i+1].yp;
+                if (delta_x == 0) {
+                    xs.push_back(c[i].xp);
+                }
+                else if (delta_y == 0)  {
+                    xs.push_back(c[i].xp);
+                    xs.push_back(c[i+1].xp);
+                }
+                else {
+                    int x_point = intersection(delta_x, delta_y, y_, c[i]);
+                    xs.push_back(x_point);
+                }
+            }
         }
 
-        if (xs.size() > 1) {
             // sort all the points
             std::sort(xs.begin(), xs.end());
+
+//        if( xs.size() %2 != 0) {
+//            std::cout << "assert failed" << std::endl;
+//            std::cout << "xs size " << xs.size() << std::endl;
+//            std::cout << "contents: " << std::endl;
+//            for (auto x_: xs) std::cout << "    " << x_ << std::endl;
+//            std::cout << " at " << y_ << std::endl;
+//            exit(0);
+//        }
 
             for(auto inter = xs.begin(); inter < xs.end(); inter += 2) {
                 for(int x_ = *inter; x_ < *(inter + 1); x_++) {
                     MakePix(x_, y_);
                 }
-            }
         }
     }
 }

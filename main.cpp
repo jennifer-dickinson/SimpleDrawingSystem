@@ -221,6 +221,11 @@ void Menu(Draw &scene) {
     } else if (input == "exit") {
         std::cout << "Program is now exiting." << std::endl;
         exit(0);
+    } else if (input == "rasterize") {
+        cin >> input;
+        if (input == "true" || input == "t")scene.raster = true;
+        else if (input == "false" || input == "f")scene.raster = false;
+        else std::cout << "Must be true (t) or false (f) for rasterize." << std::endl;
     }
     else {
         cout << "That is not a valid action." << std::endl;
