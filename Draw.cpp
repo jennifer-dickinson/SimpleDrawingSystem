@@ -72,7 +72,7 @@ void Draw::draw(Polygon & p) {
 
     CohenSutherland(c);
 
-    if (raster) rasterize(c);
+    if (raster && c.size() > 2) rasterize(c);
 //
     // Draw the points of the polygon.
     for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
@@ -103,6 +103,7 @@ void Draw::rasterize(Polygon &c) {
     }
 
     // now fill int the pixels row by row;
+    int prevstat = -1;
 
     for(int y_ = y_min; y_ < y_max; y_++) {
         std::vector<int> xs;
@@ -113,13 +114,25 @@ void Draw::rasterize(Polygon &c) {
             if(std::max(c[i].yp, c[i+1].yp) >= y_ && std::min(c[i].yp, c[i+1].yp) <= y_) {
                 float delta_x = c[i].xp - c[i+1].xp, delta_y = c[i].yp - c[i+1].yp;
                 if (delta_x == 0) {
+                    if (prevstat != 0) {
+                        std::cout << "Found horizontal edge intersection" << std::endl;
+                        prevstat = 0;
+                    }
                     xs.push_back(c[i].xp);
                 }
                 else if (delta_y == 0)  {
+                    if (prevstat != 1) {
+                        std::cout << "Found vertical edge intersection" << std::endl;
+                        prevstat = 1;
+                    }
                     xs.push_back(c[i].xp);
                     xs.push_back(c[i+1].xp);
                 }
                 else {
+                    if (prevstat != 2) {
+                        std::cout << "Found regular edge intersection" << std::endl;
+                        prevstat = 2;
+                    }
                     int x_point = intersection(delta_x, delta_y, y_, c[i]);
                     xs.push_back(x_point);
                 }
