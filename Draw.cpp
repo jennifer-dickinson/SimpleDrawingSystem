@@ -27,8 +27,8 @@ void Draw::xd2xp(Point &p) {
         p.yd = (p.yr - ViewBox[y_min]) / delta;
     }
 
-    p.xp = (int) std::round((p.xd * .8 + .1) * (min - 1) * 100) / 100;
-    p.yp = (int) std::round((p.yd * .8 + .1) * (min - 1) * 100) / 100;
+    p.xp = (int) ((p.xd * .8 + .1) * (min - 1));
+    p.yp = (int) ((p.yd * .8 + .1) * (min - 1));
 }
 
 void Draw::MakePix (const Point &a) {
@@ -85,6 +85,11 @@ int intersection(float delta_x, float delta_y, int y_line, Point &point) {
     return (y_line - b) / slope;
 }
 
+template<typename t>
+bool sameSign(t num1, t num2) {
+    return !((num2 >= 0 && num1 <= 0) || (num2 <= 0 && num1 >= 0));
+}
+
 void Draw::rasterize(Polygon &c) {
     // This must receive clipped polygon
     std::cout << "Rasterizing clipped polygon" << std::endl;
@@ -102,6 +107,11 @@ void Draw::rasterize(Polygon &c) {
         if (c[i].yp < y_min) y_min = c[i].yp;
     }
 
+    // x_max++;
+    // x_min--;
+    // y_max++;
+    // y_min--;
+
     // now fill int the pixels row by row;
     int prevstat = -1;
 
@@ -113,49 +123,34 @@ void Draw::rasterize(Polygon &c) {
 
             if(std::max(c[i].yp, c[i+1].yp) >= y_ && std::min(c[i].yp, c[i+1].yp) <= y_) {
                 float delta_x = c[i].xp - c[i+1].xp, delta_y = c[i].yp - c[i+1].yp;
+                int x_point;
                 if (delta_x == 0) {
-                    if (prevstat != 0) {
-                        std::cout << "Found horizontal edge intersection" << std::endl;
-                        prevstat = 0;
-                    }
-                    xs.push_back(c[i].xp);
+                    x_point = c[i].xp ;
                 }
-                else if (delta_y == 0)  {
-                    if (prevstat != 1) {
-                        std::cout << "Found vertical edge intersection" << std::endl;
-                        prevstat = 1;
-                    }
-                    xs.push_back(c[i].xp);
-                    xs.push_back(c[i+1].xp);
+                else if (delta_y != 0){
+                    x_point = intersection(delta_x, delta_y, y_, c[i]);
+                    if (abs(c[i].xp -  x_point) < 0.001 && !(sameSign(c[i - 1].yp - c[i].yp, c[i + 1].yp - c[i].yp))) continue;  //TODO: Fix line not showing on vertical slope
+                    // check for x extrema
                 }
-                else {
-                    if (prevstat != 2) {
-                        std::cout << "Found regular edge intersection" << std::endl;
-                        prevstat = 2;
-                    }
-                    int x_point = intersection(delta_x, delta_y, y_, c[i]);
-                    xs.push_back(x_point);
-                }
+                xs.push_back(x_point);
             }
         }
 
-            // sort all the points
-            std::sort(xs.begin(), xs.end());
+        // sort all the points
+        std::sort(xs.begin(), xs.end());
+        auto current = xs.begin();
+        bool on = false;
 
-//        if( xs.size() %2 != 0) {
-//            std::cout << "assert failed" << std::endl;
-//            std::cout << "xs size " << xs.size() << std::endl;
-//            std::cout << "contents: " << std::endl;
-//            for (auto x_: xs) std::cout << "    " << x_ << std::endl;
-//            std::cout << " at " << y_ << std::endl;
-//            exit(0);
-//        }
-
-            for(auto inter = xs.begin(); inter < xs.end(); inter += 2) {
-                for(int x_ = *inter; x_ < *(inter + 1); x_++) {
-                    MakePix(x_, y_);
-                }
+        for(int x_ = x_min; x_ <= x_max && current != xs.end() ; x_++) {
+            if(x_ == *current) {
+                on = !on;
+                current++;
+                x_--;
+            }
+            else if (on) MakePix(x_,y_);
         }
+
+
     }
 }
 
