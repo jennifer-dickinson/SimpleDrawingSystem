@@ -28,9 +28,9 @@
 class Polyhedron {
 
 struct Point3D{
-    float x, y, z, xold, yold, zold;
+    float x, y, z, xold, yold, zold, r, g, b;
 
-    Point3D(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
+    Point3D(float x_, float y_, float z_) : x(x_), y(y_), z(z_), r(1), g(1), b(1) {}
     friend std::ostream &operator<<(std::ostream &o, Point3D p) {
         o << std::setprecision(1) << '(' << p.x << ',' << p.y << ',' << p.z << ')';
         return o;

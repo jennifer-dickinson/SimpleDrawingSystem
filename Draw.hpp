@@ -78,6 +78,7 @@ public:
 
     void MakePix (const Point &a);
     void MakePix (const int &x, const int &y);
+    void MakePix (const int &x, const int &y, float r, float g, float b);
 
 
     void xd2xp(Point &p);

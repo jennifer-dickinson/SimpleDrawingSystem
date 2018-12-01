@@ -38,13 +38,18 @@ void Draw::MakePix (const Point &a) {
     MakePix(a.xp, a.yp);
 }
 
-void Draw::MakePix (const int &_x, const int &_y) {
+void Draw::MakePix (const int & _x, const int &_y) {
+    float r =1, g = 1, b = 1;
+    MakePix(_x, _y, 1, 1, 1);
+}
+
+void Draw::MakePix (const int &_x, const int &_y, float r, float g, float b) {
     /*
      * Basic method of drawing a pixel on the screen. 3 sequential floats represent RGB values.
      */
-    PixelBuffer[3 * ( _x + _y * x) ] = 1.0;
-    PixelBuffer[3 * ( _x + _y * x) + 1] = 1.0;
-    PixelBuffer[3 * ( _x + _y * x) + 2] = 1.0;
+    PixelBuffer[3 * ( _x + _y * x) ] = r;
+    PixelBuffer[3 * ( _x + _y * x) + 1] = g;
+    PixelBuffer[3 * ( _x + _y * x) + 2] = b;
 }
 
 void Draw::draw (Vertex &a) {
@@ -52,7 +57,7 @@ void Draw::draw (Vertex &a) {
      * Draw a single vertex by converting its device coordinates to pixel coordinates.
      */
     xd2xp(a);
-    MakePix(a.xp, a.yp);
+    MakePix(a.xp, a.yp, a.r, a.g, a.b);
 }
 
 
