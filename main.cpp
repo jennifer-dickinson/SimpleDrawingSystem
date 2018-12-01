@@ -226,6 +226,7 @@ void Menu(Draw &scene) {
         if (input == "true" || input == "t")scene.raster = true;
         else if (input == "false" || input == "f")scene.raster = false;
         else scene.raster = !scene.raster;
+        std::cout << "Rasterize set to " << (scene.raster? "true": "false") << std::endl;
     }
     else {
         cout << "That is not a valid action." << std::endl;

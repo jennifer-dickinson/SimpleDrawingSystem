@@ -75,7 +75,7 @@ void Draw::draw(Polygon & p) {
     if (raster && c.size() > 2) rasterize(c);
 //
     // Draw the points of the polygon.
-    for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
+    if (!raster) for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
 }
 
 
@@ -112,8 +112,6 @@ void Draw::rasterize(Polygon &c) {
     // y_max++;
     // y_min--;
 
-    // now fill int the pixels row by row;
-    int prevstat = -1;
 
     for(int y_ = y_min; y_ < y_max; y_++) {
         std::vector<int> xs;
@@ -121,16 +119,14 @@ void Draw::rasterize(Polygon &c) {
         // calculate the intersections of every line in the polygon
         for(int i = 0 ; i < c.size(); i++) {
 
-            if(std::max(c[i].yp, c[i+1].yp) >= y_ && std::min(c[i].yp, c[i+1].yp) <= y_) {
+            if(std::max(c[i].yp, c[i+1].yp)  >= y_  && std::min(c[i].yp, c[i+1].yp) <= y_) {
                 float delta_x = c[i].xp - c[i+1].xp, delta_y = c[i].yp - c[i+1].yp;
                 int x_point;
                 if (delta_x == 0) {
                     x_point = c[i].xp ;
                 }
-                else if (delta_y != 0){
+                else {
                     x_point = intersection(delta_x, delta_y, y_, c[i]);
-                    if (abs(c[i].xp -  x_point) < 0.001 && !(sameSign(c[i - 1].yp - c[i].yp, c[i + 1].yp - c[i].yp))) continue;  //TODO: Fix line not showing on vertical slope
-                    // check for x extrema
                 }
                 xs.push_back(x_point);
             }
@@ -138,6 +134,7 @@ void Draw::rasterize(Polygon &c) {
 
         // sort all the points
         std::sort(xs.begin(), xs.end());
+
         auto current = xs.begin();
         bool on = false;
 
@@ -149,8 +146,43 @@ void Draw::rasterize(Polygon &c) {
             }
             else if (on) MakePix(x_,y_);
         }
+    }
 
+    for(int x_ = x_min; x_ < x_max; x_++) {
+        std::vector<int> ys;
 
+        // calculate the intersections of every line in the polygon
+        for(int i = 0 ; i < c.size(); i++) {
+
+            if(std::max(c[i].xp, c[i+1].xp) + 1  >= x_  && std::min(c[i].xp, c[i+1].xp) - 1 <= x_) {
+                float delta_y = c[i].yp - c[i+1].yp, delta_x = c[i].xp - c[i+1].xp;
+                int y_point;
+                if (delta_y == 0) {
+                    y_point = c[i].yp ;
+                }
+                else {
+                    auto inversePoint = c[i];
+                    std::swap(inversePoint.xp, inversePoint.yp);
+                    y_point = intersection(delta_y, delta_x, x_, inversePoint);
+                }
+                ys.push_back(y_point);
+            }
+        }
+
+        // sort all the points
+        std::sort(ys.begin(), ys.end());
+
+        auto current = ys.begin();
+        bool on = false;
+
+        for(int y_ = y_min; y_ <= y_max && current != ys.end() ; y_++) {
+            if(y_ == *current) {
+                on = !on;
+                current++;
+                y_--;
+            }
+            else if (on) MakePix(x_,y_);
+        }
     }
 }
 
@@ -170,7 +202,7 @@ void Draw::draw(Vertex &a, Vertex &b) {
         max = a;
     } else if (a.yr < b.yr) {
         min = a;
-        max = b;
+        max = b; // hello theere
     } else {
         min = b;
         max = a;
