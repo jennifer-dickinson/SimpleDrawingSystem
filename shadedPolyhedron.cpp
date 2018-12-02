@@ -132,9 +132,11 @@ void ShadedPolyhedron::calculateNormals() {
     calculateCenter();
 }
 
-void Draw::draw(ShadedPolyhedron& polyhedron) {
+void Draw::draw(ShadedPolyhedron& p) {
     // draw the lines firstTime
-    // for(SPolygon &polygon: polyhedron.polygons) {
-    //     draw();
-    // }
+    for(SPolygon &polygon: p.polygons) {
+        draw(p.points[polygon.v1], p.points[polygon.v2]);
+        draw(p.points[polygon.v2], p.points[polygon.v3]);
+        draw(p.points[polygon.v3], p.points[polygon.v1]);
+    }
 }

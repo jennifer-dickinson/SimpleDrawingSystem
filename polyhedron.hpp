@@ -18,6 +18,7 @@
 #include <iomanip>
 
 #include "Draw.hpp"
+#include "Point.hpp"
 
 
 #define CABINET_DEGREE       67.5f
@@ -28,24 +29,6 @@
 class Polyhedron {
 
 public:
-struct Point3D{
-    float x, y, z, xold, yold, zold, r, g, b;
-
-    Point3D(float x_, float y_, float z_) : x(x_), y(y_), z(z_), r(1), g(1), b(1) {}
-    friend std::ostream &operator<<(std::ostream &o, Point3D p) {
-        o << std::setprecision(1) << '(' << p.x << ',' << p.y << ',' << p.z << ')';
-        return o;
-    }
-    Point3D operator-() {
-        return {-x, -y, -z};
-    }
-    Vertex xy() { return {x, y}; }
-    Vertex xz() { return {x, z}; }
-    Vertex yz() { return {y, z}; }
-
-    void save() {xold = x; yold = y; zold = z;}
-    void restore() {x = xold; y = yold; z = zold;}
-};
 
     friend class Draw;
 

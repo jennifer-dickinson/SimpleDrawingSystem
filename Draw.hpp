@@ -93,8 +93,8 @@ public:
     void draw(Polyhedron &p);
     void draw(ShadedPolyhedron &p);
     void draw(Vertex &a, Vertex &b);
-    void draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_);
-    void oblique(Polyhedron::Point3D a, Polyhedron::Point3D b);
+    void draw(Point3D &a_, Point3D &b_);
+    void oblique(Point3D a, Point3D b);
 
 
         operator float*() { return PixelBuffer; }

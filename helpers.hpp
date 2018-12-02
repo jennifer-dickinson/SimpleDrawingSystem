@@ -11,5 +11,4 @@ float niceround(float num);
 
 void getinput(std::ifstream &input, std::string &line);
 
-
 #endif //#HELPERS

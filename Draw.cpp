@@ -226,7 +226,7 @@ void Draw::draw(Vertex &a, Vertex &b) {
     else digitalDifferentialAnalyzer(min, max, deltax, deltay);
 }
 
-void Draw::draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_) {
+void Draw::draw(Point3D &a_, Point3D &b_) {
     // Handles cavalier and cabinet views
     Point a, b;
     if (view == XY) {

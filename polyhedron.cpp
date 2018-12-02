@@ -6,9 +6,10 @@
 //  Copyright © 2018 Jennifer Salas. All rights reserved.
 //
 
-#include "helpers.hpp"
 #include "Draw.hpp"
 #include <cassert>
+#include "helpers.hpp"
+
 
 void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     // Find C
@@ -102,7 +103,7 @@ void Polyhedron::scale(float factor) {
     }
 }
 
-void Polyhedron::translate(Polyhedron::Point3D p) {
+void Polyhedron::translate(Point3D p) {
     std::cout << "Translating .. " << std::endl;
     for (Point3D &point: worldPoint) {
         std::cout << p << " to ";
@@ -131,7 +132,7 @@ void Draw::normalize() {
     ViewBox[z_max] = std::numeric_limits<float>::min();
 
     for (Polyhedron &poly: polyhedrons) {
-        for (Polyhedron::Point3D &p: poly.worldPoint) {
+        for (Point3D &p: poly.worldPoint) {
             if (p.x > ViewBox[x_max]) ViewBox[x_max] = p.x;
             if (p.x < ViewBox[x_min]) ViewBox[x_min] = p.x;
             if (p.y > ViewBox[y_max]) ViewBox[y_max] = p.y;
@@ -192,7 +193,7 @@ void Draw::initializePolyhedrons(std::string filename) {
             float x, y, z;
 
             v >> x >> y >> z;
-            Polyhedron::Point3D temppoint(x, y, z);
+            Point3D temppoint(x, y, z);
             temp.worldPoint.push_back(temppoint);
 
             std::cout << "    Adding point" << temppoint << std::endl;
@@ -227,7 +228,7 @@ void Draw::initializePolyhedrons(std::string filename) {
 
 //    for (Polyhedron &poly: polyhedrons) {
 //
-//        for (Polyhedron::Point3D &p: poly.worldPoint) std::cout << p << std::endl;
+//        for (Point3D &p: poly.worldPoint) std::cout << p << std::endl;
 //        for (Line &l: poly.line) std::cout << "Line: " << l.first << " " << l.second << std::endl;
 //    }
 //
@@ -237,8 +238,8 @@ void Draw::initializePolyhedrons(std::string filename) {
 
 }
 
-void Draw::oblique(Polyhedron::Point3D a, Polyhedron::Point3D b) {
-    Polyhedron::Point3D d{b.x - a.x, b.y - a.y, b.z - a.z};
+void Draw::oblique(Point3D a, Point3D b) {
+    Point3D d{b.x - a.x, b.y - a.y, b.z - a.z};
 
     float len = sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2) + powf(b.z - a.z, 2));
 
@@ -250,8 +251,8 @@ void Draw::oblique(Polyhedron::Point3D a, Polyhedron::Point3D b) {
 
 
     for (Polyhedron &poly: polyhedrons) {
-        for (Polyhedron::Point3D &p: poly.worldPoint) {
-            Polyhedron::Point3D t = p;
+        for (Point3D &p: poly.worldPoint) {
+            Point3D t = p;
             p.save();
 
             p.x = t.x + t.z * (-d.x / d.z);
@@ -289,7 +290,7 @@ void Draw::viewYZ() {
 void Draw::undoOblique() {
     if (view == CAVALIER || view == CABINET) {
         for (Polyhedron &poly: polyhedrons) {
-            for (Polyhedron::Point3D &p: poly.worldPoint) {
+            for (Point3D &p: poly.worldPoint) {
                 p.restore();
             }
         }
