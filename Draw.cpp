@@ -30,8 +30,8 @@ void Draw::xd2xp(Point &p) {
     p.xp = (int) ((p.xd * .8 + .1) * (min - 1));
     p.yp = (int) ((p.yd * .8 + .1) * (min - 1));
 
-    std::cout << "Translating point from real to device to pixel" << std::endl;
-    std::cout << "  (" << p.xr << "," << p.yr << ") : (" << p.xd << "," << p.yd << ") : (" << p.xp << "," << p.yp << ")" << std::endl;
+    // std::cout << "Translating point from real to device to pixel" << std::endl;
+    // std::cout << "  (" << p.xr << "," << p.yr << ") : (" << p.xd << "," << p.yd << ") : (" << p.xp << "," << p.yp << ")" << std::endl;
 }
 
 void Draw::MakePix (const Point &a) {
@@ -101,7 +101,7 @@ bool sameSign(t num1, t num2) {
 
 void Draw::rasterize(Polygon &c) {
     // This must receive clipped polygon
-    std::cout << "Rasterizing clipped polygon" << std::endl;
+    // std::cout << "Rasterizing clipped polygon" << std::endl;
     int x_min = std::numeric_limits<int>::max(),
         x_max = std::numeric_limits<int>::min(),
         y_min = std::numeric_limits<int>::max(),
@@ -228,7 +228,7 @@ void Draw::draw(Vertex &a, Vertex &b) {
     else if (deltay == - deltax)  diagonalLineNegative(min, max);
     else if (bresenhamAlgo)  bresenham(min, max, deltax, deltay);
     else digitalDifferentialAnalyzer(min, max, deltax, deltay);
-    std::cout << "Drew from " << a.xp << "," << a.yp << " to " << b.xp << "," << b.yp <<std::endl;
+    // std::cout << "Drew from " << a.xp << "," << a.yp << " to " << b.xp << "," << b.yp <<std::endl;
 }
 
 void Draw::draw(Point3D &a_, Point3D &b_) {

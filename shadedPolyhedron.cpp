@@ -129,7 +129,31 @@ void ShadedPolyhedron::calculateNormals() {
     /*
         Find the normals of each face of the polyhedron;
     */
-    calculateCenter();
+    // calculateCenter();
+    for (SPolygon &poly: polygons) {
+        Point3D a{
+            points[poly.v2].x - points[poly.v1].x,
+            points[poly.v2].y - points[poly.v1].y,
+            points[poly.v2].z - points[poly.v1].z
+        };
+        Point3D b{
+            points[poly.v3].x - points[poly.v1].x,
+            points[poly.v3].y - points[poly.v1].y,
+            points[poly.v3].z - points[poly.v1].z
+        };
+        poly.normal = {
+            a.y*b.z - a.z*b.y,
+            -(a.x*b.z-a.z*b.x),
+            a.x*b.y - a.y *b.x
+        };
+        float length = sqrtf( powf(poly.normal.x, 2) + powf(poly.normal.y, 2) + powf(poly.normal.z, 2));
+        poly.normal = {
+            poly.normal.x / length,
+            poly.normal.y / length,
+            poly.normal.z / length
+        };
+        std::cout << "Normal is " << poly.normal << std::endl;
+    }
 }
 
 void Draw::draw(ShadedPolyhedron& p) {

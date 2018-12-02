@@ -1,4 +1,9 @@
-
+*.o
 *.pbxproj
 *.xcbkptlist
 *.pbxproj
+draw
+.idea/
+CMakeLists.txt
+cmake-build-debug/
+
