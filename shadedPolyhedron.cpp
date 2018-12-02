@@ -72,10 +72,10 @@ void Draw::initializeShapes(std::string filename) {
             std::cout << temp.points[v2] << " ";
             std::cout << temp.points[v3] << std::endl;
         }
-        normalizeShader();
         temp.calculateNormals();
         sPolyhedrons.push_back(temp);
     }
+    normalizeShader();
     std::cout << "Complete" <<std::endl;
 }
 
@@ -119,9 +119,9 @@ void Draw::normalizeShader() {
     delta = std::max(delta, delta_z);
 
     return;
-//    std::cout << "X boundaries: " << ViewBox[x_max] << " " << ViewBox[x_min] << std::endl;
-//    std::cout << "Y boundaries: " << ViewBox[y_max] << " " << ViewBox[y_min] << std::endl;
-//    std::cout << "Z boundaries: " << ViewBox[z_max] << " " << ViewBox[z_min] << std::endl;
+   std::cout << "X boundaries: " << ViewBox[x_max] << " " << ViewBox[x_min] << std::endl;
+   std::cout << "Y boundaries: " << ViewBox[y_max] << " " << ViewBox[y_min] << std::endl;
+   std::cout << "Z boundaries: " << ViewBox[z_max] << " " << ViewBox[z_min] << std::endl;
 
 }
 
@@ -138,5 +138,11 @@ void Draw::draw(ShadedPolyhedron& p) {
         draw(p.points[polygon.v1], p.points[polygon.v2]);
         draw(p.points[polygon.v2], p.points[polygon.v3]);
         draw(p.points[polygon.v3], p.points[polygon.v1]);
+
+        std::cout << "   Drawing a polygon from points ";
+        std::cout << p.points[polygon.v1] << " ";
+        std::cout << p.points[polygon.v2] << " ";
+        std::cout << p.points[polygon.v3] << std::endl;
     }
+    std::cout << "Finished drawing polygon" << std::endl;
 }

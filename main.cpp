@@ -247,5 +247,10 @@ void Menu(Draw &scene) {
 }
 
 void MenuShader(Draw &scene) {
+    string input;
 
+    cout <<  std::endl << "Enter action (type help for available commands): " << flush;
+    cin >> input;
+    int id = 0;
+    float x_m, y_m;
 }

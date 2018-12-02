@@ -29,6 +29,9 @@ void Draw::xd2xp(Point &p) {
 
     p.xp = (int) ((p.xd * .8 + .1) * (min - 1));
     p.yp = (int) ((p.yd * .8 + .1) * (min - 1));
+
+    std::cout << "Translating point from real to device to pixel" << std::endl;
+    std::cout << "  (" << p.xr << "," << p.yr << ") : (" << p.xd << "," << p.yd << ") : (" << p.xp << "," << p.yp << ")" << std::endl;
 }
 
 void Draw::MakePix (const Point &a) {
@@ -63,7 +66,8 @@ void Draw::draw (Vertex &a) {
 
 void Draw::draw() {
     for(int i = 0; i < x * y * 3; i++) PixelBuffer[i] = 0;
-    if (ThreeDimensional) for(Polyhedron &poly: polyhedrons) draw(poly);
+    if (Shader) for(ShadedPolyhedron &poly: sPolyhedrons) draw(poly);
+    else if (ThreeDimensional) for(Polyhedron &poly: polyhedrons) draw(poly);
     else for(Polygon &poly: polygons) draw(poly);
 }
 
@@ -224,6 +228,7 @@ void Draw::draw(Vertex &a, Vertex &b) {
     else if (deltay == - deltax)  diagonalLineNegative(min, max);
     else if (bresenhamAlgo)  bresenham(min, max, deltax, deltay);
     else digitalDifferentialAnalyzer(min, max, deltax, deltay);
+    std::cout << "Drew from " << a.xp << "," << a.yp << " to " << b.xp << "," << b.yp <<std::endl;
 }
 
 void Draw::draw(Point3D &a_, Point3D &b_) {
@@ -239,7 +244,6 @@ void Draw::draw(Point3D &a_, Point3D &b_) {
         a = a_.yz();
         b = b_.yz();
     }
-
     draw(a,b);
 
 }
