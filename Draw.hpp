@@ -16,6 +16,8 @@
 
 #include "polygon.hpp"
 #include "polyhedron.hpp"
+#include "shadedPolyhedron.hpp"
+#include "Point.hpp"
 
 enum View {XY, XZ, YZ, CAVALIER, CABINET};
 
@@ -36,17 +38,20 @@ class Draw {
 public:
     bool bresenhamAlgo;
     bool ThreeDimensional;
+    bool Shader;
     bool raster;
 
 
     std::vector<Polygon> polygons;
     std::vector<Polyhedron> polyhedrons;
+    std::vector<ShadedPolyhedron> sPolyhedrons;
 
 
     Draw() : x(640), y(480), bresenhamAlgo(false)  {
         PixelBuffer = new float[(x) * (y) * 3];
         min = std::min(x,y);
         ThreeDimensional = false;
+        Shader = false;
         view = XY;
         raster = false;
     }
@@ -54,10 +59,9 @@ public:
         PixelBuffer = new float[(x+1) * (y+1) * 3];
         min = std::min(x,y);
         ThreeDimensional = false;
+        Shader = false;
         view = XY;
         raster = false;
-
-
     }
 
     Polygon &operator[](int i){
@@ -87,6 +91,7 @@ public:
     void draw(Vertex &a);
     void draw(Polygon & p);
     void draw(Polyhedron &p);
+    void draw(ShadedPolyhedron &p);
     void draw(Vertex &a, Vertex &b);
     void draw(Polyhedron::Point3D &a_, Polyhedron::Point3D &b_);
     void oblique(Polyhedron::Point3D a, Polyhedron::Point3D b);
@@ -121,13 +126,16 @@ public:
     float Xintersection (const Point &start, const Point &end, const float &xLine);
     float Yintersection (const Point &start, const Point &end, const float &xLine);
 
-    void initialize(std::string file, bool td) {
+    void initialize(std::string file, bool td, bool sh) {
         ThreeDimensional = td;
-        if (ThreeDimensional) initializePolyhedrons(file);
+        Shader = sh;
+        if (Shader) initializeShapes(file);
+        else if (ThreeDimensional) initializePolyhedrons(file);
         else initializePolygons(file);
     }
     void initializePolygons(std::string file);
     void initializePolyhedrons(std::string filename);
+    void initializeShapes(std::string filename);
 
     void save(std::string filename) {
         std::ofstream file(filename);
@@ -155,6 +163,7 @@ public:
 
 
     void normalize();
+    void normalizeShader();
 
     void save3D(std::string filename) {
         std::ofstream file(filename);

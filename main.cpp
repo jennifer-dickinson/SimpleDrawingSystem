@@ -16,6 +16,7 @@
 
 void Menu(Draw &scene);
 void Menu3D(Draw &scene);
+void MenuShader(Draw &scene);
 
 using namespace std;
 bool firstTime = true;
@@ -28,27 +29,34 @@ Draw scene(x,y, false);
 
 void display();
 int main(int argc, char *argv[]) {
-    bool tD;
+    bool threeDimensional = false, shader = false;
     string file;
     for(int i = 0; i < argc; i++) std::cout << argv[i];
     std::cout << std::endl;
-    if (argc == 2 && std::string("3d") != argv[1]) {
-        file = argv[1];
-    }
-    if (argc == 3 && std::string("3d") == argv[1]) {
-        file = argv[2];
-        std::cout << file << " 3d!" << std::endl;
-        tD = true;
-    }
-    else{
-        cout << "Please enter the type of rendering (2d or 3d): ";
+    // if (argc == 2 && std::string("3d") != argv[1]) {
+    //     file = argv[1];
+    // }
+    // if (argc == 3 && std::string("3d") == argv[1]) {
+    //     file = argv[2];
+    //     std::cout << file << " 3d!" << std::endl;
+    //     tD = true;
+    // }
+    // else{
+        cout << "Please enter the type of rendering (2d or 3d (skeleton) or 3DS (shader)): ";
         cin >> file;
-        tD = "3d" == file;
+        if (file == "3d") {
+            threeDimensional = true;
+            std::cout << "Rendering 3D skeletons" << std::endl;
+        }
+        else if (file == "3DS") {
+            shader = true;
+            std::cout << "Rendering 3D Shaded Polyhedrons" << std::endl;
+        }
         cout << "Please enter a filename: ";
         cin >> file;
-    }
+    // }
 
-    scene.initialize(file, tD);
+    scene.initialize(file, threeDimensional, shader);
 
 
     glutInit(&argc, argv);
@@ -85,7 +93,11 @@ void display()
 
     if (firstTime) {
         firstTime = false;
-    } else if(scene.ThreeDimensional) {
+    }
+    else if (scene.Shader) {
+        MenuShader(scene);
+    }
+    else if(scene.ThreeDimensional) {
         Menu3D(scene);
     } else {
         Menu(scene);
@@ -232,4 +244,8 @@ void Menu(Draw &scene) {
         cout << "That is not a valid action." << std::endl;
         std::getline(std::cin, input); // Used to flush out the rest of the commands
     }
+}
+
+void MenuShader(Draw &scene) {
+
 }

@@ -3,6 +3,8 @@
 //
 
 #include "Draw.hpp"
+#include "helpers.hpp"
+
 
 void Draw::initializePolygons(std::string file) {
     std::ifstream input(file);
@@ -25,13 +27,13 @@ void Draw::initializePolygons(std::string file) {
 
 //    float x_min = std::numeric_limits<float>::max(), y_min = std::numeric_limits<float>::max();
 //    float x_max = std::numeric_limits<float>::min(), y_max = std::numeric_limits<float>::min();
-    
+
     ViewBox[x_min] = std::numeric_limits<float>::max();
     ViewBox[y_min] = std::numeric_limits<float>::max();
     ViewBox[x_max] = std::numeric_limits<float>::min();
     ViewBox[y_max] = std::numeric_limits<float>::min();
 
-    
+
     for (int i = 0; i < numPolygons; i++) {
 
         std::cout << "Generating polygon #" << i << std::endl;
@@ -52,31 +54,31 @@ void Draw::initializePolygons(std::string file) {
             Point tempPoint (x,y);
 //            if (temp.worldPoint.size()) assert(&tempPoint.x != &temp.worldPoint.back().x);
             temp.addVertex(tempPoint);
-            
+
             if (x > ViewBox[x_max]) ViewBox[x_max] = x;
             if (x < ViewBox[x_min]) ViewBox[x_min] = x;
             if (y > ViewBox[y_max]) ViewBox[y_max] = y;
             if (y < ViewBox[y_min]) ViewBox[y_min] = y;
-            
+
             std::cout << "    Added worldPoint: " << tempPoint << std::endl;
         }
 
         polygons.push_back(temp);
 
     }
-    
+
     delta_x = ViewBox[x_max] - ViewBox[x_min];
     delta_y = ViewBox[y_max] - ViewBox[y_min];
-    
+
     delta = std::max(delta_x, delta_y);
-    
+
     for(Polygon &poly: polygons) {
         for (Point &point: poly) {
             point.xd = (point.x - ViewBox[x_min]) / delta;
             point.yd = (point.y - ViewBox[y_min]) / delta;
         }
     }
-    
+
     std::cout << " Boundaries: " << ViewBox[x_min] << " " << ViewBox[x_max] << " " << ViewBox[y_min] << " " << ViewBox[y_max] << std::endl;
 
     input.close();
@@ -102,7 +104,7 @@ void Polygon::scale(const float &_x,const  float &_y) {
 
     x_avg /= size();
     y_avg /= size();
-    
+
     std::cout << " Scaling.. " << std::endl;
     for (auto &p: (*this)) {
         std::cout << "    from (" << p.xr << "," << p.yr << ") to ";
@@ -131,17 +133,17 @@ void Polygon::rotate(const float &deg_) {
 
     float s = sinf(deg);
     float c = cosf(deg);
-    
+
     float c_x = 0, c_y = 0;
-    
+
     for (auto &p: (*this)) {
         c_x += p.xr;
         c_y += p.yr;
     }
-    
+
     c_x /= size();
     c_y /= size();
-    
+
     // Matrix multiplication simplified
     std::cout << " Rotating.. " << std::endl;
     for(auto &p: (*this)) {

@@ -27,6 +27,7 @@
 
 class Polyhedron {
 
+public:
 struct Point3D{
     float x, y, z, xold, yold, zold, r, g, b;
 
@@ -46,7 +47,6 @@ struct Point3D{
     void restore() {x = xold; y = yold; z = zold;}
 };
 
-public:
     friend class Draw;
 
     std::vector<Point3D> worldPoint;
