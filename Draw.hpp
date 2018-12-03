@@ -18,8 +18,7 @@
 #include "polyhedron.hpp"
 #include "shadedPolyhedron.hpp"
 #include "Point.hpp"
-
-enum View {XY, XZ, YZ, CAVALIER, CABINET};
+#include "helpers.hpp"
 
 class Draw {
     unsigned int x, y; // These are the dimensions of the drawable window
@@ -160,7 +159,7 @@ public:
         }
     }
 
-
+    void sortShadedPolyhedrons();
 
     void normalize();
     void normalizeShader();
