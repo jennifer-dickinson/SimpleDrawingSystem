@@ -127,7 +127,7 @@ void Menu3D(Draw &scene) {
         std::cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" << std:: endl;
         std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
         std::cout << "    view        <XY | XZ | YZ | CAVALIER | CABINET>" << std::endl;
-        std::cout << "    info        <POLYHEDRON ID>" << std::endl;
+        // std::cout << "    info        <POLYHEDRON ID>" << std::endl;
         std::cout << "    save        <FILENAME>" << std::endl;
         std::cout << "    exit" << std::endl;
     } else if (input == "scale") {
@@ -169,7 +169,7 @@ void Menu3D(Draw &scene) {
 
     } else if (input == "save") {
         cin >> input;
-        scene.save(input);
+        scene.save3D(input);
 
     } else if (input == "info") {
 
@@ -252,5 +252,54 @@ void MenuShader(Draw &scene) {
     cout <<  std::endl << "Enter action (type help for available commands): " << flush;
     cin >> input;
     int id = 0;
-    float x_m, y_m;
+    float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
+
+    if (input == "help") {
+        std::cout << "    COMMAND     PARAMETERS" << std::endl;
+        std::cout << "    --------------------------------------------------" << std::endl;
+        // std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<std::endl;
+        // std::cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" << std:: endl;
+        // std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
+        std::cout << "    view        <XY | XZ | YZ >" << std::endl;
+        std::cout << "    info        <POLYHEDRON ID>" << std::endl;
+        // std::cout << "    save        <FILENAME>" << std::endl;
+        std::cout << "    exit" << std::endl;
+    // } else if (input == "scale") {
+    //     cin >> id >> x_m;
+    //     scene.polyhedrons[id].scale(x_m);
+    // } else if (input == "translate") {
+    //     cin >> id >> x_m >> y_m >> z_m;
+    //     scene.polyhedrons[id].translate({x_m, y_m, z_m});
+    // } else if (input == "rotate") {
+    //     cin >> id >> degree >> x_m >> y_m >> z_m >> x_m2 >> y_m2 >> z_m2;
+    //     scene.polyhedrons[id].rotate(degree, {x_m, y_m, z_m}, {x_m2, y_m2, z_m2});
+
+    } else if (input == "view") {
+        cin >> input;
+        if (input == "XY" || input == "xy") {
+            scene.viewXY();
+        }
+        else if (input == "XZ" || input == "xz") {
+            scene.undoOblique();
+            scene.viewXZ();
+        }
+        else if (input == "YZ" || input == "yz") {
+            scene.viewYZ();
+        } else std::cout << input << " is an invalid projection." << std::endl;
+
+    // } else if (input == "save") {
+    //     cin >> input;
+    //     scene.savePolyhedrons(input);
+
+    // } else if (input == "info") {
+
+    } else if (input == "exit") {
+        std::cout << "Program is now exiting." << std::endl;
+        exit(0);
+    }
+    else {
+        cout << "That is not a valid action." << std::endl;
+        std::getline(std::cin, input); // Used to flush out the rest of the commands
+    }
+    // scene.normalize();
 }

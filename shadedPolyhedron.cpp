@@ -250,9 +250,9 @@ void Draw::draw(ShadedPolyhedron& p) {
         rasterize(temp);
 
         // Draw the skeleton;
-        draw(p.points[p.polygons[i].v1], p.points[p.polygons[i].v2]);
-        draw(p.points[p.polygons[i].v2], p.points[p.polygons[i].v3]);
-        draw(p.points[p.polygons[i].v3], p.points[p.polygons[i].v1]);
+        // draw(p.points[p.polygons[i].v1], p.points[p.polygons[i].v2]);
+        // draw(p.points[p.polygons[i].v2], p.points[p.polygons[i].v3]);
+        // draw(p.points[p.polygons[i].v3], p.points[p.polygons[i].v1]);
     }
     std::cout << "Finished drawing polygon" << std::endl;
 }
@@ -299,7 +299,7 @@ void Draw::sortShadedPolyhedrons() {
                     jmin = *std::min_element(jys.begin(), jys.end());
                 }
             }
-            if (imin > jmin)
+            if (imin < jmin)
                 std::swap(sPolyhedrons[i], sPolyhedrons[j]);
 
 

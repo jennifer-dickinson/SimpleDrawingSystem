@@ -1,35 +1,40 @@
 1. Jennifer Salas, 914329903, jvsalas@ucdavis.edu
 
 2. Instructions to make and run:
-	
-	make
-	./draw 3d <file>
+
+		make
+		./draw
+		<Render Type> (3DS for project 3);
+		<filename> (ShadedPolygonFile provided)
+
 
 	While in the program, type help for commands
-  
-  A sample file "samplePolyhedron" is included. The format for a file is the following:
 
-	<number of polyhedrons>
+  A sample file "spoly" is included. The format for a file is the following:
 
-	<number of vertices>
-	<vertex 1>
-	<vertex 2>
-	...
+			  3               # of polyhedrons
 
-	<number of lines>
-	<vertex a1> <vertex a2>
-	<vertex b1> <vertex b2>
-	...
-
+			  4               # of vertices
+			  3 3 3 1 1 1     # X Y Z R G B
+			  11 0 8 0 0 1
+			  8 11 0 0 1 0
+			  0 8 11 1 0 0
+			  4               # number of triangles
+			  0 1 2           # V1 V2 V3
+			  0 3 1
+			  0 2 3
+			  1 3 2
 
 3. Attempted algorithms:
 
-    1. translate, scale, rotate
-    2. cabinet  and cavalier
-    3. normalize
+    1. Painter's algorithm
+	2. Gouraud Shading
 
 4. Part's I didn't implement:
 
-5. Attempts at extra credit: none
+	1. Phong Model
+	2. Halftone
+
+5. Attempts at extra credit: None
 
 6. Other information:

@@ -29,7 +29,7 @@ void Draw::DDAGreater(const Point &start, const Point &end, const float &slope) 
     for(int i = start_y; i <= end_y - 1; i++) {
         int x_value = std::round((i - b) / slope);
 //        assert(x_value >= 0);
-        MakePix(x_value, i, 1, 0, 0);
+        MakePix(x_value, i);
     }
 
     MakePix(end2);
@@ -52,7 +52,7 @@ void Draw::DDARegular(const Point &start, const Point &end, const float &slope) 
 
     for(int i = start_x; i <= end_x - 1; i++) {
         int y_value = std::round(b + slope * i);
-        MakePix(i, y_value, 1, 0, 0);
+        MakePix(i, y_value);
     }
     MakePix(end2);
 }

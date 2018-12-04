@@ -158,7 +158,27 @@ void Draw::rasterize(Polygon &c) {
                 current++;
                 x_--;
             }
-            else if (on) MakePix(x_,y_);
+            else if (on){
+                if (Shader){
+                    float d0 = distance(c[0].x, x_, c[0].y, y_);
+                    float d1 = distance(c[1].x, x_, c[1].y, y_);
+                    float d2 = distance(c[2].x, x_, c[2].y, y_);
+                    float tot = d0 + d1 + d2;
+
+                    float r = c[0].r * 255.0 * (tot - d0) / tot +  c[1].r * 255.0 * (tot - d1) / tot +  c[2].r * 255.0 * (tot - d2) / tot;
+                    float g = c[0].g * 255.0 * (tot - d0) / tot +  c[1].g * 255.0 * (tot - d1) / tot +  c[2].g * 255.0 * (tot - d2) / tot;
+                    float b = c[0].b * 255.0 * (tot - d0) / tot +  c[1].b * 255.0 * (tot - d1) / tot +  c[2].b * 255.0 * (tot - d2) / tot;
+
+                    // std::cout << "\nCalculated rgb (" << r << " " << g << " " << b << ") at " << "(" << x_ << "," << y_ << ")" << std::endl;
+                    // std::cout << "Used the following info: " << std::endl;
+                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[0].r, c[0].g, c[0].b, d0);
+                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[1].r, c[1].g, c[1].b, d1);
+                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[2].r, c[2].g, c[2].b, d2);
+                    MakePix(x_,y_, r / 255.0, g / 255.0, b / 255.0);
+                } else {
+                    MakePix(x_,y_);
+                }
+            }
         }
     }
 
@@ -197,16 +217,21 @@ void Draw::rasterize(Polygon &c) {
             }
             else if (on){
                 if (Shader){
-                    float d1 = distance(c[0].x, x_, c[0].y, y_);
-                    float d2 = distance(c[1].x, x_, c[1].y, y_);
-                    float d3 = distance(c[2].x, x_, c[2].y, y_);
-                    float tot = d1 + d2 + d3;
+                    float d0 = distance(c[0].x, x_, c[0].y, y_);
+                    float d1 = distance(c[1].x, x_, c[1].y, y_);
+                    float d2 = distance(c[2].x, x_, c[2].y, y_);
+                    float tot = d0 + d1 + d2;
 
-                    float r = c[0].r * (tot - d1) / d1 +  c[1].r * (tot - d2) / d2 +  c[2].r * (tot - d3) / d3;
-                    float g = c[0].g * (tot - d1) / d1 +  c[1].g * (tot - d2) / d2 +  c[2].g * (tot - d3) / d3;
-                    float b = c[0].b * (tot - d1) / d1 +  c[1].b * (tot - d2) / d2 +  c[2].b * (tot - d3) / d3;
-                    std::cout << "Calculated rgb " << r << " " << g << " " << b << std::endl;
-                    MakePix(x_,y_, r, g, b);
+                    float r = c[0].r * 255.0 * (tot - d0) / tot +  c[1].r * 255.0 * (tot - d1) / tot +  c[2].r * 255.0 * (tot - d2) / tot;
+                    float g = c[0].g * 255.0 * (tot - d0) / tot +  c[1].g * 255.0 * (tot - d1) / tot +  c[2].g * 255.0 * (tot - d2) / tot;
+                    float b = c[0].b * 255.0 * (tot - d0) / tot +  c[1].b * 255.0 * (tot - d1) / tot +  c[2].b * 255.0 * (tot - d2) / tot;
+
+                    // std::cout << "\nCalculated rgb (" << r << " " << g << " " << b << ") at " << "(" << x_ << "," << y_ << ")" << std::endl;
+                    // std::cout << "Used the following info: " << std::endl;
+                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[0].r, c[0].g, c[0].b, d0);
+                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[1].r, c[1].g, c[1].b, d1);
+                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[2].r, c[2].g, c[2].b, d2);
+                    MakePix(x_,y_, r / 255.0, g / 255.0, b / 255.0);
                 } else {
                     MakePix(x_,y_);
                 }
