@@ -4,6 +4,7 @@
 
 // #include "polyhedron.hpp"
 #include "helpers.hpp"
+#include "polygon.hpp"
 #include <vector>
 #include <iostream>
 
@@ -27,6 +28,7 @@ public:
     void sortPolygons(View proj);
     void calculateNormals();
     Point3D &calculateCenter();
+    Polygon iToPoly(int i, View view);
 
     ShadedPolyhedron() {};
 };

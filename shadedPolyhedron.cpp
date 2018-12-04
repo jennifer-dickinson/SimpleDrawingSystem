@@ -6,6 +6,7 @@
 #include <sstream>
 #include <limits>
 #include <cmath>
+#include <cassert>
 
 void Draw::initializeShapes(std::string filename) {
     /*
@@ -49,7 +50,7 @@ void Draw::initializeShapes(std::string filename) {
             temp.points.emplace_back(x,y,z);
 
             std::cout << "   Adding point " << tempPoint;
-            printf(" with RGB Color %.2f %.2f %.2f\n", r, g, b);
+            printf(" with RGB Color %.2f %.2f %.2f\n", tempPoint.r, tempPoint.g, tempPoint.b);
         }
 
         // Get the number of triangles in the shape
@@ -195,17 +196,90 @@ void ShadedPolyhedron::sortPolygons(View proj) {
     }
 }
 
+Polygon ShadedPolyhedron::iToPoly(int i, View view) {
+    Polygon temp;
+
+    // std::cout << "Polygon colors are:: " << std::endl;
+    // for (auto &pol: temp) {
+    //     std::cout << pol.r  << " " << pol.g << " " << pol.b << std::endl;
+    // }
+
+    Point3D &p1 = points[polygons[i].v1];
+    Point3D &p2 = points[polygons[i].v2];
+    Point3D &p3 = points[polygons[i].v3];
+
+    switch(view) {
+        case XY:
+        {
+            temp.addVertex(p1.xy());
+            temp.addVertex(p2.xy());
+            temp.addVertex(p3.xy());
+        }
+        break;
+        case YZ:
+        {
+            temp.addVertex(p1.yz());
+            temp.addVertex(p2.yz());
+            temp.addVertex(p3.yz());
+        }
+        break;
+        default:
+        {
+            temp.addVertex(p1.xz());
+            temp.addVertex(p2.xz());
+            temp.addVertex(p3.xz());
+        }
+    }
+
+    temp[0].r = p1.r;
+    temp[0].g = p1.g;
+    temp[0].b = p1.b;
+
+    temp[1].r = p2.r;
+    temp[1].g = p2.g;
+    temp[1].b = p2.b;
+
+    temp[2].r = p3.r;
+    temp[2].g = p3.g;
+    temp[2].b = p3.b;
+
+    // std::cout << "Generated polygon with points " << temp[0] << temp[1] << temp[2] <<std::endl;;
+    return temp;
+}
+
 void Draw::draw(ShadedPolyhedron& p) {
     // draw the lines firstTime
-    for(SPolygon &polygon: p.polygons) {
-        draw(p.points[polygon.v1], p.points[polygon.v2]);
-        draw(p.points[polygon.v2], p.points[polygon.v3]);
-        draw(p.points[polygon.v3], p.points[polygon.v1]);
+    // sortShadedPolyhedrons();
+    for(int i = 0; i < p.polygons.size(); i++) {
+        // rasterize the Polygon
+        // std::cout << "colors: " << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v1].r << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v1].g << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v1].b << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v2].r << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v2].g << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v2].b << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v3].r << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v3].g << std::endl;
+        // std::cout << "   " << p.points[p.polygons[i].v3].b << std::endl;
 
-        std::cout << "   Drawing a polygon from points ";
-        std::cout << p.points[polygon.v1] << " ";
-        std::cout << p.points[polygon.v2] << " ";
-        std::cout << p.points[polygon.v3] << std::endl;
+        Polygon temp = p.iToPoly(i,view);
+
+        // std::cout << "Polygon colors are:: " << std::endl;
+        // for (auto &pol: temp) {
+        //     std::cout << pol.r  << " " << pol.g << " " << pol.b << std::endl;
+        // }
+        rasterize(temp);
+
+        // Draw the skeleton;
+        draw(p.points[p.polygons[i].v1], p.points[p.polygons[i].v2]);
+        draw(p.points[p.polygons[i].v2], p.points[p.polygons[i].v3]);
+        draw(p.points[p.polygons[i].v3], p.points[p.polygons[i].v1]);
+
+        // std::cout << "   Drawing a polygon from points ";
+        // std::cout << p.points[p.polygons[i].v1] << " ";
+        // std::cout << p.points[p.polygons[i].v2] << " ";
+        // std::cout << p.points[p.polygons[i].v3] << std::endl;
     }
     std::cout << "Finished drawing polygon" << std::endl;
 }
@@ -215,7 +289,11 @@ void Draw::sortShadedPolyhedrons() {
     /* Painter's Algorithm */
 
     // First we sort the polyhedron's polygons
-    for(ShadedPolyhedron &p: sPolyhedrons) p.sortPolygons(view);
+    for(ShadedPolyhedron &p: sPolyhedrons) {
+        Point3D point = p.points[0];
+        assert(point.r == p.points[0].r);
+        p.sortPolygons(view);
+    }
 
     // Now we sort the polyhedrons according the view;
     for(int i = 0; i < sPolyhedrons.size(); i++) {
@@ -249,7 +327,15 @@ void Draw::sortShadedPolyhedrons() {
                 }
             }
             if (imin > jmin)
+                for(auto &pt: sPolyhedrons[i].points) {
+                    std::cout << "rgb old" << pt.r << pt.g << pt.b << std::endl;
+                }
                 std::swap(sPolyhedrons[i], sPolyhedrons[j]);
+                for(auto &pt: sPolyhedrons[i].points) {
+                    std::cout << "rgb new" << pt.r << pt.g << pt.b << std::endl;
+                }
+
+
         }
     }
 }
