@@ -105,6 +105,11 @@ bool sameSign(t num1, t num2) {
 void Draw::rasterize(Polygon &c) {
     // This must receive clipped polygon
     // std::cout << "Rasterizing clipped polygon" << std::endl;
+
+    // std::cout << "Polygon colors are:: " << std::endl;
+    // for (auto &p: c) {
+    //     std::cout << p.r  << " " << p.g << " " << p.b << std::endl;
+    // }
     int x_min = std::numeric_limits<int>::max(),
         x_max = std::numeric_limits<int>::min(),
         y_min = std::numeric_limits<int>::max(),
@@ -126,7 +131,7 @@ void Draw::rasterize(Polygon &c) {
 
 
     for(int y_ = y_min; y_ < y_max; y_++) {
-        std::vector<int> xs;
+        std::vector<std::pair<int, std::vector<float> > > xs;
 
         // calculate the intersections of every line in the polygon
         for(int i = 0 ; i < c.size(); i++) {
@@ -140,7 +145,54 @@ void Draw::rasterize(Polygon &c) {
                 else {
                     x_point = intersection(delta_x, delta_y, y_, c[i]);
                 }
-                xs.push_back(x_point);
+                std::vector<float> rgb(3);
+
+                // Calculate RGB values at this point.
+                // std::cout << x_point << " " << c[i].xp << " " << y_ << " " << c[i].yp << std::endl;
+                float d1 = sqrtf(powf(x_point - c[i].xp, 2) + powf(y_ - c[i].yp, 2));
+                float d2 = sqrtf(powf(x_point - c[i+1].xp, 2) + powf(y_ - c[i+1].yp, 2));
+                // std::cout << d1 << " " << d2 << std::endl;
+                float tot = d1 + d2;
+                d1 /= tot;
+                d2 /= tot;
+                // assert(d1 != 0);
+                // assert(d2 != 0);
+                float delta;
+                // std::cout << "RGB: (" << c[i].r << " " << c[i].g << " " << c[i].b << ") (" << c[i+1].r << " " << c[i+1].g << " " << c[i+1].b << ")" << std::endl;;
+                if (d1 == 0) {
+                    rgb[0] = c[i].r;
+                    rgb[1] = c[i].g;
+                    rgb[2] = c[i].b;
+                } else if (d2 == 0) {
+                    rgb[0] = c[i + 1].r;
+                    rgb[1] = c[i + 1].g;
+                    rgb[2] = c[i + 1].b;
+                } else {
+                    if(c[i].r > c[i+1].r) {
+                        delta =  c[i].r - c[i+1].r;
+                        rgb[0] = delta * d2 + c[i+1].r;
+                    } else {
+                        delta =  c[i].r - c[i+1].r;
+                        rgb[0] = delta * d1 + c[i+1].r;
+                    }
+                    if(c[i].g > c[i+1].g) {
+                        delta =  c[i].g - c[i+1].g;
+                        rgb[1] = delta * d2 + c[i+1].g;
+                    } else {
+                        delta =  c[i].g - c[i+1].g;
+                        rgb[1] = delta * d1 + c[i+1].g;
+                    }
+                    if(c[i].b > c[i+1].b) {
+                        delta =  c[i].b - c[i+1].b;
+                        rgb[2] = delta * d2 + c[i+1].b;
+                    } else {
+                        delta =  c[i].b - c[i+1].b;
+                        rgb[2] = delta * d1 + c[i+1].b;
+                    }
+
+                }
+                std::pair<int, std::vector<float> > an_x(x_point, rgb);
+                xs.push_back(an_x);
             }
         }
 
@@ -149,53 +201,152 @@ void Draw::rasterize(Polygon &c) {
 
         auto current = xs.begin();
         bool on = false;
+        float old_r = 0, old_g = 0, old_b = 0;
+        float man_r = 0, man_g = 0, man_b = 0;
+        float cur_r = current->second[0], cur_g = current->second[1], cur_b = current->second[2];
+        float dr, dg, db;
 
         for(int x_ = x_min; x_ <= x_max && current != xs.end() ; x_++) {
-            if(x_ == *current) {
+            if(x_ == current->first) {
                 on = !on;
                 current++;
                 x_--;
+                if(current != xs.end() && next(current) != xs.end()) {
+
+                    old_r = man_r = cur_r;
+                    old_g = man_g = cur_g;
+                    old_b = man_b = cur_b;
+                    cur_r = next(current)->second[0];
+                    cur_g = next(current)->second[1];
+                    cur_b = next(current)->second[2];
+
+                    // if(current->first != std::next(current)->first) {
+                        dr = (cur_r - old_r) / (next(current)->first - current->first);
+                        dg = (cur_g - old_g) / (next(current)->first - current->first);
+                        db = (cur_b - old_b) / (next(current)->first - current->first);
+                        std::cout << "Delta values for rgb: " << dr << " " << dg << " " << db << std::endl;
+                    // } else  dr = dg = db = 0;
+
+                }
+                // printf("Old color: %.2f %.2f %.2f; New color: %.2f %.2f %.2f. \n", old_r, old_g, old_b, cur_r, cur_g, cur_b);
+
             }
-            else if (on) MakePix(x_,y_);
+            else if (on) {
+                // calculate the color
+                old_r += dr;
+                old_b += db;
+                old_g += dg;
+
+                MakePix(x_,y_, old_r, old_g, old_b);
+            }
         }
+        // std::cout << std::endl;
+        // std::cout << "Did y " << y_ << std::endl;
+
     }
 
-    for(int x_ = x_min; x_ < x_max; x_++) {
-        std::vector<int> ys;
-
-        // calculate the intersections of every line in the polygon
-        for(int i = 0 ; i < c.size(); i++) {
-
-            if(std::max(c[i].xp, c[i+1].xp) + 1  >= x_  && std::min(c[i].xp, c[i+1].xp) - 1 <= x_) {
-                float delta_y = c[i].yp - c[i+1].yp, delta_x = c[i].xp - c[i+1].xp;
-                int y_point;
-                if (delta_y == 0) {
-                    y_point = c[i].yp ;
-                }
-                else {
-                    auto inversePoint = c[i];
-                    std::swap(inversePoint.xp, inversePoint.yp);
-                    y_point = intersection(delta_y, delta_x, x_, inversePoint);
-                }
-                ys.push_back(y_point);
-            }
-        }
-
-        // sort all the points
-        std::sort(ys.begin(), ys.end());
-
-        auto current = ys.begin();
-        bool on = false;
-
-        for(int y_ = y_min; y_ <= y_max && current != ys.end() ; y_++) {
-            if(y_ == *current) {
-                on = !on;
-                current++;
-                y_--;
-            }
-            else if (on) MakePix(x_,y_);
-        }
-    }
+    // for(int x_ = x_min; x_ < x_max; x_++) {
+    //     std::vector<std::pair<int, std::vector<float> > > ys;
+    //
+    //     // calculate the intersections of every line in the polygon
+    //     for(int i = 0 ; i < c.size(); i++) {
+    //
+    //         if(std::max(c[i].xp, c[i+1].xp) + 1  >= x_  && std::min(c[i].xp, c[i+1].xp) - 1 <= x_) {
+    //             float delta_y = c[i].yp - c[i+1].yp, delta_x = c[i].xp - c[i+1].xp;
+    //             int y_point;
+    //             if (delta_y == 0) {
+    //                 y_point = c[i].yp ;
+    //             }
+    //             else {
+    //                 auto inversePoint = c[i];
+    //                 std::swap(inversePoint.xp, inversePoint.yp);
+    //                 y_point = intersection(delta_y, delta_x, x_, inversePoint);
+    //             }
+    //             std::vector<float> rgb(3);
+    //
+    //             // Calculate RGB values at this point.
+    //             std::cout << y_point << " " << c[i].xp << " " << x_ << " " << c[i].yp << std::endl;
+    //             float d1 = sqrtf(powf(x_ - c[i].xp, 2) + powf(y_point - c[i].yp, 2));
+    //             float d2 = sqrtf(powf(x_ - c[i+1].xp, 2) + powf(y_point - c[i+1].yp, 2));
+    //             std::cout << d1 << " " << d2 << std::endl;
+    //             float tot = d1 + d2;
+    //             d1 /= tot;
+    //             d2 /= tot;
+    //             // assert(d1 != 0);
+    //             // assert(d2 != 0);
+    //             float delta;
+    //             std::cout << "RGB: (" << c[i].r << " " << c[i].g << " " << c[i].b << ") (" << c[i+1].r << " " << c[i+1].g << " " << c[i+1].b << ")" << std::endl;;
+    //             if(c[i].r > c[i+1].r) {
+    //                 delta =  c[i].r - c[i+1].r;
+    //                 rgb[0] = delta * d2 + c[i+1].r;
+    //             } else {
+    //                 delta =  c[i].r - c[i+1].r;
+    //                 rgb[0] = delta * d1 + c[i+1].r;
+    //             }
+    //             if(c[i].g > c[i+1].g) {
+    //                 delta =  c[i].g - c[i+1].g;
+    //                 rgb[1] = delta * d2 + c[i+1].g;
+    //             } else {
+    //                 delta =  c[i].g - c[i+1].g;
+    //                 rgb[1] = delta * d1 + c[i+1].g;
+    //             }
+    //             if(c[i].b > c[i+1].b) {
+    //                 delta =  c[i].b - c[i+1].b;
+    //                 rgb[2] = delta * d2 + c[i+1].b;
+    //             } else {
+    //                 delta =  c[i].b - c[i+1].b;
+    //                 rgb[2] = delta * d1 + c[i+1].b;
+    //             }
+    //
+    //             std::pair<int, std::vector<float> > an_y(y_point, rgb);
+    //             ys.push_back(an_y);
+    //         }
+    //     }
+    //
+    //     // sort all the points
+    //     std::sort(ys.begin(), ys.end());
+    //
+    //     auto current = ys.begin();
+    //     bool on = false;
+    //     float old_r = 0, old_g = 0, old_b = 0;
+    //     float man_r = 0, man_g = 0, man_b = 0;
+    //     float cur_r = current->second[0], cur_g = current->second[1], cur_b = current->second[2];
+    //     float dr, dg, db;
+    //
+    //     for(int y_ = y_min; y_ <= y_max && current != ys.end() ; y_++) {
+    //         if(y_ == current->first) {
+    //             on = !on;
+    //             current++;
+    //             y_--;
+    //             if(current != ys.end() && next(current) != ys.end()) {
+    //
+    //                 old_r = man_r = cur_r;
+    //                 old_g = man_g = cur_g;
+    //                 old_b = man_b = cur_b;
+    //                 cur_r = next(current)->second[0];
+    //                 cur_g = next(current)->second[1];
+    //                 cur_b = next(current)->second[2];
+    //
+    //                 if(current->first != std::next(current)->first) {
+    //                     dr = (cur_r - old_r) / (next(current)->first - current->first);
+    //                     dg = (cur_g - old_g) / (next(current)->first - current->first);
+    //                     db = (cur_b - old_b) / (next(current)->first - current->first);
+    //                 } else  dr = dg = db = 0;
+    //
+    //             }
+    //             printf("Old color: %.2f %.2f %.2f; New color: %.2f %.2f %.2f. \n", old_r, old_g, old_b, cur_r, cur_g, cur_b);
+    //
+    //         }
+    //         else if (on) {
+    //             // calculate the color
+    //             old_r += dr;
+    //             old_b += db;
+    //             old_g += dg;
+    //
+    //             MakePix(x_,y_, old_r, old_g, old_b);
+    //         }
+    //     }
+    // }
 }
 
 

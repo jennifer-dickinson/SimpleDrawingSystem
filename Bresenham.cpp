@@ -8,6 +8,8 @@
 
 #include "Draw.hpp"
 
+// int r, g, b;
+
 void Draw::bresenham(Point &min, Point &max, float delta_x, float delta_y) {
     delta_x = (max.xp - min.xp);
     delta_y = (max.yp - min.yp);

@@ -198,12 +198,9 @@ void ShadedPolyhedron::sortPolygons(View proj) {
 
 Polygon ShadedPolyhedron::iToPoly(int i, View view) {
     Polygon temp;
-
     Point3D &p1 = points[polygons[i].v1];
     Point3D &p2 = points[polygons[i].v2];
     Point3D &p3 = points[polygons[i].v3];
-
-
     switch(view) {
         case XY:
         {
@@ -248,34 +245,14 @@ void Draw::draw(ShadedPolyhedron& p) {
     // sortShadedPolyhedrons();
     for(int i = 0; i < p.polygons.size(); i++) {
         // rasterize the Polygon
-        // std::cout << "colors: " << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v1].r << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v1].g << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v1].b << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v2].r << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v2].g << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v2].b << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v3].r << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v3].g << std::endl;
-        // std::cout << "   " << p.points[p.polygons[i].v3].b << std::endl;
 
         Polygon temp = p.iToPoly(i,view);
-
-        // std::cout << "Polygon colors are:: " << std::endl;
-        // for (auto &pol: temp) {
-        //     std::cout << pol.r  << " " << pol.g << " " << pol.b << std::endl;
-        // }
         rasterize(temp);
 
         // Draw the skeleton;
         draw(p.points[p.polygons[i].v1], p.points[p.polygons[i].v2]);
         draw(p.points[p.polygons[i].v2], p.points[p.polygons[i].v3]);
         draw(p.points[p.polygons[i].v3], p.points[p.polygons[i].v1]);
-
-        // std::cout << "   Drawing a polygon from points ";
-        // std::cout << p.points[p.polygons[i].v1] << " ";
-        // std::cout << p.points[p.polygons[i].v2] << " ";
-        // std::cout << p.points[p.polygons[i].v3] << std::endl;
     }
     std::cout << "Finished drawing polygon" << std::endl;
 }
