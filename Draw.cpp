@@ -66,7 +66,10 @@ void Draw::draw (Vertex &a) {
 
 void Draw::draw() {
     for(int i = 0; i < x * y * 3; i++) PixelBuffer[i] = 0;
-    if (Shader) for(ShadedPolyhedron &poly: sPolyhedrons) draw(poly);
+    if (Shader) {
+        sortShadedPolyhedrons();
+        for(ShadedPolyhedron &poly: sPolyhedrons) draw(poly);
+    }
     else if (ThreeDimensional) for(Polyhedron &poly: polyhedrons) draw(poly);
     else for(Polygon &poly: polygons) draw(poly);
 }

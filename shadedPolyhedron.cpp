@@ -47,10 +47,10 @@ void Draw::initializeShapes(std::string filename) {
             v >> x >> y >> z >> r >> g >> b;
             Point3D tempPoint(x, y, z);
             tempPoint.setColor(r, g, b);
-            temp.points.emplace_back(x,y,z);
+            temp.points.push_back(tempPoint);
 
             std::cout << "   Adding point " << tempPoint;
-            printf(" with RGB Color %.2f %.2f %.2f\n", tempPoint.r, tempPoint.g, tempPoint.b);
+            printf(" with RGB Color %.2f %.2f %.2f\n", temp.points.back().r, temp.points.back().g, temp.points.back().b);
         }
 
         // Get the number of triangles in the shape
@@ -154,7 +154,7 @@ void ShadedPolyhedron::calculateNormals() {
             poly.normal.y / length,
             poly.normal.z / length
         };
-        std::cout << "Normal is " << poly.normal << std::endl;
+        // std::cout << "Normal is " << poly.normal << std::endl;
     }
 }
 
@@ -199,14 +199,10 @@ void ShadedPolyhedron::sortPolygons(View proj) {
 Polygon ShadedPolyhedron::iToPoly(int i, View view) {
     Polygon temp;
 
-    // std::cout << "Polygon colors are:: " << std::endl;
-    // for (auto &pol: temp) {
-    //     std::cout << pol.r  << " " << pol.g << " " << pol.b << std::endl;
-    // }
-
     Point3D &p1 = points[polygons[i].v1];
     Point3D &p2 = points[polygons[i].v2];
     Point3D &p3 = points[polygons[i].v3];
+
 
     switch(view) {
         case XY:
@@ -327,13 +323,7 @@ void Draw::sortShadedPolyhedrons() {
                 }
             }
             if (imin > jmin)
-                for(auto &pt: sPolyhedrons[i].points) {
-                    std::cout << "rgb old" << pt.r << pt.g << pt.b << std::endl;
-                }
                 std::swap(sPolyhedrons[i], sPolyhedrons[j]);
-                for(auto &pt: sPolyhedrons[i].points) {
-                    std::cout << "rgb new" << pt.r << pt.g << pt.b << std::endl;
-                }
 
 
         }
