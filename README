@@ -5,7 +5,7 @@
 		make
 		./draw
 		<Render Type> (3DS for project 3);
-		<filename> (ShadedPolygonFile provided)
+		<filename> (ShadedPolyhedron provided)
 
 
 	While in the program, type help for commands
@@ -27,8 +27,8 @@
 
 3. Attempted algorithms:
 
-    1. Painter's algorithm
-	2. Gouraud Shading
+    1. Painter's algorithm (shadedPolyhedron:lines 161-197, 260-307)
+	2. Gouraud Shading (Draw.cpp: lines 162-177, 220-234)
 
 4. Part's I didn't implement:
 

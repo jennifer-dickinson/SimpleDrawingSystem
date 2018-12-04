@@ -242,7 +242,7 @@ Polygon ShadedPolyhedron::iToPoly(int i, View view) {
 
 void Draw::draw(ShadedPolyhedron& p) {
     // draw the lines firstTime
-    // sortShadedPolyhedrons();
+    sortShadedPolyhedrons();
     for(int i = 0; i < p.polygons.size(); i++) {
         // rasterize the Polygon
 
@@ -299,7 +299,7 @@ void Draw::sortShadedPolyhedrons() {
                     jmin = *std::min_element(jys.begin(), jys.end());
                 }
             }
-            if (imin < jmin)
+            if (imin > jmin)
                 std::swap(sPolyhedrons[i], sPolyhedrons[j]);
 
 
