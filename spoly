@@ -1,7 +1,7 @@
 1               # of polyhedrons
 
 4               # of vertices
-0 0 0 1 1 1     # X Y Z R GB
+0 0 0 1 1 1      # X Y Z R GB
 8 0 5 0 0 1
 5 8 0 0 1 0
 0 5 8 1 0 0

@@ -152,18 +152,30 @@ void Draw::rasterize(Polygon &c) {
             if (on){
                 if (Shader){
 
-                    float d0 = distance(c[0].xp, x_, c[0].yp, y_);
-                    float d1 = distance(c[1].xp, x_, c[1].yp, y_);
-                    float d2 = distance(c[2].xp, x_, c[2].yp, y_);
+                    float d0 = 1 / distance(c[0].xp, x_, c[0].yp, y_);
+                    float d1 = 1 / distance(c[1].xp, x_, c[1].yp, y_);
+                    float d2 = 1 / distance(c[2].xp, x_, c[2].yp, y_);
                     float tot = d0 + d1 + d2;
 
-                    float r = c[0].r * (tot - d0) / tot +  c[1].r * (tot - d1) / tot +  c[2].r * (tot - d2) / tot;
-                    float g = c[0].g * (tot - d0) / tot +  c[1].g * (tot - d1) / tot +  c[2].g * (tot - d2) / tot;
-                    float b = c[0].b * (tot - d0) / tot +  c[1].b * (tot - d1) / tot +  c[2].b * (tot - d2) / tot;
+                    float r = (c[0].r * d0 +  c[1].r * d1 +  c[2].r * d2) / tot;
+                    float g = (c[0].g * d0 +  c[1].g * d1 +  c[2].g * d2) / tot;
+                    float b = (c[0].b * d0 +  c[1].b * d1 +  c[2].b * d2) / tot;
                     MakePix(x_,y_, r,g,b);
 
                 } else {
                     MakePix(x_,y_);
+                }
+            }
+        }
+    }
+
+    if (Shader) {
+        for (auto &point: c) {
+            for(int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    if (point.xp + i < x && point.xp + i >= 0 && point.yp + j < y && point.yp + j >= 0) {
+                        MakePix(point.xp + i, point.yp + j, point.r, point.g, point.b);
+                    }
                 }
             }
         }

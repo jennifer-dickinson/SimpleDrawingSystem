@@ -59,7 +59,6 @@ void Draw::initializeShapes(std::string filename) {
         nt >> numTriangles;
 
         for (int j = 0; j < numTriangles; j++) {
-            std::cout << j << std::endl;
             getinput(input, line);
 
             std::istringstream t(line);
@@ -160,7 +159,7 @@ void ShadedPolyhedron::sortPolygons(View proj) {
     // Part of painters algorithm. Sorts the polygons within a polyhedron.
     std::vector<SPolygon> sortedPolys;
     for(auto &poly: polygons) {
-        // Get the average projection position of a polygon
+        // Get the center of the polygon in terms of the view projection.
         switch(proj) {
             case XY:
                 poly.center = (points[poly.v1].z  + points[poly.v2].z + points[poly.v3].z) / 3;
@@ -230,7 +229,7 @@ void Draw::draw(ShadedPolyhedron& p) {
         Polygon temp = p.iToPoly(i,view);
         rasterize(temp);
 
-        // Draw the skeleton;
+        //Draw the skeleton;
         // draw(p.points[p.polygons[i].v1], p.points[p.polygons[i].v2]);
         // draw(p.points[p.polygons[i].v2], p.points[p.polygons[i].v3]);
         // draw(p.points[p.polygons[i].v3], p.points[p.polygons[i].v1]);
@@ -245,8 +244,9 @@ void Draw::sortShadedPolyhedrons() {
     // First we sort the polyhedron's polygons
     for(ShadedPolyhedron &p: sPolyhedrons) {
         Point3D point = p.points[0];
-        assert(point.r == p.points[0].r);
         p.sortPolygons(view);
     }
+
+    // Then we sort the polyhedrons.
     std::sort(sPolyhedrons.begin(), sPolyhedrons.end(), std::greater<ShadedPolyhedron>());
 }
