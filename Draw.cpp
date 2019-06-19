@@ -12,7 +12,7 @@
 
 
 float distance(float x1, float x2, float y1, float y2) {
-    return sqrtf(powf(x1 -x2, 2) + powf(y1 - y2, 2));
+    return sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
 }
 
 void Draw::xd2xp(Point &p) {
@@ -104,9 +104,7 @@ bool sameSign(t num1, t num2) {
 }
 
 void Draw::rasterize(Polygon &c) {
-    if(!Shader) std::cout << "Shader is off!" <<std::endl;
     // This must receive clipped polygon
-    // std::cout << "Rasterizing clipped polygon" << std::endl;
     int x_min = std::numeric_limits<int>::max(),
         x_max = std::numeric_limits<int>::min(),
         y_min = std::numeric_limits<int>::max(),
@@ -115,34 +113,26 @@ void Draw::rasterize(Polygon &c) {
     // calculate the pixel extrema in x and y
     for (int i = 0; i < c.size() + 1; i++) {
         xd2xp(c[i]);
-        if (c[i].xp > x_max) x_max = c[i].xp;
-        if (c[i].xp < x_min) x_min = c[i].xp;
-        if (c[i].yp > y_max) y_max = c[i].yp;
-        if (c[i].yp < y_min) y_min = c[i].yp;
+        if (c[i].xp >= x_max) x_max = c[i].xp;
+        if (c[i].xp <= x_min) x_min = c[i].xp;
+        if (c[i].yp >= y_max) y_max = c[i].yp;
+        if (c[i].yp <= y_min) y_min = c[i].yp;
     }
 
-    // x_max++;
-    // x_min--;
-    // y_max++;
-    // y_min--;
 
-
-    for(int y_ = y_min; y_ < y_max; y_++) {
+    for(int y_ = y_min; y_ <= y_max; y_++) {
         std::vector<int> xs;
 
-        // calculate the intersections of every line in the polygon
+        // calculate the intersections of a horizontal line at y_ with the lines in the polygon
         for(int i = 0 ; i < c.size(); i++) {
 
             if(std::max(c[i].yp, c[i+1].yp)  >= y_  && std::min(c[i].yp, c[i+1].yp) <= y_) {
+                if (c[i].yp == y_) continue;
+
                 float delta_x = c[i].xp - c[i+1].xp, delta_y = c[i].yp - c[i+1].yp;
-                int x_point;
-                if (delta_x == 0) {
-                    x_point = c[i].xp ;
-                }
-                else {
-                    x_point = intersection(delta_x, delta_y, y_, c[i]);
-                }
-                xs.push_back(x_point);
+
+                if (delta_x == 0) xs.push_back(c[i].xp);
+                else xs.push_back(intersection(delta_x, delta_y, y_, c[i]));
             }
         }
 
@@ -154,84 +144,24 @@ void Draw::rasterize(Polygon &c) {
 
         for(int x_ = x_min; x_ <= x_max && current != xs.end() ; x_++) {
             if(x_ == *current) {
-                on = !on;
-                current++;
+                if(current++ != current) {
+                  on = !on;
+                };
                 x_--;
             }
-            else if (on){
+            if (on){
                 if (Shader){
-                    float d0 = distance(c[0].x, x_, c[0].y, y_);
-                    float d1 = distance(c[1].x, x_, c[1].y, y_);
-                    float d2 = distance(c[2].x, x_, c[2].y, y_);
+
+                    float d0 = distance(c[0].xp, x_, c[0].yp, y_);
+                    float d1 = distance(c[1].xp, x_, c[1].yp, y_);
+                    float d2 = distance(c[2].xp, x_, c[2].yp, y_);
                     float tot = d0 + d1 + d2;
 
-                    float r = c[0].r * 255.0 * (tot - d0) / tot +  c[1].r * 255.0 * (tot - d1) / tot +  c[2].r * 255.0 * (tot - d2) / tot;
-                    float g = c[0].g * 255.0 * (tot - d0) / tot +  c[1].g * 255.0 * (tot - d1) / tot +  c[2].g * 255.0 * (tot - d2) / tot;
-                    float b = c[0].b * 255.0 * (tot - d0) / tot +  c[1].b * 255.0 * (tot - d1) / tot +  c[2].b * 255.0 * (tot - d2) / tot;
+                    float r = c[0].r * (tot - d0) / tot +  c[1].r * (tot - d1) / tot +  c[2].r * (tot - d2) / tot;
+                    float g = c[0].g * (tot - d0) / tot +  c[1].g * (tot - d1) / tot +  c[2].g * (tot - d2) / tot;
+                    float b = c[0].b * (tot - d0) / tot +  c[1].b * (tot - d1) / tot +  c[2].b * (tot - d2) / tot;
+                    MakePix(x_,y_, r,g,b);
 
-                    // std::cout << "\nCalculated rgb (" << r << " " << g << " " << b << ") at " << "(" << x_ << "," << y_ << ")" << std::endl;
-                    // std::cout << "Used the following info: " << std::endl;
-                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[0].r, c[0].g, c[0].b, d0);
-                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[1].r, c[1].g, c[1].b, d1);
-                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[2].r, c[2].g, c[2].b, d2);
-                    MakePix(x_,y_, r / 255.0, g / 255.0, b / 255.0);
-                } else {
-                    MakePix(x_,y_);
-                }
-            }
-        }
-    }
-
-    for(int x_ = x_min; x_ < x_max; x_++) {
-        std::vector<int> ys;
-
-        // calculate the intersections of every line in the polygon
-        for(int i = 0 ; i < c.size(); i++) {
-
-            if(std::max(c[i].xp, c[i+1].xp) + 1  >= x_  && std::min(c[i].xp, c[i+1].xp) - 1 <= x_) {
-                float delta_y = c[i].yp - c[i+1].yp, delta_x = c[i].xp - c[i+1].xp;
-                int y_point;
-                if (delta_y == 0) {
-                    y_point = c[i].yp ;
-                }
-                else {
-                    auto inversePoint = c[i];
-                    std::swap(inversePoint.xp, inversePoint.yp);
-                    y_point = intersection(delta_y, delta_x, x_, inversePoint);
-                }
-                ys.push_back(y_point);
-            }
-        }
-
-        // sort all the points
-        std::sort(ys.begin(), ys.end());
-
-        auto current = ys.begin();
-        bool on = false;
-
-        for(int y_ = y_min; y_ <= y_max && current != ys.end() ; y_++) {
-            if(y_ == *current) {
-                on = !on;
-                current++;
-                y_--;
-            }
-            else if (on){
-                if (Shader){
-                    float d0 = distance(c[0].x, x_, c[0].y, y_);
-                    float d1 = distance(c[1].x, x_, c[1].y, y_);
-                    float d2 = distance(c[2].x, x_, c[2].y, y_);
-                    float tot = d0 + d1 + d2;
-
-                    float r = c[0].r * 255.0 * (tot - d0) / tot +  c[1].r * 255.0 * (tot - d1) / tot +  c[2].r * 255.0 * (tot - d2) / tot;
-                    float g = c[0].g * 255.0 * (tot - d0) / tot +  c[1].g * 255.0 * (tot - d1) / tot +  c[2].g * 255.0 * (tot - d2) / tot;
-                    float b = c[0].b * 255.0 * (tot - d0) / tot +  c[1].b * 255.0 * (tot - d1) / tot +  c[2].b * 255.0 * (tot - d2) / tot;
-
-                    // std::cout << "\nCalculated rgb (" << r << " " << g << " " << b << ") at " << "(" << x_ << "," << y_ << ")" << std::endl;
-                    // std::cout << "Used the following info: " << std::endl;
-                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[0].r, c[0].g, c[0].b, d0);
-                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[1].r, c[1].g, c[1].b, d1);
-                    // printf(" RGB (%.2f,%.2f,%.2f) Distance (%.2f)\n", c[2].r, c[2].g, c[2].b, d2);
-                    MakePix(x_,y_, r / 255.0, g / 255.0, b / 255.0);
                 } else {
                     MakePix(x_,y_);
                 }
@@ -266,14 +196,12 @@ void Draw::draw(Vertex &a, Vertex &b) {
     deltax = max.xr - min.xr;
     deltay = max.yr - min.yr;
 
-//    std::cout << a<< b << deltax << " " << deltay << std::endl;
     if(deltax == 0) verticalLine(min, max);
     else if (deltay == 0) horizontalLine(min, max);
     else if (deltay == deltax)  diagonalLinePositive(min, max);
     else if (deltay == - deltax)  diagonalLineNegative(min, max);
     else if (bresenhamAlgo)  bresenham(min, max, deltax, deltay);
     else digitalDifferentialAnalyzer(min, max, deltax, deltay);
-    // std::cout << "Drew from " << a.xp << "," << a.yp << " to " << b.xp << "," << b.yp <<std::endl;
 }
 
 void Draw::draw(Point3D &a_, Point3D &b_) {

@@ -8,7 +8,16 @@
 
 // Compile: g++ -o draw polygon.cpp Draw.cpp main.cpp -framework GLUT -framework OpenGL -lcurses
 
-#include <GL/glut.h>  // CSIF Specific
+
+//*** CSIF Specific ***//
+// #include <GL/glut.h>
+//*** End CSIF Specific ***//
+
+//*** Mac Specific ***//
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
+//*** End Mac Specific ***//
 
 #include "Draw.hpp"
 
@@ -137,11 +146,11 @@ void Menu3D(Draw &scene) {
     } else if (input == "translate") {
         cin >> id >> x_m >> y_m >> z_m;
         scene.undoOblique();
-        scene.polyhedrons[id].translate({x_m, y_m, z_m});
+        scene.polyhedrons[id].translate(Point3D(x_m, y_m, z_m));
     } else if (input == "rotate") {
         cin >> id >> degree >> x_m >> y_m >> z_m >> x_m2 >> y_m2 >> z_m2;
         scene.undoOblique();
-        scene.polyhedrons[id].rotate(degree, {x_m, y_m, z_m}, {x_m2, y_m2, z_m2});
+        scene.polyhedrons[id].rotate(degree, Point3D(x_m, y_m, z_m), Point3D(x_m2, y_m2, z_m2));
 
     } else if (input == "view") {
         cin >> input;

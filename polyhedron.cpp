@@ -18,7 +18,7 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
 
     degree *= M_PI / 180.0;
 
-    Point3D C{0, 0, 0};
+    Point3D C(0, 0, 0);
     for (Point3D &p: worldPoint) {
         C.x += p.x;
         C.y += p.y;
@@ -33,13 +33,12 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
 //    std::cout << " len is " << len << std::endl;
     float c = cosf(degree), s = sinf(degree);
 
-    Point3D u{
+    Point3D u(
             (p2.x - p1.x) / len,
             (p2.y - p1.y) / len,
             (p2.z - p1.z) / len
-    };
+    );
 
-//    std::cout << sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) << std::endl;
     assert(fabsf(sqrtf(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2)) - 1) < .01);
 
     // Single matrix equation pulled from
@@ -58,23 +57,23 @@ void Polyhedron::rotate(float degree, Point3D p1, Point3D p2) {
     for (Point3D &p: worldPoint) {
         std::cout << p << " to ";
 
-        p = {
+        p = Point3D(
                 p.x - C.x,
                 p.y - C.y,
                 p.z - C.z
-        };
+        );
 
-        p = {
+        p = Point3D(
                 niceround((p.x * R[0][0] + p.y * R[1][0] + p.z * R[2][0])),
                 niceround((p.x * R[0][1] + p.y * R[1][1] + p.z * R[2][1])),
-                niceround((p.x * R[0][2] + p.y * R[1][2] + p.z * R[2][2])),
-        };
+                niceround((p.x * R[0][2] + p.y * R[1][2] + p.z * R[2][2]))
+        );
 
-        p = {
+        p = Point3D(
                 p.x + C.x,
                 p.y + C.y,
                 p.z + C.z
-        };
+        );
         std::cout << p << std::endl;
 
     }
@@ -150,10 +149,6 @@ void Draw::normalize() {
     delta = std::max(delta, delta_z);
 
     return;
-//    std::cout << "X boundaries: " << ViewBox[x_max] << " " << ViewBox[x_min] << std::endl;
-//    std::cout << "Y boundaries: " << ViewBox[y_max] << " " << ViewBox[y_min] << std::endl;
-//    std::cout << "Z boundaries: " << ViewBox[z_max] << " " << ViewBox[z_min] << std::endl;
-
 }
 
 void Draw::initializePolyhedrons(std::string filename) {
@@ -239,7 +234,7 @@ void Draw::initializePolyhedrons(std::string filename) {
 }
 
 void Draw::oblique(Point3D a, Point3D b) {
-    Point3D d{b.x - a.x, b.y - a.y, b.z - a.z};
+    Point3D d(b.x - a.x, b.y - a.y, b.z - a.z);
 
     float len = sqrtf(powf(b.x - a.x, 2) + powf(b.y - a.y, 2) + powf(b.z - a.z, 2));
 
@@ -267,12 +262,12 @@ void Draw::oblique(Point3D a, Point3D b) {
 
 void Draw::viewCavalier() {
     view = CAVALIER;
-    oblique({0, 0, 0}, {1, 1, 1});
+    oblique(Point3D(0, 0, 0), Point3D(1, 1, 1));
 }
 
 void Draw::viewCabinet() {
     view = CABINET;
-    oblique({0, 0, 0}, {1, 1, 3});
+    oblique(Point3D(0, 0, 0), Point3D(1, 1, 3));
 }
 
 void Draw::viewXY() {

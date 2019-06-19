@@ -43,11 +43,11 @@ struct Point3D{
         return o;
     }
     Point3D operator-() {
-        return {-x, -y, -z};
+        return Point3D(-x, -y, -z);
     }
-    Vertex xy() { return {x, y}; }
-    Vertex xz() { return {x, z}; }
-    Vertex yz() { return {y, z}; }
+    Vertex xy() { return Vertex(x, y); }
+    Vertex xz() { return Vertex(x, z); }
+    Vertex yz() { return Vertex(y, z); }
 
     void save() {xold = x; yold = y; zold = z;}
     void restore() {x = xold; y = yold; z = zold;}

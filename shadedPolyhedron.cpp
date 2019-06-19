@@ -28,8 +28,6 @@ void Draw::initializeShapes(std::string filename) {
     ss >> numPolyhedrons;
 
     for (int i = 0; i < numPolyhedrons; i++) {
-        std::cout << "Adding polyhedron #" << i << std::endl;
-
         getinput(input, line);
 
         unsigned int numVertices;
@@ -61,13 +59,14 @@ void Draw::initializeShapes(std::string filename) {
         nt >> numTriangles;
 
         for (int j = 0; j < numTriangles; j++) {
+            std::cout << j << std::endl;
             getinput(input, line);
 
             std::istringstream t(line);
             int v1, v2, v3;
             t >> v1 >> v2 >> v3;
 
-            temp.polygons.emplace_back(v1, v2, v3);
+            temp.polygons.push_back(SPolygon(v1, v2, v3));
             std::cout << "   Making a polygon from points ";
             std::cout << temp.points[v1] << " ";
             std::cout << temp.points[v2] << " ";
@@ -78,7 +77,6 @@ void Draw::initializeShapes(std::string filename) {
     }
     normalizeShader();
     sortShadedPolyhedrons();
-    std::cout << "Complete" <<std::endl;
 }
 
 Point3D &ShadedPolyhedron::calculateCenter()  {
@@ -133,67 +131,50 @@ void ShadedPolyhedron::calculateNormals() {
     */
     // calculateCenter();
     for (SPolygon &poly: polygons) {
-        Point3D a{
+        Point3D a(
             points[poly.v2].x - points[poly.v1].x,
             points[poly.v2].y - points[poly.v1].y,
             points[poly.v2].z - points[poly.v1].z
-        };
-        Point3D b{
+        );
+        Point3D b(
             points[poly.v3].x - points[poly.v1].x,
             points[poly.v3].y - points[poly.v1].y,
             points[poly.v3].z - points[poly.v1].z
-        };
-        poly.normal = {
+        );
+        poly.normal = Point3D(
             a.y*b.z - a.z*b.y,
             -(a.x*b.z-a.z*b.x),
             a.x*b.y - a.y *b.x
-        };
+        );
         float length = sqrtf( powf(poly.normal.x, 2) + powf(poly.normal.y, 2) + powf(poly.normal.z, 2));
-        poly.normal = {
+        poly.normal = Point3D(
             poly.normal.x / length,
             poly.normal.y / length,
             poly.normal.z / length
-        };
+        );
         // std::cout << "Normal is " << poly.normal << std::endl;
     }
 }
 
 void ShadedPolyhedron::sortPolygons(View proj) {
     // Part of painters algorithm. Sorts the polygons within a polyhedron.
-    for(int i = 0; i < polygons.size(); i++) {
-        for (int j = i + 1; j < polygons.size(); j++) {
-            SPolygon &ith = polygons[i];
-            SPolygon &jth = polygons[j];
-            int imin, jmin;
-            switch(proj) {
-                case XY:
-                {
-                    std::vector<float> izs({points[ith.v1].z, points[ith.v2].z, points[ith.v3].z});
-                    std::vector<float> jzs({points[jth.v1].z, points[jth.v2].z, points[jth.v3].z});
-                    imin = *std::min_element(izs.begin(), izs.end());
-                    jmin = *std::min_element(jzs.begin(), jzs.end());
-                }
-                    break;
-                case YZ:
-                {
-                    std::vector<float> ixs({points[ith.v1].x, points[ith.v2].x, points[ith.v3].x});
-                    std::vector<float> jxs({points[jth.v1].x, points[jth.v2].x, points[jth.v3].x});
-                    imin = *std::min_element(ixs.begin(), ixs.end());
-                    jmin = *std::min_element(jxs.begin(), jxs.end());
-                }
-                    break;
-                default:
-                {
-                    std::vector<float> iys({points[ith.v1].y, points[ith.v2].y, points[ith.v3].y});
-                    std::vector<float> jys({points[jth.v1].y, points[jth.v2].y, points[jth.v3].y});
-                    imin = *std::min_element(iys.begin(), iys.end());
-                    jmin = *std::min_element(jys.begin(), jys.end());
-                }
-            }
-            if (imin > jmin)
-                std::swap(polygons[i], polygons[j]);
+    std::vector<SPolygon> sortedPolys;
+    for(auto &poly: polygons) {
+        // Get the average projection position of a polygon
+        switch(proj) {
+            case XY:
+                poly.center = (points[poly.v1].z  + points[poly.v2].z + points[poly.v3].z) / 3;
+                break;
+            case YZ:
+                poly.center = (points[poly.v1].x  + points[poly.v2].x + points[poly.v3].x) / 3;
+                break;
+            default:
+                poly.center = (points[poly.v1].y  + points[poly.v2].y + points[poly.v3].y) / 3;
         }
+        sortedPolys.push_back(poly);
     }
+    std::sort(sortedPolys.begin(), sortedPolys.end(), std::greater<SPolygon>());
+    polygons = sortedPolys;
 }
 
 Polygon ShadedPolyhedron::iToPoly(int i, View view) {
@@ -267,42 +248,5 @@ void Draw::sortShadedPolyhedrons() {
         assert(point.r == p.points[0].r);
         p.sortPolygons(view);
     }
-
-    // Now we sort the polyhedrons according the view;
-    for(int i = 0; i < sPolyhedrons.size(); i++) {
-        for (int j = i + 1; j < sPolyhedrons.size(); j++) {
-            ShadedPolyhedron &ith = sPolyhedrons[i];
-            ShadedPolyhedron &jth = sPolyhedrons[j];
-            int imin, jmin;
-            switch(view) {
-                case XY:
-                {
-                    std::vector<float> izs({ith.points[ith.polygons[0].v1].z, ith.points[ith.polygons[0].v2].z, ith.points[ith.polygons[0].v3].z});
-                    std::vector<float> jzs({jth.points[jth.polygons[0].v1].z, jth.points[jth.polygons[0].v2].z, jth.points[jth.polygons[0].v3].z});
-                    imin = *std::min_element(izs.begin(), izs.end());
-                    jmin = *std::min_element(jzs.begin(), jzs.end());
-                }
-                    break;
-                case YZ:
-                {
-                    std::vector<float> ixs({ith.points[ith.polygons[0].v1].x, ith.points[ith.polygons[0].v2].x, ith.points[ith.polygons[0].v3].x});
-                    std::vector<float> jxs({jth.points[jth.polygons[0].v1].x, jth.points[jth.polygons[0].v2].x, jth.points[jth.polygons[0].v3].x});
-                    imin = *std::min_element(ixs.begin(), ixs.end());
-                    jmin = *std::min_element(jxs.begin(), jxs.end());
-                }
-                    break;
-                default:
-                {
-                    std::vector<float> iys({ith.points[ith.polygons[0].v1].y, ith.points[ith.polygons[0].v2].y, ith.points[ith.polygons[0].v3].y});
-                    std::vector<float> jys({jth.points[jth.polygons[0].v1].y, jth.points[jth.polygons[0].v2].y, jth.points[jth.polygons[0].v3].y});
-                    imin = *std::min_element(iys.begin(), iys.end());
-                    jmin = *std::min_element(jys.begin(), jys.end());
-                }
-            }
-            if (imin > jmin)
-                std::swap(sPolyhedrons[i], sPolyhedrons[j]);
-
-
-        }
-    }
+    std::sort(sPolyhedrons.begin(), sPolyhedrons.end(), std::greater<ShadedPolyhedron>());
 }
