@@ -141,10 +141,10 @@ public:
 
         file << polygons.size() << std::endl;
 
-        for (auto poly: polygons) {
+        for (Polygon &poly: polygons) {
 
             file << std::endl << poly.size() << std::endl;
-            for (auto point: poly) {
+            for (Point &point: poly) {
                 file << point.xr << " " << point.yr << std::endl;
             }
         }
@@ -154,7 +154,7 @@ public:
     void info(int id) {
         std::cout << "    Showing info for polygon " << id << std::endl;
         std::cout << "      Number of vertices: " << polygons[id].size() << std::endl;
-        for (auto point: polygons[id]) {
+        for (Point &point: polygons[id]) {
             std::cout << "        (" << point.xr << "," << point.yr << ")" << std::endl;
         }
     }
@@ -171,11 +171,11 @@ public:
 
         for(int i = 0; i < polyhedrons.size(); i++) {
             file << polyhedrons[i].worldPoint.size() << std::endl;
-            for(auto p: polyhedrons[i].worldPoint) {
+            for(Point3D &p: polyhedrons[i].worldPoint) {
                 file<< p.x << " " << p.y << " " << p.z << std::endl;
             }
             file << polyhedrons[i].line.size() << std::endl;
-            for (auto pair: polyhedrons[i].line) {
+            for (Point::pair<unsigned int, unsigned int> &pair: polyhedrons[i].line) {
                 file << pair.first << " " << pair.second << std::endl;
             }
         }

@@ -139,7 +139,7 @@ void Draw::rasterize(Polygon &c) {
         // sort all the points
         std::sort(xs.begin(), xs.end());
 
-        auto current = xs.begin();
+        std::vector<int>::iterator current = xs.begin();
         bool on = false;
 
         for(int x_ = x_min; x_ <= x_max && current != xs.end() ; x_++) {
@@ -164,18 +164,6 @@ void Draw::rasterize(Polygon &c) {
 
                 } else {
                     MakePix(x_,y_);
-                }
-            }
-        }
-    }
-
-    if (Shader) {
-        for (auto &point: c) {
-            for(int i = -1; i < 2; i++) {
-                for (int j = -1; j < 2; j++) {
-                    if (point.xp + i < x && point.xp + i >= 0 && point.yp + j < y && point.yp + j >= 0) {
-                        MakePix(point.xp + i, point.yp + j, point.r, point.g, point.b);
-                    }
                 }
             }
         }

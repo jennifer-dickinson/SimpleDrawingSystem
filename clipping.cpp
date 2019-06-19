@@ -30,14 +30,14 @@ void Draw::CohenSutherland(Polygon &poly) {
      * Uses the CohenSutherland algorithm to determine if a polygon
      * needs to be clipped.
      */
-    
+
     // First locate each worldPoint.
     bool bounded = false;
-    for(auto &p: poly) {
+    for(Point &p: poly) {
         locate(p);
         if (p.region == 0) bounded = true;
     }
-    
+
     if (!bounded) poly.resize(0);
     // Now we do the algoirthm
     for (int j = 0; j < 2; j++)
@@ -59,29 +59,29 @@ void Draw::CohenSutherland(Polygon &poly) {
                         p2 =  new Point(ViewBox[x_min], yInter2);
                         locate(*p2);
                     }
-                    
+
                     if(p1) poly.insert(poly.begin()+p+1, *p1);
                     if(p2) poly.insert(poly.begin()+p+1, *p2);
 
                     poly.erase(poly.begin()+p);
 
                 } else if (OOBR & x_max) {
-                    
+
                     if ((poly[p+1].region & x_max) != x_max) {
                         float yInter1 = Yintersection(poly[p], poly[p+1], ViewBox[x_max]);
                         p1 = new Point(ViewBox[x_max], yInter1);
                         locate(*p1);
-                        
+
                     }
                     if ((poly[p-1].region & x_max) != x_max) {
                         float yInter2 = Yintersection(poly[p], poly[p-1], ViewBox[x_max]);
                         p2 =  new Point(ViewBox[x_max], yInter2);
                         locate(*p2);
                     }
-                    
+
                     if(p1) poly.insert(poly.begin()+p+1, *p1);
                     if(p2) poly.insert(poly.begin()+p+1, *p2);
-                    
+
                     poly.erase(poly.begin()+p);
 
                 } else if (OOBR & y_min) {
@@ -96,17 +96,17 @@ void Draw::CohenSutherland(Polygon &poly) {
                         locate(*p2);
 
                     }
-                    
+
                     if(p1) poly.insert(poly.begin()+p+1, *p1);
                     if(p2) poly.insert(poly.begin()+p+1, *p2);
-                    
+
                     poly.erase(poly.begin()+p);
                 } else if (OOBR & y_max) {
                     if ((poly[p+1].region & y_max) != y_max) {
                         float yInter1 = Xintersection(poly[p], poly[p+1], ViewBox[y_max]);
                         p1 =  new Point(yInter1, ViewBox[y_max]);
                         locate(*p1);
-                        
+
                     }
                     if ((poly[p-1].region & y_max) != y_max) {
                         float yInter2 = Xintersection(poly[p], poly[p-1], ViewBox[y_max]);
@@ -120,11 +120,7 @@ void Draw::CohenSutherland(Polygon &poly) {
                 }
             }
         }
-//        for(auto &p: poly) std::cout << "(" << p.xr << "," << p.yr << ")" << std::endl;
     }
-    
-//    std::cout << "Clipped polygon" << std::endl;
-//    for(auto &p: poly) std::cout << "(" << p.xr << "," << p.yr << ")" << std::endl;
 }
 
 void Draw::locate(Point &p) {
@@ -135,7 +131,7 @@ void Draw::locate(Point &p) {
      * The region binary value is of the format 0bABRL, where A is above,
      * B is below, R is right, and L is left of the viewbox.
      */
-    
+
     p.region = 0; // Reset the region
     if (p.xr < ViewBox[x_min]) {
         p.region ^= x_min;

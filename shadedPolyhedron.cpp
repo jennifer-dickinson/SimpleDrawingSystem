@@ -151,7 +151,6 @@ void ShadedPolyhedron::calculateNormals() {
             poly.normal.y / length,
             poly.normal.z / length
         );
-        // std::cout << "Normal is " << poly.normal << std::endl;
     }
 }
 
@@ -225,16 +224,9 @@ void Draw::draw(ShadedPolyhedron& p) {
     sortShadedPolyhedrons();
     for(int i = 0; i < p.polygons.size(); i++) {
         // rasterize the Polygon
-
-        Polygon temp = p.iToPoly(i,view);
+        Polygon temp = p.iToPoly(i,view); // get the 2 dimensional view of the polygon
         rasterize(temp);
-
-        //Draw the skeleton;
-        // draw(p.points[p.polygons[i].v1], p.points[p.polygons[i].v2]);
-        // draw(p.points[p.polygons[i].v2], p.points[p.polygons[i].v3]);
-        // draw(p.points[p.polygons[i].v3], p.points[p.polygons[i].v1]);
     }
-    std::cout << "Finished drawing polygon" << std::endl;
 }
 
 void Draw::sortShadedPolyhedrons() {

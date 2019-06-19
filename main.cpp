@@ -22,6 +22,7 @@
 #include "Draw.hpp"
 
 #include <iostream>
+#include <thread>
 
 void Menu(Draw &scene);
 void Menu3D(Draw &scene);
@@ -37,29 +38,37 @@ int y = 600;
 Draw scene(x,y, false);
 
 void display();
+void allmenu();
 int main(int argc, char *argv[]) {
     bool threeDimensional = false, shader = false;
     string file;
     for(int i = 0; i < argc; i++) std::cout << argv[i];
     std::cout << std::endl;
-    // if (argc == 2 && std::string("3d") != argv[1]) {
-    //     file = argv[1];
-    // }
-    // if (argc == 3 && std::string("3d") == argv[1]) {
-    //     file = argv[2];
-    //     std::cout << file << " 3d!" << std::endl;
-    //     tD = true;
-    // }
-    // else{
-        cout << "Please enter the type of rendering (2d or 3d (skeleton) or 3DS (shader)): ";
+    if (argc == 1) {
+        NEEDRENDERTYPE:
+        cout << "Please enter the type of rendering:\n" \
+            << "\t2d\tRender two dimensional polygons\n" \
+            << "\t3d\tRender skeletons of polyhedrons\n" \
+            << "\tshader\tRender polyhedrons with shading" \
+            << std::endl;
         cin >> file;
-        if (file == "3d") {
-            threeDimensional = true;
-            std::cout << "Rendering 3D skeletons" << std::endl;
+    }
+    else {
+        file = argv[1];
+    }
+        if (file == "2d") {
+            std::cout << "Rendering 2D polygons" << std::endl;
         }
-        else if (file == "3DS") {
+        else if (file == "3d") {
+            threeDimensional = true;
+            std::cout << "Rendering 3D polyhedron skeletons" << std::endl;
+        }
+        else if (file == "shader") {
             shader = true;
-            std::cout << "Rendering 3D Shaded Polyhedrons" << std::endl;
+            std::cout << "Rendering 3D shaded polyhedrons" << std::endl;        }
+        else {
+            std::cout << file << " is not a valid render type" <<std::endl;
+            goto NEEDRENDERTYPE;
         }
         cout << "Please enter a filename: ";
         cin >> file;
@@ -79,11 +88,27 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Simple Drawing System");
     glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
     //sets display function
+    std::thread console(allmenu);
     glutDisplayFunc(display);
-
     glutMainLoop();//main display loop, will display until terminate
 
     return 0;
+}
+
+void allmenu() {
+    while(true) {
+        if (firstTime) {
+            firstTime = false;
+        }
+        else if (scene.Shader) {
+            MenuShader(scene);
+        }
+        else if(scene.ThreeDimensional) {
+            Menu3D(scene);
+        } else {
+            Menu(scene);
+        }
+    }
 }
 
 //main display loop, this function will be called again and again by OpenGL
@@ -99,18 +124,6 @@ void display()
 
     //window refresh
     glFlush();
-
-    if (firstTime) {
-        firstTime = false;
-    }
-    else if (scene.Shader) {
-        MenuShader(scene);
-    }
-    else if(scene.ThreeDimensional) {
-        Menu3D(scene);
-    } else {
-        Menu(scene);
-    }
 
     glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
