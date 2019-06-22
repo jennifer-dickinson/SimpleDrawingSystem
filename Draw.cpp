@@ -152,16 +152,31 @@ void Draw::rasterize(Polygon &c) {
             if (on){
                 if (Shader){
 
-                    float d0 = 1 / distance(c[0].xp, x_, c[0].yp, y_);
-                    float d1 = 1 / distance(c[1].xp, x_, c[1].yp, y_);
-                    float d2 = 1 / distance(c[2].xp, x_, c[2].yp, y_);
-                    float tot = d0 + d1 + d2;
+                    float d0 = distance(c[0].xp, x_, c[0].yp, y_);
+                    float d1 = distance(c[1].xp, x_, c[1].yp, y_);
+                    float d2 = distance(c[2].xp, x_, c[2].yp, y_);
 
-                    float r = (c[0].r * d0 +  c[1].r * d1 +  c[2].r * d2) / tot;
-                    float g = (c[0].g * d0 +  c[1].g * d1 +  c[2].g * d2) / tot;
-                    float b = (c[0].b * d0 +  c[1].b * d1 +  c[2].b * d2) / tot;
-                    MakePix(x_,y_, r,g,b);
+                    // If distance to any vertex is 0, then it is the vertex
+                    if (d0 == 0) {
+                        MakePix(x_,y_, c[0].r, c[0].g, c[0].b);
+                    } else if (d1 == 0) {
+                        MakePix(x_,y_, c[1].r, c[1].g, c[1].b);
+                    } else if (d2 == 0) {
+                        MakePix(x_,y_, c[2].r, c[2].g, c[2].b);
+                    }
 
+                    // Otherwise, color it with the combination of the other vertices
+                    else {
+                        d0 = 1 / d0;
+                        d1 = 1 / d1;
+                        d2 = 1 / d2;
+                        float tot = d0 + d1 + d2;
+
+                        float r = (c[0].r * d0 +  c[1].r * d1 +  c[2].r * d2) / tot;
+                        float g = (c[0].g * d0 +  c[1].g * d1 +  c[2].g * d2) / tot;
+                        float b = (c[0].b * d0 +  c[1].b * d1 +  c[2].b * d2) / tot;
+                        MakePix(x_, y_, r, g, b);
+                    }
                 } else {
                     MakePix(x_,y_);
                 }
