@@ -221,16 +221,6 @@ void Draw::initializePolyhedrons(std::string filename) {
     // Normalize the viewbox
     normalize();
 
-//    for (Polyhedron &poly: polyhedrons) {
-//
-//        for (Point3D &p: poly.worldPoint) std::cout << p << std::endl;
-//        for (Line &l: poly.line) std::cout << "Line: " << l.first << " " << l.second << std::endl;
-//    }
-//
-//    std::cout << ViewBox[x_min] << " " << ViewBox[x_max] <<std::endl;
-//    std::cout << ViewBox[y_min] << " " << ViewBox[y_max] <<std::endl;
-//    std::cout << ViewBox[z_min] << " " << ViewBox[z_max] <<std::endl;
-
 }
 
 void Draw::oblique(Point3D a, Point3D b) {

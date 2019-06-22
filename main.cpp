@@ -47,9 +47,9 @@ int main(int argc, char *argv[]) {
     if (argc == 1) {
         NEEDRENDERTYPE:
         cout << "Please enter the type of rendering:\n" \
-            << "\t2d\tRender two dimensional polygons\n" \
-            << "\t3d\tRender skeletons of polyhedrons\n" \
-            << "\tshader\tRender polyhedrons with shading" \
+            << "\t2d"       << "\tRender two dimensional polygons\n" \
+            << "\t3d"       << "\tRender skeletons of polyhedrons\n" \
+            << "\tshader"   << "\tRender polyhedrons with shading" \
             << std::endl;
         cin >> file;
     }

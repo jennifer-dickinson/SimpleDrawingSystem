@@ -11,15 +11,15 @@
 
 // enum View;
 
-struct SPolygon {
+struct Triangle {
     int v1, v2, v3; // Vertex 1, vertex 2 vertex 3
     Point3D normal; // For the normal vector;
-    SPolygon(int v1_, int v2_, int v3_): v1(v1_), v2(v2_), v3(v3_), normal(0,0,0), center(0) {}
+    Triangle(int v1_, int v2_, int v3_): v1(v1_), v2(v2_), v3(v3_), normal(0,0,0), center(0) {}
     float center;
-    friend bool operator<(const SPolygon&  cmp, const SPolygon& cmp2) {
+    friend bool operator<(const Triangle&  cmp, const Triangle& cmp2) {
         return cmp.center < cmp2.center;
     }
-    friend bool operator>(const SPolygon&  cmp, const SPolygon& cmp2) {
+    friend bool operator>(const Triangle&  cmp, const Triangle& cmp2) {
         return cmp.center > cmp2.center;
     }
 };
@@ -29,7 +29,7 @@ class ShadedPolyhedron{
 public:
 
     std::vector<Point3D> points;
-    std::vector<SPolygon> polygons;
+    std::vector<Triangle> polygons;
     Point3D center;
     float viewCenter;
 

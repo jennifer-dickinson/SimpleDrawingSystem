@@ -65,7 +65,7 @@ void Draw::initializeShapes(std::string filename) {
             int v1, v2, v3;
             t >> v1 >> v2 >> v3;
 
-            temp.polygons.push_back(SPolygon(v1, v2, v3));
+            temp.polygons.push_back(Triangle(v1, v2, v3));
             std::cout << "   Making a polygon from points ";
             std::cout << temp.points[v1] << " ";
             std::cout << temp.points[v2] << " ";
@@ -129,7 +129,7 @@ void ShadedPolyhedron::calculateNormals() {
         Find the normals of each face of the polyhedron;
     */
     // calculateCenter();
-    for (SPolygon &poly: polygons) {
+    for (Triangle &poly: polygons) {
         Point3D a(
             points[poly.v2].x - points[poly.v1].x,
             points[poly.v2].y - points[poly.v1].y,
@@ -156,7 +156,7 @@ void ShadedPolyhedron::calculateNormals() {
 
 void ShadedPolyhedron::sortPolygons(View proj) {
     // Part of painters algorithm. Sorts the polygons within a polyhedron.
-    std::vector<SPolygon> sortedPolys;
+    std::vector<Triangle> sortedPolys;
     for(auto &poly: polygons) {
         // Get the center of the polygon in terms of the view projection.
         switch(proj) {
@@ -171,7 +171,7 @@ void ShadedPolyhedron::sortPolygons(View proj) {
         }
         sortedPolys.push_back(poly);
     }
-    std::sort(sortedPolys.begin(), sortedPolys.end(), std::greater<SPolygon>());
+    std::sort(sortedPolys.begin(), sortedPolys.end(), std::greater<Triangle>());
     polygons = sortedPolys;
 }
 
