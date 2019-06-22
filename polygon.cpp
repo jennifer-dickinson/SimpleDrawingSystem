@@ -89,7 +89,7 @@ void Polygon::addVertex(Point p) {
 }
 
 std::ostream &operator<< (std::ostream& os, const Point& p) {
-    os << "(" << p.x << "," << p.y << ")";
+    os << "(" << p.xr << "," << p.yr << ")";
     return os;
 }
 

@@ -114,7 +114,7 @@ void allmenu() {
 //main display loop, this function will be called again and again by OpenGL
 void display()
 {
-
+    // allmenu();
     //Misc.
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();

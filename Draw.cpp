@@ -156,7 +156,10 @@ void Draw::rasterize(Polygon &c) {
                     float d1 = distance(c[1].xp, x_, c[1].yp, y_);
                     float d2 = distance(c[2].xp, x_, c[2].yp, y_);
 
-                    // If distance to any vertex is 0, then it is the vertex
+                    /*
+                        If the distance of the pixel to a particular vertex is
+                        0, then color the pixel that vertex's color.
+                    */
                     if (d0 == 0) {
                         MakePix(x_,y_, c[0].r, c[0].g, c[0].b);
                     } else if (d1 == 0) {
@@ -165,7 +168,10 @@ void Draw::rasterize(Polygon &c) {
                         MakePix(x_,y_, c[2].r, c[2].g, c[2].b);
                     }
 
-                    // Otherwise, color it with the combination of the other vertices
+                    /*
+                        Otherwise, color the pixel with a color combination of
+                        the three vertices dependent on distance.
+                    */
                     else {
                         d0 = 1 / d0;
                         d1 = 1 / d1;
