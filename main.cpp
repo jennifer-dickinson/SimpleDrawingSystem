@@ -341,11 +341,12 @@ void MenuShader(Draw &scene) {
     std::string input;
 
     cout <<  endl << "Enter action (type help for available commands): " << flush;
-    cin >> input;
+    getline(cin, input);
+    std::vector<std::string> args(split(input));
     int id = 0;
     float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
-    if (input == "help") {
+    if (args.size() == 1 && args[0] == "help") {
         cout << "    COMMAND     PARAMETERS" << endl;
         cout << "    --------------------------------------------------" << endl;
         // cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<endl;
@@ -355,42 +356,25 @@ void MenuShader(Draw &scene) {
         cout << "    info        <POLYHEDRON ID>" << endl;
         // cout << "    save        <FILENAME>" << endl;
         cout << "    exit" << endl;
-    // } else if (input == "scale") {
-    //     cin >> id >> x_m;
-    //     scene.polyhedrons[id].scale(x_m);
-    // } else if (input == "translate") {
-    //     cin >> id >> x_m >> y_m >> z_m;
-    //     scene.polyhedrons[id].translate({x_m, y_m, z_m});
-    // } else if (input == "rotate") {
-    //     cin >> id >> degree >> x_m >> y_m >> z_m >> x_m2 >> y_m2 >> z_m2;
-    //     scene.polyhedrons[id].rotate(degree, {x_m, y_m, z_m}, {x_m2, y_m2, z_m2});
 
-    } else if (input == "view") {
-        cin >> input;
-        if (input == "XY" || input == "xy") {
+    } else if (args.size() == 2 && args[0] == "view") {
+        if (args[1] == "XY" || args[1] == "xy") {
             scene.viewXY();
         }
-        else if (input == "XZ" || input == "xz") {
+        else if (args[1] == "XZ" || args[1] == "xz") {
             scene.undoOblique();
             scene.viewXZ();
         }
-        else if (input == "YZ" || input == "yz") {
+        else if (args[1] == "YZ" || args[1] == "yz") {
             scene.viewYZ();
-        } else cout << input << " is an invalid projection." << endl;
+        } else cout << args[1] << " is an invalid projection." << endl;
 
-    // } else if (input == "save") {
-    //     cin >> input;
-    //     scene.savePolyhedrons(input);
-
-    // } else if (input == "info") {
-
-    } else if (input == "exit") {
+    } else if (args.size() == 1 && args[0] == "exit") {
         cout << "Program is now exiting." << endl;
         exit(0);
     }
     else {
         cout << "That is not a valid action." << endl;
-        getline(cin, input); // Used to flush out the rest of the commands
     }
     // scene.normalize();
 }
