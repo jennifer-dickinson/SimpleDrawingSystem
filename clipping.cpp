@@ -52,38 +52,26 @@ void Draw::CohenSutherland(Polygon &poly) {
                 Point *p1 = NULL, *p2 = NULL;
                 float inter1 = 0, inter2 = 0;
 
-                if (OOBR & x_min || OOBR & x_max) {
-                    if (poly[p+1].region & OOBR); // check if the next piont is out of bounds in the same region
-                    else {
+                if (!(poly[p+1].region & OOBR)) {
+                    if (OOBR & x_min || OOBR & x_max) {
                         inter1 = intersection(poly[p], poly[p+1], ViewBox[OOBR]);
                         p1 =  new Point(ViewBox[OOBR], inter1);
-                    }
-                    if(poly[p-1].region & OOBR); // check if the previous piont is out of bounds in the same region
-                    else {
-                        inter2 = intersection(poly[p], poly[p-1], ViewBox[OOBR]);
-                        p2 =  new Point(ViewBox[OOBR], inter2);
-                    }
-                }
-
-                else if (OOBR & y_min || OOBR & y_max) {
-                    if (poly[p+1].region & OOBR); // check if the next piont is out of bounds in the same region
-                    else {
+                    } else {
                         inter1 = intersection(poly[p].T(), poly[p+1].T(), ViewBox[OOBR]);
                         p1 =  new Point(inter1, ViewBox[OOBR]);
                     }
-                    if(poly[p-1].region & OOBR); // check if the previous piont is out of bounds in the same region
-                    else {
-                        inter2 = intersection(poly[p].T(), poly[p-1].T(), ViewBox[OOBR]);
-                        p2 =  new Point(inter2, ViewBox[OOBR]);
-                    }
-                }
-
-                if (p1) {
                     locate(*p1);
                     poly.insert(poly.begin()+p+1, *p1);
                 }
 
-                if (p2) {
+                if (!(poly[p-1].region & OOBR)) {
+                    if (OOBR & x_min || OOBR & x_max) {
+                        inter2 = intersection(poly[p], poly[p-1], ViewBox[OOBR]);
+                        p2 =  new Point(ViewBox[OOBR], inter2);
+                    } else {
+                        inter2 = intersection(poly[p].T(), poly[p-1].T(), ViewBox[OOBR]);
+                        p2 =  new Point(inter2, ViewBox[OOBR]);
+                    }
                     locate(*p2);
                     poly.insert(poly.begin()+p+1, *p2);
                 }
