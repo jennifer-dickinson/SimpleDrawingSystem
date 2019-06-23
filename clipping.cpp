@@ -19,7 +19,7 @@ float intersection (const Point &start, const Point &end, const float &xLine) {
 
 void Draw::CohenSutherland(Polygon &poly) {
     /*
-     * Uses the CohenSutherland algorithm to determine if a polygon
+     * Uses the Cohen Sutherland algorithm to determine if a polygon
      * needs to be clipped.
      */
 
@@ -41,6 +41,7 @@ void Draw::CohenSutherland(Polygon &poly) {
     // Now we do the algoirthm
     for (int j = 0; j < 2; j++)
     for (int i = 0; i < 4; i++) {
+        // Check for each boundary x_min, y_max, x_max, y_min
         char OOBR = 1 << i; // OOBR = Out Of Bounds Region
         for (int p = 0; p < poly.size(); p++) {
 
@@ -51,6 +52,21 @@ void Draw::CohenSutherland(Polygon &poly) {
 
                 Point *p1 = NULL, *p2 = NULL;
                 float inter1 = 0, inter2 = 0;
+
+                /*
+                    Logic:
+                        1. Check if the next reference vertex is also out of
+                        bounds in the same region. If it is, skip calculating
+                        for it, and move on to step 4.
+                        2. Calculate the intersection of the boundry line with
+                        the line of the current vertex and the reference vertex.
+                        3. Insert the intersecting point after the current
+                        vertex.
+                        4. Repeat steps 1-3 for the previous reference vertex.
+                        5. Delete the current vertex once the above is completed
+                        for both the previous reference vertex and the next
+                        reference vertex.
+                */
 
                 if (!(poly[p+1].region & OOBR)) {
                     if (OOBR & x_min || OOBR & x_max) {
