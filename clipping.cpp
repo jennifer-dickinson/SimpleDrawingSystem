@@ -80,13 +80,11 @@ void Draw::CohenSutherland(Polygon &poly) {
 
                 if (p1) {
                     locate(*p1);
-                    assert((p1->region & OOBR) != OOBR);
                     poly.insert(poly.begin()+p+1, *p1);
                 }
 
                 if (p2) {
                     locate(*p2);
-                    assert((p2->region & OOBR )!= OOBR);
                     poly.insert(poly.begin()+p+1, *p2);
                 }
 
@@ -94,11 +92,6 @@ void Draw::CohenSutherland(Polygon &poly) {
 
             }
         }
-    }
-
-    for(Point &p: poly) {
-        locate(p);
-        assert(p.region == 0);
     }
 }
 

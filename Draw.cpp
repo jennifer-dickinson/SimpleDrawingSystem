@@ -54,14 +54,6 @@ void Draw::MakePix (const int &_x, const int &_y, float r, float g, float b) {
     /*
      * Basic method of drawing a pixel on the screen. 3 sequential floats represent RGB values.
      */
-    if (_x < 0 || _x > (x -1)) {
-        printf("X index is out of bounds at (%d, %d) in grid (%d, %d)", _x, _y, 0, x);
-        exit(0);
-    }
-    if (_y < 0 || _y > (y-1)) {
-        printf("Y index is out of bounds at (%d, %d) in grid (%d, %d)", _x, _y, 0, y);
-        exit(0);
-    }
     PixelBuffer[3 * ( _x + _y * x) ] = r;
     PixelBuffer[3 * ( _x + _y * x) + 1] = g;
     PixelBuffer[3 * ( _x + _y * x) + 2] = b;
