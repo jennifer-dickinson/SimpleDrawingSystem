@@ -151,9 +151,10 @@ public:
     }
 
     void info(int id) {
-        std::cout << "    Showing info for polygon " << id << std::endl;
-        std::cout << "      Number of vertices: " << polygons[id].size() << std::endl;
-        for (Point &point: polygons[id]) {
+        int id_ = id % polygons.size();
+        std::cout << "    Showing info for polygon " << id_ << std::endl;
+        std::cout << "      Number of vertices: " << polygons[id_].size() << std::endl;
+        for (Point &point: polygons[id_]) {
             std::cout << "        (" << point.xr << "," << point.yr << ")" << std::endl;
         }
     }

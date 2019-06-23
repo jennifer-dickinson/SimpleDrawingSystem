@@ -53,8 +53,6 @@ void Draw::CohenSutherland(Polygon &poly) {
             }
         }
     }
-
-    assert(poly.size() <= 6);
 }
 
 void Draw::ClippingPointAddOn(Polygon &poly, const int &p, const int &pnext, char OOBR) {

@@ -23,8 +23,9 @@
 
 #include <iostream>
 #include <thread>
+#include <cstdlib>
 
-void Menu(Draw &scene);
+void Menu2D(Draw &scene);
 void Menu3D(Draw &scene);
 void MenuShader(Draw &scene);
 
@@ -42,36 +43,36 @@ void allmenu();
 int main(int argc, char *argv[]) {
     bool threeDimensional = false, shader = false;
     string file;
-    for(int i = 0; i < argc; i++) std::cout << argv[i];
-    std::cout << std::endl;
+    for(int i = 0; i < argc; i++) cout << argv[i];
+    cout << endl;
     if (argc == 1) {
         NEEDRENDERTYPE:
         cout << "Please enter the type of rendering:\n" \
             << "\t2d"       << "\tRender two dimensional polygons\n" \
             << "\t3d"       << "\tRender skeletons of polyhedrons\n" \
-            << "\tshader"   << "\tRender polyhedrons with shading" \
-            << std::endl;
-        cin >> file;
+            << "\tshader"   << "\tRender polyhedrons with shading\n" \
+            << "> ";
+        getline(cin, file);
     }
     else {
         file = argv[1];
     }
         if (file == "2d") {
-            std::cout << "Rendering 2D polygons" << std::endl;
+            cout << "Rendering 2D polygons" << endl;
         }
         else if (file == "3d") {
             threeDimensional = true;
-            std::cout << "Rendering 3D polyhedron skeletons" << std::endl;
+            cout << "Rendering 3D polyhedron skeletons" << endl;
         }
         else if (file == "shader") {
             shader = true;
-            std::cout << "Rendering 3D shaded polyhedrons" << std::endl;        }
+            cout << "Rendering 3D shaded polyhedrons" << endl;        }
         else {
-            std::cout << file << " is not a valid render type" <<std::endl;
+            cout << file << " is not a valid render type" <<endl;
             goto NEEDRENDERTYPE;
         }
-        cout << "Please enter a filename: ";
-        cin >> file;
+        cout << "Please enter a filename: \n> ";
+        getline(cin, file);
     // }
 
     scene.initialize(file, threeDimensional, shader);
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Simple Drawing System");
     glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
     //sets display function
-    std::thread console(allmenu);
+    thread console(allmenu);
     glutDisplayFunc(display);
     glutMainLoop();//main display loop, will display until terminate
 
@@ -106,7 +107,7 @@ void allmenu() {
         else if(scene.ThreeDimensional) {
             Menu3D(scene);
         } else {
-            Menu(scene);
+            Menu2D(scene);
         }
     }
 }
@@ -134,24 +135,38 @@ void display()
 
 }
 
+// 1 2 3 4 5
+
+vector<string> split(string input, char delim = ' ') {
+    vector<string> substrs;
+    for(int i = 0; i < input.size(); i++) {
+        while(i < input.size() && input[i] == delim) i++;
+        int j = i;
+        while(j < input.size() && input[j] != delim) j++;
+        substrs.push_back(input.substr(i,j - i));
+        i = j;
+    }
+    return substrs;
+}
+
 void Menu3D(Draw &scene) {
     string input;
 
-    cout <<  std::endl << "Enter action (type help for available commands): " << flush;
+    cout <<  endl << "Enter action (type help for available commands): " << flush;
     cin >> input;
     int id = 0;
     float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
     if (input == "help") {
-        std::cout << "    COMMAND     PARAMETERS" << std::endl;
-        std::cout << "    --------------------------------------------------" << std::endl;
-        std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<std::endl;
-        std::cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" << std:: endl;
-        std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
-        std::cout << "    view        <XY | XZ | YZ | CAVALIER | CABINET>" << std::endl;
-        // std::cout << "    info        <POLYHEDRON ID>" << std::endl;
-        std::cout << "    save        <FILENAME>" << std::endl;
-        std::cout << "    exit" << std::endl;
+        cout << "    COMMAND     PARAMETERS" << endl;
+        cout << "    --------------------------------------------------" << endl;
+        cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<endl;
+        cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" <<  endl;
+        cout << "    scale       <POLYGON ID> <FACTOR>" <<endl;
+        cout << "    view        <XY | XZ | YZ | CAVALIER | CABINET>" << endl;
+        // cout << "    info        <POLYHEDRON ID>" << endl;
+        cout << "    save        <FILENAME>" << endl;
+        cout << "    exit" << endl;
     } else if (input == "scale") {
         cin >> id >> x_m;
         scene.undoOblique();
@@ -187,7 +202,7 @@ void Menu3D(Draw &scene) {
             scene.undoOblique();
             scene.viewCabinet();
         }
-        else std::cout << input << " is an invalid projection." << std::endl;
+        else cout << input << " is an invalid projection." << endl;
 
     } else if (input == "save") {
         cin >> input;
@@ -196,96 +211,123 @@ void Menu3D(Draw &scene) {
     } else if (input == "info") {
 
     } else if (input == "exit") {
-        std::cout << "Program is now exiting." << std::endl;
+        cout << "Program is now exiting." << endl;
         exit(0);
     }
     else {
-        cout << "That is not a valid action." << std::endl;
-        std::getline(std::cin, input); // Used to flush out the rest of the commands
+        cout << "That is not a valid action." << endl;
+        getline(cin, input); // Used to flush out the rest of the commands
     }
     scene.normalize();
 }
 
-void Menu(Draw &scene) {
+void Menu2D(Draw &scene) {
     string input;
 
-    cout <<  std::endl << "Enter action (type help for available commands): " << flush;
-    cin >> input;
+    cout <<  endl << "Enter action (type help for available commands): " << flush;
+    getline(cin, input);
+    vector<string> args(split(input));
     int id = 0;
     float x_m, y_m;
 
-    if (input == "help") {
-        std::cout << "    COMMAND     PARAMETERS" << std::endl;
-        std::cout << "    --------------------------------------------------" << std::endl;
-        std::cout << "    algorithm   <bresenham | dda>" << std::endl;
-        std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<std::endl;
-        std::cout << "    rotate      <POLYGON ID> <DEGREES>" << std:: endl;
-        std::cout << "    scale       <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<std::endl;
-        std::cout << "    viewport    <X LOWER> <X UPPER> <Y LOWER> <Y UPPER>" << std::endl;
-        std::cout << "    info        <POLYGON ID>" << std::endl;
-        std::cout << "    save        <FILENAME>" << std::endl;
-        std::cout << "    exit" << std::endl;
+    if (args.size() >= 1 && args[0] == "help") {
+        cout << "    COMMAND     PARAMETERS" << endl;
+        cout << "    --------------------------------------------------" << endl;
+        cout << "    algorithm   <bresenham | dda>" << endl;
+        cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<endl;
+        cout << "    rotate      <POLYGON ID> <DEGREES>" <<  endl;
+        cout << "    scale       <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<endl;
+        cout << "    viewport    <X LOWER> <X UPPER> <Y LOWER> <Y UPPER>" << endl;
+        cout << "    info        <POLYGON ID>" << endl;
+        cout << "    save        <FILENAME>" << endl;
+        cout << "    exit" << endl;
 
     }
-    else if (input == "algorithm") {
-        cin >> input;
-        if (input == "bresenham") scene.bresenhamAlgo = true;
-        else if (input == "dda") scene.bresenhamAlgo = false;
+    else if (args.size() == 2 && args[0] == "algorithm") {
+        if (args[1] == "bresenham") scene.bresenhamAlgo = true;
+        else if (args[1] == "dda") scene.bresenhamAlgo = false;
         else {
-            std::cout << "That is not a valid algorithm" << std::endl;
+            cout << "That is not a valid algorithm" << endl;
+            return;
         }
+        cout << "Line rendering algoirthm set to " << args[1] << endl;
     }
-    else if (input == "scale") {
-        cin >> id >> x_m >> y_m;
-        scene[id].scale(x_m, y_m);
-    } else if (input == "translate") {
-        cin >> id >>  x_m >> y_m;
-        scene[id].translate(x_m, y_m);
-    } else if (input == "rotate") {
-        cin >> id >>  x_m;
-        scene[id].rotate(x_m);
-    } else if (input == "viewport") {
-
-    } else if (input == "save") {
-        cin >> input;
-        scene.save(input);
-    } else if (input == "info") {
-        cin >> id;
+    else if (args.size() == 4 && args[0] == "scale") {
+        try {
+            id = stoi(args[1]);
+            x_m = stof(args[2]);
+            y_m= stof(args[3]);
+            scene[id].scale(x_m, y_m);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for scale." << endl;
+            return;
+        }
+    } else if (args.size() == 4 && args[0] == "translate") {
+        try{
+            id = stoi(args[1]);
+            x_m = stof(args[2]);
+            y_m= stof(args[3]);
+            scene[id].translate(x_m, y_m);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for translate." << endl;
+            return;
+        }
+    } else if (args.size() == 3 && args[0] == "rotate") {
+        try {
+            id = stoi(args[1]);
+            x_m = stof(args[2]);
+            scene[id].rotate(x_m);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for rotate" << endl;
+            return;
+        }
+    // } else if (args.size() == 1 && args[0] == "viewport") {
+    } else if (args.size() >= 2 && args[0] == "save") {
+        scene.save(args[1]);
+        cout << "Modified polygons saved to file " << args[1] << endl;
+    } else if (args.size() == 2 && args[0] == "info") {
+        try {
+            id = stoi(args[1]);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for info" << endl;
+            return;
+        }
         scene.info(id);
-    } else if (input == "exit") {
-        std::cout << "Program is now exiting." << std::endl;
+    } else if (args.size() == 1 && args[0] == "exit") {
+        cout << "Program is now exiting." << endl;
         exit(0);
-    } else if (input == "rasterize") {
-        cin >> input;
-        if (input == "true" || input == "t")scene.raster = true;
-        else if (input == "false" || input == "f")scene.raster = false;
-        else scene.raster = !scene.raster;
-        std::cout << "Rasterize set to " << (scene.raster? "true": "false") << std::endl;
+    } else if (args.size() == 2 && args[0] == "rasterize") {
+        if (args[1] == "true" || args[1] == "t") scene.raster = true;
+        else if (args[1] == "false" || args[1] == "f") scene.raster = false;
+        else { cout << "Invalid arguments for rasterize" << endl; return;}
+        cout << "Rasterize set to " << (scene.raster? "true": "false") << endl;
+    } else if (args.size() == 1 && args[0] == "rasterize") {
+        scene.raster = !scene.raster;
+        cout << "Rasterize switched to " << (scene.raster? "true": "false") << endl;
     }
     else {
-        cout << "That is not a valid action." << std::endl;
-        std::getline(std::cin, input); // Used to flush out the rest of the commands
+        cout << "That is not a valid action." << endl;
     }
 }
 
 void MenuShader(Draw &scene) {
     string input;
 
-    cout <<  std::endl << "Enter action (type help for available commands): " << flush;
+    cout <<  endl << "Enter action (type help for available commands): " << flush;
     cin >> input;
     int id = 0;
     float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
     if (input == "help") {
-        std::cout << "    COMMAND     PARAMETERS" << std::endl;
-        std::cout << "    --------------------------------------------------" << std::endl;
-        // std::cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<std::endl;
-        // std::cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" << std:: endl;
-        // std::cout << "    scale       <POLYGON ID> <FACTOR>" <<std::endl;
-        std::cout << "    view        <XY | XZ | YZ >" << std::endl;
-        std::cout << "    info        <POLYHEDRON ID>" << std::endl;
-        // std::cout << "    save        <FILENAME>" << std::endl;
-        std::cout << "    exit" << std::endl;
+        cout << "    COMMAND     PARAMETERS" << endl;
+        cout << "    --------------------------------------------------" << endl;
+        // cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<endl;
+        // cout << "    rotate      <POLYGON ID> <DEGREES> <P1 X> <P1 Y> <P1 Z> <P2 X> <P2 Y> <P2 Z>" <<  endl;
+        // cout << "    scale       <POLYGON ID> <FACTOR>" <<endl;
+        cout << "    view        <XY | XZ | YZ >" << endl;
+        cout << "    info        <POLYHEDRON ID>" << endl;
+        // cout << "    save        <FILENAME>" << endl;
+        cout << "    exit" << endl;
     // } else if (input == "scale") {
     //     cin >> id >> x_m;
     //     scene.polyhedrons[id].scale(x_m);
@@ -307,7 +349,7 @@ void MenuShader(Draw &scene) {
         }
         else if (input == "YZ" || input == "yz") {
             scene.viewYZ();
-        } else std::cout << input << " is an invalid projection." << std::endl;
+        } else cout << input << " is an invalid projection." << endl;
 
     // } else if (input == "save") {
     //     cin >> input;
@@ -316,12 +358,12 @@ void MenuShader(Draw &scene) {
     // } else if (input == "info") {
 
     } else if (input == "exit") {
-        std::cout << "Program is now exiting." << std::endl;
+        cout << "Program is now exiting." << endl;
         exit(0);
     }
     else {
-        cout << "That is not a valid action." << std::endl;
-        std::getline(std::cin, input); // Used to flush out the rest of the commands
+        cout << "That is not a valid action." << endl;
+        getline(cin, input); // Used to flush out the rest of the commands
     }
     // scene.normalize();
 }
