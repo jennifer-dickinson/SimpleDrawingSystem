@@ -28,6 +28,7 @@
 void Menu2D(Draw &scene);
 void Menu3D(Draw &scene);
 void MenuShader(Draw &scene);
+std::vector<std::string> split(std::string input, char delim = ' ');
 
 using namespace std;
 bool firstTime = true;
@@ -42,7 +43,7 @@ void display();
 void allmenu();
 int main(int argc, char *argv[]) {
     bool threeDimensional = false, shader = false;
-    string file;
+    std::string file;
     for(int i = 0; i < argc; i++) cout << argv[i];
     cout << endl;
     if (argc == 1) {
@@ -137,8 +138,8 @@ void display()
 
 // 1 2 3 4 5
 
-vector<string> split(string input, char delim = ' ') {
-    vector<string> substrs;
+std::vector<std::string> split(std::string input, char delim) {
+    std::vector<std::string> substrs;
     for(int i = 0; i < input.size(); i++) {
         while(i < input.size() && input[i] == delim) i++;
         int j = i;
@@ -150,14 +151,16 @@ vector<string> split(string input, char delim = ' ') {
 }
 
 void Menu3D(Draw &scene) {
-    string input;
+    std::string input;
 
     cout <<  endl << "Enter action (type help for available commands): " << flush;
-    cin >> input;
+    getline(cin, input);
+    std::vector<std::string> args(split(input));
+
     int id = 0;
     float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
-    if (input == "help") {
+    if (args.size() == 1 && args[0] == "help") {
         cout << "    COMMAND     PARAMETERS" << endl;
         cout << "    --------------------------------------------------" << endl;
         cout << "    translate   <POLYGON ID> <X MODIFIER> <Y MODIFER> <Z Modifier>" <<endl;
@@ -167,66 +170,90 @@ void Menu3D(Draw &scene) {
         // cout << "    info        <POLYHEDRON ID>" << endl;
         cout << "    save        <FILENAME>" << endl;
         cout << "    exit" << endl;
-    } else if (input == "scale") {
-        cin >> id >> x_m;
+    } else if (args.size() == 3 && args[0] == "scale") {
+        try {
+            id = stoi(args[1]);
+            x_m = stof(args[2]);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for scale." << endl;
+            return;
+        }
         scene.undoOblique();
         scene.polyhedrons[id].scale(x_m);
-    } else if (input == "translate") {
-        cin >> id >> x_m >> y_m >> z_m;
+    } else if (args.size() == 5 && args[0] == "translate") {
+        try {
+            id = stoi(args[1]);
+            x_m = stof(args[2]);
+            y_m= stof(args[3]);
+            z_m = stof(args[4]);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for translate." << endl;
+            return;
+        }
         scene.undoOblique();
         scene.polyhedrons[id].translate(Point3D(x_m, y_m, z_m));
-    } else if (input == "rotate") {
-        cin >> id >> degree >> x_m >> y_m >> z_m >> x_m2 >> y_m2 >> z_m2;
+    } else if (args.size() == 9 && args[0] == "rotate") {
+        try {
+            id = stoi(args[1]);
+            degree = stof(args[2]);
+            x_m = stof(args[3]);
+            y_m = stof(args[4]);
+            z_m = stof(args[5]);
+            x_m2 = stof(args[6]);
+            y_m2 = stof(args[7]);
+            z_m2 = stof(args[8]);
+        } catch (const invalid_argument &e) {
+            cout << "Invalid arguments for rotate." << endl;
+            return;
+        }
         scene.undoOblique();
         scene.polyhedrons[id].rotate(degree, Point3D(x_m, y_m, z_m), Point3D(x_m2, y_m2, z_m2));
 
-    } else if (input == "view") {
-        cin >> input;
-        if (input == "XY" || input == "xy") {
+    } else if (args.size() == 2 && args[0] == "view") {
+        if (args[1] == "XY" || args[1] == "xy") {
             scene.undoOblique();
             scene.viewXY();
         }
-        else if (input == "XZ" || input == "xz") {
+        else if (args[1] == "XZ" || args[1] == "xz") {
             scene.undoOblique();
             scene.viewXZ();
         }
-        else if (input == "YZ" || input == "yz") {
+        else if (args[1] == "YZ" || args[1] == "yz") {
             scene.undoOblique();
             scene.viewYZ();
         }
-        else if (input == "CAVALIER" || input == "cavalier")  {
+        else if (args[1] == "CAVALIER" || args[1] == "cavalier")  {
             scene.undoOblique();
             scene.viewCavalier();
         }
-        else if (input == "CABINET" || input == "cabinet") {
+        else if (args[1] == "CABINET" || args[1] == "cabinet") {
             scene.undoOblique();
             scene.viewCabinet();
         }
-        else cout << input << " is an invalid projection." << endl;
+        else cout << args[1] << " is an invalid projection." << endl;
 
-    } else if (input == "save") {
-        cin >> input;
-        scene.save3D(input);
+    } else if (args.size() == 2 && args[0] == "save") {
+        scene.save3D(args[1]);
 
-    } else if (input == "info") {
+    } else if (args.size() == 1 && args[0] == "info") {
 
-    } else if (input == "exit") {
+    } else if (args.size() == 1 && args[0] == "exit") {
         cout << "Program is now exiting." << endl;
         exit(0);
     }
     else {
         cout << "That is not a valid action." << endl;
-        getline(cin, input); // Used to flush out the rest of the commands
+        return;
     }
     scene.normalize();
 }
 
 void Menu2D(Draw &scene) {
-    string input;
+    std::string input;
 
     cout <<  endl << "Enter action (type help for available commands): " << flush;
     getline(cin, input);
-    vector<string> args(split(input));
+    std::vector<std::string> args(split(input));
     int id = 0;
     float x_m, y_m;
 
@@ -311,7 +338,7 @@ void Menu2D(Draw &scene) {
 }
 
 void MenuShader(Draw &scene) {
-    string input;
+    std::string input;
 
     cout <<  endl << "Enter action (type help for available commands): " << flush;
     cin >> input;
