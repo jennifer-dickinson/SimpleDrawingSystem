@@ -46,56 +46,40 @@ void Draw::CohenSutherland(Polygon &poly) {
         for (int p = 0; p < poly.size(); p++) {
 
             if (poly[p].region & OOBR) {
-                /*
-                    Point is out of bounds, calculate intersections at boundaries
-                */
-
-                Point *p1 = NULL, *p2 = NULL;
-                float inter1 = 0, inter2 = 0;
-
-                /*
-                    Logic:
-                        1. Check if the next reference vertex is also out of
-                        bounds in the same region. If it is, skip calculating
-                        for it, and move on to step 4.
-                        2. Calculate the intersection of the boundry line with
-                        the line of the current vertex and the reference vertex.
-                        3. Insert the intersecting point after the current
-                        vertex.
-                        4. Repeat steps 1-3 for the previous reference vertex.
-                        5. Delete the current vertex once the above is completed
-                        for both the previous reference vertex and the next
-                        reference vertex.
-                */
-
-                if (!(poly[p+1].region & OOBR)) {
-                    if (OOBR & x_min || OOBR & x_max) {
-                        inter1 = intersection(poly[p], poly[p+1], ViewBox[OOBR]);
-                        p1 =  new Point(ViewBox[OOBR], inter1);
-                    } else {
-                        inter1 = intersection(poly[p].T(), poly[p+1].T(), ViewBox[OOBR]);
-                        p1 =  new Point(inter1, ViewBox[OOBR]);
-                    }
-                    locate(*p1);
-                    poly.insert(poly.begin()+p+1, *p1);
-                }
-
-                if (!(poly[p-1].region & OOBR)) {
-                    if (OOBR & x_min || OOBR & x_max) {
-                        inter2 = intersection(poly[p], poly[p-1], ViewBox[OOBR]);
-                        p2 =  new Point(ViewBox[OOBR], inter2);
-                    } else {
-                        inter2 = intersection(poly[p].T(), poly[p-1].T(), ViewBox[OOBR]);
-                        p2 =  new Point(inter2, ViewBox[OOBR]);
-                    }
-                    locate(*p2);
-                    poly.insert(poly.begin()+p+1, *p2);
-                }
-
+                // Find two replacement points and delete the old point
+                ClippingPointAddOn(poly, p, 1, OOBR);
+                ClippingPointAddOn(poly, p, -1, OOBR);
                 poly.erase(poly.begin()+p);
-
             }
         }
+    }
+
+    assert(poly.size() <= 6);
+}
+
+void Draw::ClippingPointAddOn(Polygon &poly, const int &p, const int &pnext, char OOBR) {
+    /*
+    Logic:
+        1. Check if the next reference vertex is also out of
+        bounds in the same region. If it is, skip calculating
+        for it, and move on to step 4.
+        2. Calculate the intersection of the boundry line with
+        the line of the current vertex and the reference vertex.
+        3. Insert the intersecting point after the current
+        vertex.
+    */
+    Point *newPoint = NULL;
+    float intercept = 0;
+    if (!(poly[p+pnext].region & OOBR)) {
+        if (OOBR & x_min || OOBR & x_max) {
+            intercept = intersection(poly[p], poly[p+pnext], ViewBox[OOBR]);
+            newPoint =  new Point(ViewBox[OOBR], intercept);
+        } else {
+            intercept = intersection(poly[p].T(), poly[p+pnext].T(), ViewBox[OOBR]);
+            newPoint =  new Point(intercept, ViewBox[OOBR]);
+        }
+        locate(*newPoint);
+        poly.insert(poly.begin()+p+1, *newPoint);
     }
 }
 

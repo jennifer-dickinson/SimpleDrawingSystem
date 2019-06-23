@@ -129,7 +129,8 @@ void Polygon::rotate(const float &deg_) {
 
     float deg = deg_ * M_PI / 180;
 
-    std::cout << "Degree is " << deg << std::endl;
+    printf("Angle is %.2f degrees or %.2f radians", deg, deg_);
+
 
     float s = sinf(deg);
     float c = cosf(deg);

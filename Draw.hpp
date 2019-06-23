@@ -122,6 +122,7 @@ public:
     // Clipping alogirthm
     void CohenSutherland(Polygon &poly);
     void locate(Point &p);
+    void ClippingPointAddOn(Polygon &poly, const int &p, const int &pnext, char OOBR);
 
     void initialize(std::string file, bool td, bool sh) {
         ThreeDimensional = td;

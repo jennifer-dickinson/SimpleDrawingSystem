@@ -9,7 +9,7 @@
 #include "Draw.hpp"
 #include <limits>
 #include <cassert>
-
+#include <set>
 
 float distance(float x1, float x2, float y1, float y2) {
     return sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
@@ -33,9 +33,6 @@ void Draw::xd2xp(Point &p) {
 
     p.xp = (int) ((p.xd * .8 + .1) * (min - 1));
     p.yp = (int) ((p.yd * .8 + .1) * (min - 1));
-
-    // std::cout << "Translating point from real to device to pixel" << std::endl;
-    // std::cout << "  (" << p.xr << "," << p.yr << ") : (" << p.xd << "," << p.yd << ") : (" << p.xp << "," << p.yp << ")" << std::endl;
 }
 
 void Draw::MakePix (const Point &a) {
@@ -86,7 +83,7 @@ void Draw::draw(Polygon & p) {
     CohenSutherland(c);
 
     if (raster && c.size() > 2) rasterize(c);
-//
+
     // Draw the points of the polygon.
     if (!raster) for(int i = 0; i < c.size() ; i++) draw(c[i], c[i+1]);
 }
@@ -121,25 +118,20 @@ void Draw::rasterize(Polygon &c) {
 
 
     for(int y_ = y_min; y_ <= y_max; y_++) {
-        std::vector<int> xs;
+        std::set<int> xs;
 
         // calculate the intersections of a horizontal line at y_ with the lines in the polygon
         for(int i = 0 ; i < c.size(); i++) {
-
             if(std::max(c[i].yp, c[i+1].yp)  >= y_  && std::min(c[i].yp, c[i+1].yp) <= y_) {
-                if (c[i].yp == y_) continue;
-
                 float delta_x = c[i].xp - c[i+1].xp, delta_y = c[i].yp - c[i+1].yp;
-
-                if (delta_x == 0) xs.push_back(c[i].xp);
-                else xs.push_back(intersection(delta_x, delta_y, y_, c[i]));
+                if (delta_x == 0) {
+                    xs.insert(c[i].xp);
+                }
+                else xs.insert(intersection(delta_x, delta_y, y_, c[i]));
             }
         }
 
-        // sort all the points
-        std::sort(xs.begin(), xs.end());
-
-        std::vector<int>::iterator current = xs.begin();
+        std::set<int>::iterator current = xs.begin();
         bool on = false;
 
         for(int x_ = x_min; x_ <= x_max && current != xs.end() ; x_++) {
