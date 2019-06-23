@@ -8,16 +8,8 @@
 
 #include "Draw.hpp"
 
-float Draw::Xintersection (const Point &start, const Point &end, const float &yLine) {
-    if (end.xr - start.xr == 0 ) {
-        return end.xr;
-    }
-    float slope = (end.yr - start.yr) / (end.xr - start.xr);
-    float b = end.yr - slope * end.xr;
-    return (yLine - b) / slope;
-}
-float Draw::Yintersection (const Point &start, const Point &end, const float &xLine) {
-    if (end.yr - start.yr == 0) {
+float intersection (const Point &start, const Point &end, const float &xLine) {
+    if (end.xr == start.xr) {
         return start.yr;
     }
     float slope = (end.yr - start.yr) / (end.xr - start.xr);
@@ -32,110 +24,81 @@ void Draw::CohenSutherland(Polygon &poly) {
      */
 
     // First locate each worldPoint.
-    bool bounded = false;
+    char  A = y_max, B = y_min, R = x_max, L = y_min;
     for(Point &p: poly) {
         locate(p);
-        if (p.region == 0) bounded = true;
+        A &= p.region;
+        B &= p.region;
+        R &= p.region;
+        L &= p.region;
     }
 
-    if (!bounded) poly.resize(0);
+    if (A || B || R || L) { // All points above, or below, or left, or right.
+        poly.resize(0);
+        return;
+    }
+
     // Now we do the algoirthm
     for (int j = 0; j < 2; j++)
     for (int i = 0; i < 4; i++) {
         char OOBR = 1 << i; // OOBR = Out Of Bounds Region
-        for(int p = 0; p < poly.size(); p++) {
+        for (int p = 0; p < poly.size(); p++) {
+
             if (poly[p].region & OOBR) {
+                /*
+                    Point is out of bounds, calculate intersections at boundaries
+                */
+
                 Point *p1 = NULL, *p2 = NULL;
+                float inter1 = 0, inter2 = 0;
 
-                // Point is out of bounds
-                if (OOBR & x_min) {
-                    if ((poly[p+1].region & x_min) != x_min) {
-                        float yInter1 = Yintersection(poly[p], poly[p+1], ViewBox[x_min]);
-                        p1 =  new Point(ViewBox[x_min], yInter1);
-                        locate(*p1);
-                        assert(p1->region == 0);
-
+                if (OOBR & x_min || OOBR & x_max) {
+                    if (poly[p+1].region & OOBR); // check if the next piont is out of bounds in the same region
+                    else {
+                        inter1 = intersection(poly[p], poly[p+1], ViewBox[OOBR]);
+                        p1 =  new Point(ViewBox[OOBR], inter1);
                     }
-                    if ((poly[p-1].region & x_min) != x_min) {
-                        float yInter2 = Yintersection(poly[p], poly[p-1], ViewBox[x_min]);
-                        p2 =  new Point(ViewBox[x_min], yInter2);
-                        locate(*p2);
-                        assert(p2->region == 0);
-
+                    if(poly[p-1].region & OOBR); // check if the previous piont is out of bounds in the same region
+                    else {
+                        inter2 = intersection(poly[p], poly[p-1], ViewBox[OOBR]);
+                        p2 =  new Point(ViewBox[OOBR], inter2);
                     }
-
-                    if(p1) poly.insert(poly.begin()+p+1, *p1);
-                    if(p2) poly.insert(poly.begin()+p+1, *p2);
-
-                    poly.erase(poly.begin()+p);
-
                 }
 
-                if (OOBR & x_max) {
-
-                    if ((poly[p+1].region & x_max) != x_max) {
-                        float yInter1 = Yintersection(poly[p], poly[p+1], ViewBox[x_max]);
-                        p1 = new Point(ViewBox[x_max], yInter1);
-                        locate(*p1);
-                        assert(p1->region == 0);
-
+                else if (OOBR & y_min || OOBR & y_max) {
+                    if (poly[p+1].region & OOBR); // check if the next piont is out of bounds in the same region
+                    else {
+                        inter1 = intersection(poly[p].T(), poly[p+1].T(), ViewBox[OOBR]);
+                        p1 =  new Point(inter1, ViewBox[OOBR]);
                     }
-                    if ((poly[p-1].region & x_max) != x_max) {
-                        float yInter2 = Yintersection(poly[p], poly[p-1], ViewBox[x_max]);
-                        p2 =  new Point(ViewBox[x_max], yInter2);
-                        locate(*p2);
-                        assert(p2->region == 0);
+                    if(poly[p-1].region & OOBR); // check if the previous piont is out of bounds in the same region
+                    else {
+                        inter2 = intersection(poly[p].T(), poly[p-1].T(), ViewBox[OOBR]);
+                        p2 =  new Point(inter2, ViewBox[OOBR]);
                     }
-
-                    if(p1) poly.insert(poly.begin()+p+1, *p1);
-                    if(p2) poly.insert(poly.begin()+p+1, *p2);
-
-                    poly.erase(poly.begin()+p);
-
                 }
 
-                if (OOBR & y_min) {
-                    if ((poly[p+1].region & y_min) != y_min) {
-                        float xInter1 = Xintersection(poly[p], poly[p+1], ViewBox[y_min]);
-                        p1 =  new Point(xInter1, ViewBox[y_min]);
-                        locate(*p1);
-                        assert(p1->region == 0);
-                    }
-                    if ((poly[p-1].region & y_min) != y_min) {
-                        float xInter2 = Xintersection(poly[p], poly[p-1], ViewBox[y_min]);
-                        p2 =  new Point(xInter2, ViewBox[y_min]);
-                        locate(*p2);
-                        assert(p2->region == 0);
-
-                    }
-
-                    if(p1) poly.insert(poly.begin()+p+1, *p1);
-                    if(p2) poly.insert(poly.begin()+p+1, *p2);
-
-                    poly.erase(poly.begin()+p);
+                if (p1) {
+                    locate(*p1);
+                    assert((p1->region & OOBR) != OOBR);
+                    poly.insert(poly.begin()+p+1, *p1);
                 }
 
-                if (OOBR & y_max) {
-                    if ((poly[p+1].region & y_max) != y_max) {
-                        float xInter1 = Xintersection(poly[p], poly[p+1], ViewBox[y_max]);
-                        p1 =  new Point(xInter1, ViewBox[y_max]);
-                        locate(*p1);
-                        assert(p1->region == 0);
-
-                    }
-                    if ((poly[p-1].region & y_max) != y_max) {
-                        float xInter2 = Xintersection(poly[p], poly[p-1], ViewBox[y_max]);
-                        p2 =  new Point(xInter2, ViewBox[y_max]);
-                        locate(*p2);
-                        assert(p2->region == 0);
-
-                    }
-                    if(p1) poly.insert(poly.begin()+p+1, *p1);
-                    if(p2) poly.insert(poly.begin()+p+1, *p2);
-                    poly.erase(poly.begin()+p);
+                if (p2) {
+                    locate(*p2);
+                    assert((p2->region & OOBR )!= OOBR);
+                    poly.insert(poly.begin()+p+1, *p2);
                 }
+
+                poly.erase(poly.begin()+p);
+
             }
         }
+    }
+
+    for(Point &p: poly) {
+        locate(p);
+        assert(p.region == 0);
     }
 }
 

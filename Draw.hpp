@@ -26,9 +26,9 @@ class Draw {
     float *PixelBuffer; // This is where we can draw the pixels
     int min;
     const char x_min = 0b000001;
-    const char x_max = 0b000010;
-    const char y_min = 0b000100;
-    const char y_max = 0b001000;
+    const char y_max = 0b000010;
+    const char x_max = 0b000100;
+    const char y_min = 0b001000;
     const char z_min = 0b010000;
     const char z_max = 0b100000;
     std::map<char, float> ViewBox;
@@ -122,8 +122,6 @@ public:
     // Clipping alogirthm
     void CohenSutherland(Polygon &poly);
     void locate(Point &p);
-    float Xintersection (const Point &start, const Point &end, const float &xLine);
-    float Yintersection (const Point &start, const Point &end, const float &xLine);
 
     void initialize(std::string file, bool td, bool sh) {
         ThreeDimensional = td;
