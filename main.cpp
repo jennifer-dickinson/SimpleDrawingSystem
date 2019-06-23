@@ -25,10 +25,10 @@
 #include <thread>
 #include <cstdlib>
 
-void Menu2D(Draw &scene);
-void Menu3D(Draw &scene);
-void MenuShader(Draw &scene);
-std::vector<std::string> split(std::string input, char delim = ' ');
+void Menu2D(Draw &scene, std::vector<std::string> args);
+void Menu3D(Draw &scene, std::vector<std::string> args);
+void MenuShader(Draw &scene, std::vector<std::string> args);
+std::vector<std::string> split(std::string str, char delim = ' ');
 
 using namespace std;
 bool firstTime = true;
@@ -40,7 +40,7 @@ int y = 600;
 Draw scene(x,y, false);
 
 void display();
-void allmenu();
+void masterMenu();
 int main(int argc, char *argv[]) {
     bool threeDimensional = false, shader = false;
     std::string file;
@@ -90,25 +90,28 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Simple Drawing System");
     glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
     //sets display function
-    thread console(allmenu);
+    thread console(masterMenu);
     glutDisplayFunc(display);
     glutMainLoop();//main display loop, will display until terminate
 
     return 0;
 }
 
-void allmenu() {
+void masterMenu() {
+    std::string input;
+    std::vector<std::string> args;
+
     while(true) {
-        if (firstTime) {
-            firstTime = false;
-        }
-        else if (scene.Shader) {
-            MenuShader(scene);
+        cout <<  endl << "Enter action (type help for available commands): " << flush;
+        getline(cin, input);
+        args = split(input);
+        if (scene.Shader) {
+            MenuShader(scene, args);
         }
         else if(scene.ThreeDimensional) {
-            Menu3D(scene);
+            Menu3D(scene, args);
         } else {
-            Menu2D(scene);
+            Menu2D(scene, args);
         }
     }
 }
@@ -116,7 +119,7 @@ void allmenu() {
 //main display loop, this function will be called again and again by OpenGL
 void display()
 {
-    // allmenu();
+    // masterMenu();
     //Misc.
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -138,25 +141,19 @@ void display()
 
 // 1 2 3 4 5
 
-std::vector<std::string> split(std::string input, char delim) {
+std::vector<std::string> split(std::string str, char delim) {
     std::vector<std::string> substrs;
-    for(int i = 0; i < input.size(); i++) {
-        while(i < input.size() && input[i] == delim) i++;
+    for(int i = 0; i < str.size(); i++) {
+        while(i < str.size() && str[i] == delim) i++;
         int j = i;
-        while(j < input.size() && input[j] != delim) j++;
-        substrs.push_back(input.substr(i,j - i));
+        while(j < str.size() && str[j] != delim) j++;
+        substrs.push_back(str.substr(i,j - i));
         i = j;
     }
     return substrs;
 }
 
-void Menu3D(Draw &scene) {
-    std::string input;
-
-    cout <<  endl << "Enter action (type help for available commands): " << flush;
-    getline(cin, input);
-    std::vector<std::string> args(split(input));
-
+void Menu3D(Draw &scene, std::vector<std::string> args) {
     int id = 0;
     float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
@@ -168,7 +165,7 @@ void Menu3D(Draw &scene) {
         cout << "    scale       <POLYGON ID> <FACTOR>" <<endl;
         cout << "    view        <XY | XZ | YZ | CAVALIER | CABINET>" << endl;
         // cout << "    info        <POLYHEDRON ID>" << endl;
-        cout << "    save        <FILENAME>" << endl;
+        // cout << "    save        <FILENAME>" << endl;
         cout << "    exit" << endl;
     } else if (args.size() == 3 && args[0] == "scale") {
         try {
@@ -232,10 +229,10 @@ void Menu3D(Draw &scene) {
         }
         else cout << args[1] << " is an invalid projection." << endl;
 
-    } else if (args.size() == 2 && args[0] == "save") {
-        scene.save3D(args[1]);
+    // } else if (args.size() == 2 && args[0] == "save") {
+    //     scene.save3D(args[1]);
 
-    } else if (args.size() == 1 && args[0] == "info") {
+    // } else if (args.size() == 1 && args[0] == "info") {
 
     } else if (args.size() == 1 && args[0] == "exit") {
         cout << "Program is now exiting." << endl;
@@ -248,12 +245,7 @@ void Menu3D(Draw &scene) {
     scene.normalize();
 }
 
-void Menu2D(Draw &scene) {
-    std::string input;
-
-    cout <<  endl << "Enter action (type help for available commands): " << flush;
-    getline(cin, input);
-    std::vector<std::string> args(split(input));
+void Menu2D(Draw &scene, std::vector<std::string> args) {
     int id = 0;
     float x_m, y_m;
 
@@ -265,6 +257,7 @@ void Menu2D(Draw &scene) {
         cout << "    rotate      <POLYGON ID> <DEGREES>" <<  endl;
         cout << "    scale       <POLYGON ID> <X MODIFIER> <Y MODIFER>" <<endl;
         cout << "    viewport    <X LOWER> <X UPPER> <Y LOWER> <Y UPPER>" << endl;
+        cout << "    rasterize   [t|true|f|false]" << endl;
         cout << "    info        <POLYGON ID>" << endl;
         cout << "    save        <FILENAME>" << endl;
         cout << "    exit" << endl;
@@ -337,12 +330,7 @@ void Menu2D(Draw &scene) {
     }
 }
 
-void MenuShader(Draw &scene) {
-    std::string input;
-
-    cout <<  endl << "Enter action (type help for available commands): " << flush;
-    getline(cin, input);
-    std::vector<std::string> args(split(input));
+void MenuShader(Draw &scene, std::vector<std::string> args) {
     int id = 0;
     float x_m, y_m, z_m, x_m2, y_m2, z_m2, degree;
 
