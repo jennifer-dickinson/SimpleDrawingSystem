@@ -19,6 +19,7 @@
 #include "shadedPolyhedron.hpp"
 #include "Point.hpp"
 #include "helpers.hpp"
+#include "button.hpp"
 
 class Draw {
     unsigned int x, y; // These are the dimensions of the drawable window
@@ -44,6 +45,7 @@ public:
     std::vector<Polygon> polygons;
     std::vector<Polyhedron> polyhedrons;
     std::vector<ShadedPolyhedron> sPolyhedrons;
+    std::vector<Button> buttons;
 
 
     Draw() : x(640), y(480), bresenhamAlgo(false)  {

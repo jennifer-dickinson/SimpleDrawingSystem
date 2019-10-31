@@ -1,6 +1,6 @@
 FLAGS = -Wno-deprecated -std=c++11
-DEPS = polygon.hpp Draw.hpp helpers.hpp Point.hpp polygon.hpp polyhedron.hpp shadedPolyhedron.hpp
-OBJ = polygon.o Lines.o helpers.o DigitalDifferentialAnalyzer.o Bresenham.o Draw.o main.o clipping.o polyhedron.o shadedPolyhedron.o
+DEPS = polygon.hpp Draw.hpp helpers.hpp Point.hpp polygon.hpp polyhedron.hpp shadedPolyhedron.hpp button.hpp
+OBJ = polygon.o Lines.o helpers.o DigitalDifferentialAnalyzer.o Bresenham.o Draw.o main.o clipping.o polyhedron.o shadedPolyhedron.o button.o
 
 draw: $(OBJ)
 	# g++ -o $@ $(OBJ) $(FLAGS) -lglut -lGLU -lGL ##Linux

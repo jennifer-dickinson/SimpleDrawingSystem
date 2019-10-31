@@ -29,24 +29,48 @@ void Menu2D(Draw &scene, std::vector<std::string> args);
 void Menu3D(Draw &scene, std::vector<std::string> args);
 void MenuShader(Draw &scene, std::vector<std::string> args);
 std::vector<std::string> split(std::string str, char delim = ' ');
+void click(int button, int state, int x, int y);
 
 using namespace std;
 bool firstTime = true;
 
 
-int x = 600;
-int y = 600;
+int x = 640;
+int y = 480;
 
 Draw scene(x,y, false);
 
 void display();
 void masterMenu();
 int main(int argc, char *argv[]) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE);
+    //set window size to 200*200
+    glutInitWindowSize(x, y);
+    //set window position
+    glutInitWindowPosition(100, 100);
+
+    //create and set main window title
+    glutCreateWindow("Simple Drawing System");
+    glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
+    //sets display function
+    thread console(masterMenu);
+    glutDisplayFunc(display);
+    glutMouseFunc(click);
+    glutMainLoop();//main display loop, will display until terminate
+
+    return 0;
+}
+
+void masterMenu() {
+    std::string input;
+    std::vector<std::string> args;
+
     bool threeDimensional = false, shader = false;
     std::string file;
-    for(int i = 0; i < argc; i++) cout << argv[i];
-    cout << endl;
-    if (argc == 1) {
+    // for(int i = 0; i < argc; i++) cout << argv[i];
+    // cout << endl;
+    // if (argc == 1) {
         NEEDRENDERTYPE:
         cout << "Please enter the type of rendering:\n" \
             << "\t2d"       << "\tRender two dimensional polygons\n" \
@@ -54,10 +78,10 @@ int main(int argc, char *argv[]) {
             << "\tshader"   << "\tRender polyhedrons with shading\n" \
             << "> ";
         getline(cin, file);
-    }
-    else {
-        file = argv[1];
-    }
+    // }
+    // else {
+    //     file = argv[1];
+    // }
         if (file == "2d") {
             cout << "Rendering 2D polygons" << endl;
         }
@@ -77,29 +101,6 @@ int main(int argc, char *argv[]) {
     // }
 
     scene.initialize(file, threeDimensional, shader);
-
-
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE);
-    //set window size to 200*200
-    glutInitWindowSize(x, y);
-    //set window position
-    glutInitWindowPosition(100, 100);
-
-    //create and set main window title
-    glutCreateWindow("Simple Drawing System");
-    glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
-    //sets display function
-    thread console(masterMenu);
-    glutDisplayFunc(display);
-    glutMainLoop();//main display loop, will display until terminate
-
-    return 0;
-}
-
-void masterMenu() {
-    std::string input;
-    std::vector<std::string> args;
 
     while(true) {
         cout <<  endl << "Enter action (type help for available commands): " << flush;
@@ -365,4 +366,10 @@ void MenuShader(Draw &scene, std::vector<std::string> args) {
         cout << "That is not a valid action." << endl;
     }
     // scene.normalize();
+}
+
+void click(int button, int state, int x, int y) {
+    cout << "button " << button << std::endl;
+    cout << "state " << state << std::endl;
+    cout << "(" << x << "," << y << ")" << std::endl;
 }
