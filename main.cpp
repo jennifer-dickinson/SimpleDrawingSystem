@@ -29,7 +29,6 @@ void Menu2D(Draw &scene, std::vector<std::string> args);
 void Menu3D(Draw &scene, std::vector<std::string> args);
 void MenuShader(Draw &scene, std::vector<std::string> args);
 std::vector<std::string> split(std::string str, char delim = ' ');
-void click(int button, int state, int x, int y);
 
 using namespace std;
 bool firstTime = true;
@@ -39,6 +38,9 @@ int x = 640;
 int y = 480;
 
 Draw scene(x,y, false);
+void click(int button, int state, int x, int y) { 
+    scene.click(button, state, x, y);
+}
 
 void display();
 void masterMenu();
@@ -54,8 +56,10 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Simple Drawing System");
     glClearColor(0, 0, 0, 0); //clears the buffer of OpenGL
     //sets display function
+
     thread console(masterMenu);
     glutDisplayFunc(display);
+
     glutMouseFunc(click);
     glutMainLoop();//main display loop, will display until terminate
 
@@ -120,7 +124,6 @@ void masterMenu() {
 //main display loop, this function will be called again and again by OpenGL
 void display()
 {
-    // masterMenu();
     //Misc.
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -139,8 +142,6 @@ void display()
     glutPostRedisplay();
 
 }
-
-// 1 2 3 4 5
 
 std::vector<std::string> split(std::string str, char delim) {
     std::vector<std::string> substrs;
@@ -365,11 +366,4 @@ void MenuShader(Draw &scene, std::vector<std::string> args) {
     else {
         cout << "That is not a valid action." << endl;
     }
-    // scene.normalize();
-}
-
-void click(int button, int state, int x, int y) {
-    cout << "button " << button << std::endl;
-    cout << "state " << state << std::endl;
-    cout << "(" << x << "," << y << ")" << std::endl;
 }

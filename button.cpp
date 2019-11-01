@@ -22,11 +22,18 @@ Button::Button(int x, int y, int w, int h,std::string text, void(*action)(void))
 {
     this->active_color = {.5,.5,.5};
     this->inactive_color = {.2,.2,.2};
+    this->active = false;
+
+    poly.addVertex(Point(x,y));
+    poly.addVertex(Point(x+w, y));
+    poly.addVertex(Point(x+w,y+h));
+    poly.addVertex(Point(x,y+h));
+
 }
 
-bool Button:bounded(const int &x_ref, const int &y_ref) {
+bool Button::bounded(const int &x_ref, const int &y_ref) {
     bool bounded = true;
     if (x_ref < this->x && x_ref > this->x + this->w) bounded = false;
-    if (y_ref < this->y && y_ref > this->y = this->h) bounded = false;
+    if (y_ref < this->y && y_ref > this->y + this->h) bounded = false;
     return bounded;
 }

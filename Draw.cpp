@@ -11,6 +11,25 @@
 #include <cassert>
 #include <set>
 
+
+void Draw::click(int button, int state, int x, int y) {
+    std::cout << "Button; " << button << std::endl;
+    std::cout << "State: " << state << std::endl;
+    std::cout << "(" << x << "," << y << ")" << std::endl;
+    return;
+}
+
+void Draw::makeButtons() {
+    std::cout << "max width: " << x << std::endl;
+    std::cout << "max height: " << y << std::endl;
+    buttons.push_back(Button(1,y-10,20,10, "hello", NULL));
+    buttons.push_back(Button(x-20, 0,20,10, "hello", NULL));
+}
+
+void Draw::draw(Button &b) {
+    rasterize(b.poly);
+}
+
 float distance(float x1, float x2, float y1, float y2) {
     return sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
 }
@@ -67,6 +86,7 @@ void Draw::draw (Vertex &a) {
 
 void Draw::draw() {
     for(int i = 0; i < x * y * 3; i++) PixelBuffer[i] = 0;
+    for(Button &button: buttons) draw(button);
     if (Shader) for(ShadedPolyhedron &poly: sPolyhedrons) draw(poly);
     else if (ThreeDimensional) for(Polyhedron &poly: polyhedrons) draw(poly);
     else for(Polygon &poly: polygons) draw(poly);
@@ -109,7 +129,6 @@ void Draw::rasterize(Polygon &c) {
 
     // calculate the pixel extrema in x and y
     for (int i = 0; i < c.size() + 1; i++) {
-        xd2xp(c[i]);
         if (c[i].xp >= x_max) x_max = c[i].xp;
         if (c[i].xp <= x_min) x_min = c[i].xp;
         if (c[i].yp >= y_max) y_max = c[i].yp;
@@ -199,7 +218,7 @@ void Draw::draw(Vertex &a, Vertex &b) {
         max = a;
     } else if (a.yr < b.yr) {
         min = a;
-        max = b; // hello theere
+        max = b;
     } else {
         min = b;
         max = a;

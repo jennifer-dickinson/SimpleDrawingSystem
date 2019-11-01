@@ -25,9 +25,6 @@ void Draw::initializePolygons(std::string file) {
 
     std::cout << "Total polygons: " << numPolygons << std::endl;
 
-//    float x_min = std::numeric_limits<float>::max(), y_min = std::numeric_limits<float>::max();
-//    float x_max = std::numeric_limits<float>::min(), y_max = std::numeric_limits<float>::min();
-
     ViewBox[x_min] = std::numeric_limits<float>::max();
     ViewBox[y_min] = std::numeric_limits<float>::max();
     ViewBox[x_max] = std::numeric_limits<float>::min();
@@ -52,7 +49,6 @@ void Draw::initializePolygons(std::string file) {
             point >> x >> y;
 
             Point tempPoint (x,y);
-//            if (temp.worldPoint.size()) assert(&tempPoint.x != &temp.worldPoint.back().x);
             temp.addVertex(tempPoint);
 
             if (x > ViewBox[x_max]) ViewBox[x_max] = x;

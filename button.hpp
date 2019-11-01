@@ -2,6 +2,8 @@
 #define BUTTON
 #include <vector>
 #include <string>
+#include "polygon.hpp"
+#include "Point.hpp"
 
 class Button {
     int x, y, w, h;
@@ -11,7 +13,9 @@ class Button {
     std::vector<float> active_color;
     std::vector<float> inactive_color;
 
+public:
     Button(int,int,int,int,std::string, void(*action)(void));
+    Polygon poly;
 
     void click();
 

@@ -55,6 +55,7 @@ public:
         Shader = false;
         view = XY;
         raster = false;
+        makeButtons();
     }
     Draw(unsigned int _x, unsigned int _y, bool ba) : x(_x), y(_y), bresenhamAlgo(ba){
         PixelBuffer = new float[(x+1) * (y+1) * 3];
@@ -63,7 +64,13 @@ public:
         Shader = false;
         view = XY;
         raster = false;
+        makeButtons();
     }
+
+    void makeButtons();
+
+    void click( int button, int state, int x, int y);
+    void draw(Button &b);
 
     Polygon &operator[](int i){
         if(i < 0 || i >= polygons.size()) {
@@ -162,6 +169,8 @@ public:
     }
 
     void sortShadedPolyhedrons();
+
+    void calcPixels(Polygon &p);
 
     void normalize();
     void normalizeShader();

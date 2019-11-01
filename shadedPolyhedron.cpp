@@ -219,12 +219,17 @@ Polygon ShadedPolyhedron::iToPoly(int i, View view) {
     return temp;
 }
 
+void Draw::calcPixels(Polygon &p) {
+    for (int i = 0; i < p.size() + 1; i++) xd2xp(p[i]);
+}
+
 void Draw::draw(ShadedPolyhedron& p) {
     // draw the lines firstTime
     sortShadedPolyhedrons();
     for(int i = 0; i < p.polygons.size(); i++) {
         // rasterize the Polygon
         Polygon temp = p.iToPoly(i,view); // get the 2 dimensional view of the polygon
+        calcPixels(temp);
         rasterize(temp);
     }
 }
